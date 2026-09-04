@@ -1,74 +1,60 @@
 /**
- * filings4u wizard access gate
- * Lives ONLY in the wizard repo and should load before wizard-master-core.js.
+ * filings4u Wizard Access Gate
+ * WIZARD REPO ONLY.
  *
- * No valid handoff/session => return to:
- * https://filings4u.com/get-started.html
+ * Must load after supabase-client.js and before every wizard core/step script.
+ * Direct entry without a verified handoff is returned to Get Started.
  */
 (function () {
   "use strict";
 
-  const CONFIG = Object.freeze({
-    marketingOrigin: "https://filings4u.com",
-    fallback: "https://filings4u.com/get-started.html",
-    storageKey: "f4u_verified_wizard_handoff"
-  });
+  const FALLBACK = "https://filings4u.com/get-started.html";
+  const SESSION_KEY = "f4u_wizard_session_token";
+  const CONTEXT_KEY = "f4u_verified_wizard_handoff";
 
-  const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
-
-  function safeReturnUrl(value) {
+  function safeReturn(value) {
     try {
-      const u = new URL(value);
-      if (u.protocol !== "https:") return CONFIG.fallback;
-      if (u.hostname !== "filings4u.com" && !u.hostname.endsWith(".filings4u.com"))
-        return CONFIG.fallback;
-      if (u.hostname === "wizard.filings4u.com") return CONFIG.fallback;
+      const u = new URL(String(value || ""));
+      if (u.protocol !== "https:") return FALLBACK;
+      if (!["filings4u.com", "www.filings4u.com"].includes(u.hostname)) return FALLBACK;
       return u.toString();
-    } catch (_) {
-      return CONFIG.fallback;
-    }
+    } catch (_) { return FALLBACK; }
   }
 
-  function storedSession() {
-    try {
-      const value = JSON.parse(sessionStorage.getItem(CONFIG.storageKey) || "null");
-      if (!value?.expires_at) return null;
-      if (Date.parse(value.expires_at) <= Date.now()) return null;
-      if (!value.service || !value.plan) return null;
-      return value;
-    } catch (_) {
-      return null;
-    }
+  function supabaseClient() {
+    return window.f4uSupabase || window.supabaseClientInstance || null;
   }
 
-  async function consume(token) {
-    if (!window.f4uSupabase) throw new Error("Wizard Supabase client unavailable.");
-
-    const { data, error } = await window.f4uSupabase.functions.invoke("wizard-handoff", {
-      body: { action: "consume", token }
-    });
-
+  async function invoke(body) {
+    const client = supabaseClient();
+    if (!client) throw new Error("Supabase client unavailable.");
+    const { data, error } = await client.functions.invoke("wizard-handoff", { body });
     if (error) throw error;
-    if (!data?.ok || !data?.session) throw new Error("Invalid wizard handoff.");
-    return data.session;
+    if (!data?.ok || !data?.session) throw new Error("Wizard access was not verified.");
+    return data;
   }
 
-  function expose(session) {
+  function installContext(data) {
+    const s = data.session;
     const verified = Object.freeze({
-      service: session.service,
-      plan: session.plan,
-      state: session.state || "",
-      return_url: safeReturnUrl(session.return_url),
-      expires_at: session.expires_at,
-      handoff_id: session.handoff_id
+      handoff_id: s.handoff_id,
+      service: String(s.service || "").trim().toLowerCase(),
+      plan: String(s.plan || "").trim().toLowerCase(),
+      state: String(s.state || "").trim().toUpperCase(),
+      return_url: safeReturn(s.return_url),
+      expires_at: s.expires_at
     });
 
+    if (!verified.service || !verified.plan) throw new Error("Incomplete handoff.");
+
+    if (data.session_token) {
+      sessionStorage.setItem(SESSION_KEY, data.session_token);
+    }
+    sessionStorage.setItem(CONTEXT_KEY, JSON.stringify(verified));
     window.F4U_VERIFIED_HANDOFF = verified;
 
-    // Compatibility with the existing wizard, which currently reads its route
-    // from service/plan/state query parameters.
+    // Compatibility: existing original wizard continues to read service/plan/state
+    // from the URL, but these values now come from the server-verified handoff.
     const url = new URL(location.href);
     url.searchParams.delete("handoff");
     url.searchParams.set("service", verified.service);
@@ -77,50 +63,54 @@
     else url.searchParams.delete("state");
     history.replaceState({}, "", url.pathname + "?" + url.searchParams.toString());
 
-    const back = document.querySelector(".wizard-shell-topbar__back");
-    if (back) {
-      back.href = verified.return_url;
-      back.textContent = "← Back to service";
-    }
+    // Backward handoff to the exact service page.
+    document.addEventListener("DOMContentLoaded", function () {
+      const back =
+        document.querySelector(".wizard-shell-topbar__back") ||
+        document.querySelector('[data-wizard-back]') ||
+        Array.from(document.querySelectorAll("a")).find(a =>
+          /back to services?/i.test(a.textContent || "")
+        );
 
-    sessionStorage.setItem(CONFIG.storageKey, JSON.stringify(verified));
-    document.documentElement.dataset.wizardAccess = "verified";
-    document.dispatchEvent(new CustomEvent("f4u:wizard-access-ready", {
-      detail: verified
-    }));
+      if (back) {
+        back.href = verified.return_url;
+        back.textContent = "← Back to service";
+      }
+    }, { once: true });
 
     return verified;
   }
 
   function deny() {
-    sessionStorage.removeItem(CONFIG.storageKey);
-    location.replace(CONFIG.fallback);
+    try {
+      sessionStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(CONTEXT_KEY);
+    } catch (_) {}
+    location.replace(FALLBACK);
+    return new Promise(function () {});
   }
 
-  async function initialize() {
+  async function verify() {
     const url = new URL(location.href);
-    const token = url.searchParams.get("handoff");
+    const handoff = url.searchParams.get("handoff");
 
     try {
-      if (token) {
-        const session = await consume(token);
-        expose(session);
-        return;
+      if (handoff) {
+        return installContext(await invoke({ action: "consume", token: handoff }));
       }
 
-      const existing = storedSession();
-      if (existing) {
-        expose(existing);
-        return;
+      const sessionToken = sessionStorage.getItem(SESSION_KEY);
+      if (sessionToken) {
+        return installContext(await invoke({ action: "resume", session_token: sessionToken }));
       }
 
-      deny();
+      return deny();
     } catch (error) {
       console.warn("[filings4u] Wizard access denied:", error);
-      deny();
+      return deny();
     }
   }
 
-  // The wizard core can await this promise before booting.
-  window.F4UWizardAccessReady = initialize();
+  // A single promise is the boot barrier for the original wizard.
+  window.F4UWizardAccessReady = verify();
 })();
