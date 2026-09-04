@@ -7,21 +7,21 @@
 <meta content="#10b981" name="theme-color"/>
 <title>Secure Filing Wizard | filings4u</title>
 <!-- 1. CORE THIRD-PARTY API DEPENDENCIES & SECURITY FILTERS (LOAD SYNCHRONOUSLY) -->
-
-
-
+<script src="https://js.stripe.com/v3/"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/wizard/wizard-env.js"></script><script src="assets/js/wizard/supabase-client.js"></script>
+<script async="" defer="" src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
 <!-- 2. STYLESHEETS & FONTS TYPOGRAPHY ASSETS -->
 <link href="images/fav.png" rel="icon" type="image/png"/>
-
-
-
-
-
-
+<link href="assets/css/new-wizard.css" rel="stylesheet"/>
+<link href="assets/css/wizard-chat-wizard.css" rel="stylesheet"/>
+<link href="assets/css/wizard-mobile.css" rel="stylesheet"/>
+<link href="assets/css/wizard-toggle.css" rel="stylesheet"/>
+<link href="assets/css/wizard-floating-map.css" rel="stylesheet"/>
+<link href="assets/css/wizard-overrides.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-
-<link href="assets/css/wizard.css" rel="stylesheet"/></head>
+<link href="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;family=Dancing+Script&amp;family=Great+Vibes&amp;family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+</head>
 <body>
 <header class="wizard-shell-topbar">
 <div class="wizard-shell-topbar__brand">
@@ -71,57 +71,101 @@
 <span id="wizard-progress-meter"></span>
 </div>
 </div>
-<div class="wizard-container-wrapper"><div aria-label="Wizard step 1" class="wizard-panel active" id="step-panel-1" role="region"><div id="step-1-injection-placeholder"></div></div>
-<div aria-label="Wizard step 2" class="wizard-panel" hidden="" id="step-panel-2" role="region"><div id="step-2-injection-placeholder"></div></div>
-<div aria-label="Wizard step 3" class="wizard-panel" hidden="" id="step-panel-3" role="region"><div id="step-3-injection-placeholder"></div></div>
-<div aria-label="Wizard step 4" class="wizard-panel" hidden="" id="step-panel-4" role="region"><div id="step-4-injection-placeholder"></div></div>
-<div aria-label="Wizard step 5" class="wizard-panel" hidden="" id="step-panel-5" role="region"><div id="step-5-injection-placeholder"></div></div>
-<div aria-label="Wizard step 6" class="wizard-panel" hidden="" id="step-panel-6" role="region"><div id="step-6-injection-placeholder"></div></div>
-<div aria-label="Wizard step 7" class="wizard-panel" hidden="" id="step-panel-7" role="region"><div id="step-7-injection-placeholder"></div></div>
-<div aria-label="Wizard step 8" class="wizard-panel" hidden="" id="step-panel-8" role="region"><div id="step-8-injection-placeholder"></div></div></div>
+<div class="wizard-container-wrapper">
+<!-- INTERNAL STEP 0 / VISUAL STEP 1: JURISDICTION OR GOVERNMENT SERVICE -->
+<div aria-label="Wizard step 0" class="wizard-panel active" id="step-panel-0" role="region">
+<div id="step-0-injection-placeholder"></div>
+</div>
+<!-- INTERNAL STEP 1 / VISUAL STEP 2: PACKAGE REVIEW -->
+<div aria-label="Wizard step 1" class="wizard-panel" id="step-panel-1" role="region" style="display:none;">
+<div id="step-1-injection-placeholder"></div>
+</div>
+<!-- STEP 2 INNER WIZARD PANEL CARD -->
+<div aria-label="Wizard step 2" class="wizard-panel" id="step-panel-2" role="region" style="display:none;">
+<div id="step-2-injection-placeholder"></div>
+</div>
+</div>
 <!-- STEP 3 INNER WIZARD PANEL CARD -->
-
+<div aria-label="Wizard step 3" class="wizard-panel" id="step-panel-3" role="region" style="display:none;">
+<div id="step-3-injection-placeholder"></div>
+</div>
 </main></div>
 <!-- STEP 4 INNER WIZARD PANEL CARD -->
-
+<div aria-label="Wizard step 4" class="wizard-panel" id="step-panel-4" role="region" style="display:none;">
+<div id="step-4-injection-placeholder"></div>
+</div>
 
 <!-- STEP 5 INNER WIZARD PANEL CARD -->
-
+<div aria-label="Wizard step 5" class="wizard-panel" id="step-panel-5" role="region" style="display:none;">
+<div id="step-5-injection-placeholder"></div>
+</div>
 
 <!-- STEP 6 INNER WIZARD PANEL CARD -->
-
+<div aria-label="Wizard step 6" class="wizard-panel" id="step-panel-6" role="region" style="display:none;">
+<div id="step-6-injection-placeholder"></div>
+</div>
 
 <!-- STEP 7 INNER WIZARD PANEL CARD -->
-
+<div aria-label="Wizard step 7" class="wizard-panel" id="step-panel-7" role="region" style="display:none;">
+<div id="step-7-injection-placeholder"></div>
+</div>
 <!-- 🏁 STEP 8 INNER WIZARD PANEL CARD (NEW SUCCESS PORTAL FRAME) -->
-
-
+<div aria-label="Wizard step 8" class="wizard-panel" id="step-panel-8" role="region" style="display:none;">
+<div id="step-8-injection-placeholder"></div>
+</div>
+<div id="wizard-footer-injection-target" style="display:none;"></div>
 
 
 <!-- /.dashboard-wrapper -->
 <!-- Load reference registries first -->
-
-
+<script src="assets/js/wizard/government-pricing.js"></script>
+<script src="assets/js/wizard/state-pricing.js"></script>
 <!-- Load wizard core engine next -->
-
-
-
+<script src="assets/js/wizard/application-map.js"></script>
+<script src="assets/js/wizard/stripe-core.js"></script>
+<script src="assets/js/wizard/wizard-master-core.js"></script>
 <!-- Core Wizard Engines & Master Layout Router Pipeline -->
+<script src="assets/js/wizard/step-0.js"></script>
+<script src="assets/js/wizard/step-1.js"></script>
+<script src="assets/js/wizard/step-2.js"></script>
+<script src="assets/js/wizard/step-3.js"></script>
+<script src="assets/js/wizard/step-4.js"></script>
+<script src="assets/js/wizard/step-5.js"></script>
+<script src="assets/js/wizard/step-6.js"></script>
+<script src="assets/js/wizard/step-7.js"></script>
+<script src="assets/js/wizard/step-8.js"></script>
+<script src="assets/js/wizard/footer.js"></script>
+<script src="assets/js/wizard/wizard-flow-controller.js"></script>
+<script src="assets/js/wizard/wizard-floating-ui.js"></script>
+<script>
+      (function () {
+        if (window.__f4uWizardStepEventBridgeInstalled) return;
+        window.__f4uWizardStepEventBridgeInstalled = true;
 
+        function emitStep(step) {
+          document.dispatchEvent(new CustomEvent("f4u:wizard-step-changed", {
+            detail: { step: Number(step) }
+          }));
+        }
 
+        var originalSwitch = window.switchWizardActiveViewLayout;
+        if (typeof originalSwitch === "function" && !originalSwitch.__f4uEventWrapped) {
+          function wrappedSwitch(step) {
+            var result = originalSwitch.apply(this, arguments);
+            emitStep(step);
+            return result;
+          }
+          wrappedSwitch.__f4uEventWrapped = true;
+          window.switchWizardActiveViewLayout = wrappedSwitch;
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
+        document.addEventListener("DOMContentLoaded", function () {
+          emitStep(window.currentWizardActiveStep || 0);
+        });
+      })();
+    </script>
+<script src="assets/js/wizard/unified-interaction-controller.js"></script>
+<script src="assets/js/wizard/save-progress.js"></script>
 <!-- Production checkout remains connected only to the wizard files actually deployed on this site. -->
 <style>
   /* 1. Core Structural Sizing & Mobile Fixes */
@@ -248,7 +292,7 @@
 
 </style>
 <!-- Floating launcher trigger button widget bubble -->
-<div class="chat-bubble-widget-launcher" data-chat-action="open" id="wizard-chat-launcher" style="cursor: pointer; position: fixed !important; bottom: 24px !important; right: 24px !important; background: #0a1f44 !important; width: 50px !important; height: 50px !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important; box-shadow: 0 4px 12px rgba(10,31,68,0.2) !important; z-index: 99998 !important;" title="Chat with an Expert">
+<div class="chat-bubble-widget-launcher" onclick="window.toggleSupportFlyoutContainer(true)" style="cursor: pointer; position: fixed !important; bottom: 24px !important; right: 24px !important; background: #0a1f44 !important; width: 50px !important; height: 50px !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important; box-shadow: 0 4px 12px rgba(10,31,68,0.2) !important; z-index: 99998 !important;" title="Chat with an Expert">
 <svg fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" style="width: 22px; height: 22px; display: block; pointer-events: none;" viewbox="0 0 24 24" xmlns="http://w3.org">
 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
 </svg>
@@ -259,8 +303,8 @@
 <header id="support-chat-drag-handle" style="background: #0a1f44; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; color: #ffffff; user-select: none;">
 <h3 style="margin: 0; font-size: 0.95rem; font-weight: 800;">filings4u Support</h3>
 <div style="display: flex; align-items: center; gap: 12px;">
-<button data-chat-action="end" id="wizardHeaderEndChatBtn" style="display: none; background: #ef4444; border: none; color: #ffffff; font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; cursor: pointer;" type="button">End Chat</button>
-<button data-chat-action="close" style="background: transparent; border: none; color: #ffffff; font-size: 1.4rem; cursor: pointer; line-height: 1;" type="button">×</button>
+<button id="wizardHeaderEndChatBtn" onclick="if(typeof window.confirmAndTerminateChatSession === 'function') { window.confirmAndTerminateChatSession(); }" style="display: none; background: #ef4444; border: none; color: #ffffff; font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; cursor: pointer;" type="button">End Chat</button>
+<button onclick="window.toggleSupportFlyoutContainer(false)" style="background: transparent; border: none; color: #ffffff; font-size: 1.4rem; cursor: pointer; line-height: 1;" type="button">×</button>
 </div>
 </header>
 <!-- FIXED HOOK: This parent container box keeps your 520px height rules fully locked! -->
@@ -281,7 +325,7 @@
       A compliance broker will personally contact you on the very next business day!
     </p>
 </div>
-<button data-chat-action="close" style="width: 100%; padding: 12px 0; background: #0a1f44; color: #ffffff; border: none; font-weight: 700; border-radius: 6px; cursor: pointer; font-size: 0.875rem;" type="button">Close Window</button>
+<button onclick="window.toggleSupportFlyoutContainer(false)" style="width: 100%; padding: 12px 0; background: #0a1f44; color: #ffffff; border: none; font-weight: 700; border-radius: 6px; cursor: pointer; font-size: 0.875rem;" type="button">Close Window</button>
 </div>
 <!-- THE INTAKE FORM WELL (Swapped away dynamically on user login) -->
 <div id="chat-preflight-input-form" style="padding: 26px 24px 12px 24px; display: flex; flex-direction: column; gap: 16px; box-sizing: border-box; background: #ffffff; flex: 1 !important; justify-content: center !important;">
@@ -301,7 +345,7 @@
 <div class="f4u-input-group" style="width: 100%;">
 <input id="chat_email" placeholder="Email Address" required="" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.875rem; box-sizing: border-box;" type="email"/>
 </div>
-<button class="btn-wizard-main" id="f4uSubmitBtn" style="width:100%; padding:12px 0; background:#0a1f44; color:#ffffff; border:none; font-weight:700; border-radius:6px; cursor:pointer; font-size:0.875rem; margin-top: 4px; transition: background 0.15s ease;" type="submit">Connect to Live Agent</button>
+<button class="btn-wizard-main" id="f4uSubmitBtn" onmouseout="this.style.background='#0a1f44'" onmouseover="this.style.background='#122d5a'" style="width:100%; padding:12px 0; background:#0a1f44; color:#ffffff; border:none; font-weight:700; border-radius:6px; cursor:pointer; font-size:0.875rem; margin-top: 4px; transition: background 0.15s ease;" type="submit">Connect to Live Agent</button>
 </form>
 </div>
 <!-- MONITORING PILL BAR -->
@@ -326,8 +370,8 @@
           Are you sure you want to end this chat conversation? A copy of the full text discussion logs transcript will be immediately delivered to your business email address.
         </p>
 <div style="display: flex !important; gap: 10px !important; justify-content: flex-end !important; width: 100% !important; box-sizing: border-box !important;">
-<button style="padding: 8px 14px !important; background: #f1f5f9 !important; color: #475569 !important; border: 1px solid #cbd5e1 !important; border-radius: 6px !important; font-size: 0.8rem !important; font-weight: 700 !important; cursor: pointer !important; transition: background 0.15s ease !important;" type="button">Cancel</button>
-<button id="f4uConfirmCloseActionBtn" style="padding: 8px 16px !important; background: #ef4444 !important; color: #ffffff !important; border: none !important; border-radius: 6px !important; font-size: 0.8rem !important; font-weight: 700 !important; cursor: pointer !important; transition: background 0.15s ease !important;" type="button">Yes, End Chat</button>
+<button onclick="window.closeTerminalModalInterfaceWindow(false)" onmouseout="this.style.background='#f1f5f9'" onmouseover="this.style.background='#e2e8f0'" style="padding: 8px 14px !important; background: #f1f5f9 !important; color: #475569 !important; border: 1px solid #cbd5e1 !important; border-radius: 6px !important; font-size: 0.8rem !important; font-weight: 700 !important; cursor: pointer !important; transition: background 0.15s ease !important;" type="button">Cancel</button>
+<button id="f4uConfirmCloseActionBtn" onclick="window.executeHardSessionClearPipeline()" onmouseout="this.style.background='#ef4444'" onmouseover="this.style.background='#dc2626'" style="padding: 8px 16px !important; background: #ef4444 !important; color: #ffffff !important; border: none !important; border-radius: 6px !important; font-size: 0.8rem !important; font-weight: 700 !important; cursor: pointer !important; transition: background 0.15s ease !important;" type="button">Yes, End Chat</button>
 </div>
 </div>
 <!-- NEW: SUCCESS STATE TRANSCRIPT TRANSFERS NOTIFICATION (HIDDEN ON START) -->
@@ -344,6 +388,7 @@
 <!-- ========================================================================== 
      🚀 THE PLATFORM ENGINE PROGRAM CODE HOOK IS CURRENTLY OPEN
      ========================================================================== -->
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://js.stripe.com/v3/"></script><script defer="" src="assets/js/supabase-client.js"></script><script defer="" src="assets/js/wizard.js"></script><script defer="" src="assets/js/step-1.js"></script><script defer="" src="assets/js/step-2.js"></script><script defer="" src="assets/js/step-3.js"></script><script defer="" src="assets/js/step-4.js"></script><script defer="" src="assets/js/step-5.js"></script><script defer="" src="assets/js/step-6.js"></script><script defer="" src="assets/js/step-7.js"></script><script defer="" src="assets/js/step-8.js"></script></body>
+<script src="assets/js/wizard/wizard-chat-widget.js"></script>
+<script src="assets/js/wizard-access-gate.js"></script>
+</body>
 </html>
