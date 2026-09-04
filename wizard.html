@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<meta content="#10b981" name="theme-color"/>
+<title>Secure Filing Wizard | filings4u</title>
+<!-- 1. CORE THIRD-PARTY API DEPENDENCIES & SECURITY FILTERS (LOAD SYNCHRONOUSLY) -->
+
+
+
+<!-- 2. STYLESHEETS & FONTS TYPOGRAPHY ASSETS -->
+<link href="images/fav.png" rel="icon" type="image/png"/>
+
+
+
+
+
+
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+
+<link href="assets/css/wizard.css" rel="stylesheet"/></head>
+<body>
+<header class="wizard-shell-topbar">
+<div class="wizard-shell-topbar__brand">
+<a aria-label="filings4u home" href="index.html">
+<img alt="filings4u" src="images/logo.png"/>
+</a>
+<span aria-hidden="true" class="wizard-shell-topbar__divider"></span>
+<span class="wizard-shell-topbar__label">
+<strong>Secure Filing Wizard</strong>
+<span>Guided application workspace</span>
+</span>
+</div>
+<div class="wizard-shell-topbar__actions">
+<span class="wizard-shell-topbar__secure">● Secure workspace</span>
+<a class="wizard-shell-topbar__back" href="get-started.html">← Back to services</a>
+</div>
+</header>
+<div aria-label="Wizard tools" class="wizard-floating-tools">
+<button aria-expanded="false" class="wizard-floating-tool wizard-floating-tool--map" id="f4u-application-map-toggle" type="button">
+<span class="wizard-floating-tool__icon">☷</span>
+<span class="wizard-floating-tool__text">
+<strong>Application Map</strong>
+<small id="wizard-floating-step-label">Step 1 of 8</small>
+</span>
+</button>
+<button class="wizard-floating-tool wizard-floating-tool--save" id="sidebarFallbackLogoutBtn" type="button">
+<span class="wizard-floating-tool__icon">↧</span>
+<span class="wizard-floating-tool__text">
+<strong>Save Progress</strong>
+<small>Resume later</small>
+</span>
+</button>
+</div>
+<div aria-hidden="true" class="wizard-floating-map" id="f4u-floating-map-panel">
+<div id="wizard-sidebar-application-map-target"></div>
+</div>
+<div class="dashboard-wrapper">
+<!-- RIGHT MAIN SCREEN CONTENT AREA -->
+<main class="portal-main">
+<div class="wizard-progress-shell">
+<div class="wizard-progress-shell__top">
+<span id="wizard-progress-step-text">Step 1 of 8</span>
+<strong id="wizard-progress-title">Getting started</strong>
+<span id="wizard-progress-percent">12%</span>
+</div>
+<div aria-hidden="true" class="wizard-progress-track">
+<span id="wizard-progress-meter"></span>
+</div>
+</div>
+<div class="wizard-container-wrapper"><div aria-label="Wizard step 1" class="wizard-panel active" id="step-panel-1" role="region"><div id="step-1-injection-placeholder"></div></div>
+<div aria-label="Wizard step 2" class="wizard-panel" hidden="" id="step-panel-2" role="region"><div id="step-2-injection-placeholder"></div></div>
+<div aria-label="Wizard step 3" class="wizard-panel" hidden="" id="step-panel-3" role="region"><div id="step-3-injection-placeholder"></div></div>
+<div aria-label="Wizard step 4" class="wizard-panel" hidden="" id="step-panel-4" role="region"><div id="step-4-injection-placeholder"></div></div>
+<div aria-label="Wizard step 5" class="wizard-panel" hidden="" id="step-panel-5" role="region"><div id="step-5-injection-placeholder"></div></div>
+<div aria-label="Wizard step 6" class="wizard-panel" hidden="" id="step-panel-6" role="region"><div id="step-6-injection-placeholder"></div></div>
+<div aria-label="Wizard step 7" class="wizard-panel" hidden="" id="step-panel-7" role="region"><div id="step-7-injection-placeholder"></div></div>
+<div aria-label="Wizard step 8" class="wizard-panel" hidden="" id="step-panel-8" role="region"><div id="step-8-injection-placeholder"></div></div></div>
+<!-- STEP 3 INNER WIZARD PANEL CARD -->
+
+</main></div>
+<!-- STEP 4 INNER WIZARD PANEL CARD -->
+
+
+<!-- STEP 5 INNER WIZARD PANEL CARD -->
+
+
+<!-- STEP 6 INNER WIZARD PANEL CARD -->
+
+
+<!-- STEP 7 INNER WIZARD PANEL CARD -->
+
+<!-- 🏁 STEP 8 INNER WIZARD PANEL CARD (NEW SUCCESS PORTAL FRAME) -->
+
+
+
+
+<!-- /.dashboard-wrapper -->
+<!-- Load reference registries first -->
+
+
+<!-- Load wizard core engine next -->
+
+
+
+<!-- Core Wizard Engines & Master Layout Router Pipeline -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Production checkout remains connected only to the wizard files actually deployed on this site. -->
+<style>
+  /* 1. Core Structural Sizing & Mobile Fixes */
+  .chat-bubble-widget-launcher, .support-slide-container {
+    box-sizing: border-box !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
+  }
+  .f4u-form-row {
+    display: flex !important;
+    gap: 10px !important;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+  }
+  .f4u-input-group {
+    flex: 1 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .f4u-input-field {
+    width: 100% !important;
+    height: 38px !important;
+    padding: 0 10px !important;
+    border-radius: 6px !important;
+    border: 1px solid #cbd5e1 !important;
+    box-sizing: border-box !important;
+    font-size: 0.85rem !important;
+  }
+
+  @media screen and (max-width: 500px) {
+    #support-chat-flyout-panel {
+      bottom: 0px !important;
+      right: 0px !important;
+      width: 100vw !important;
+      max-width: 100vw !important;
+      height: 100vh !important;
+      max-height: 100vh !important;
+      border-radius: 0px !important;
+      border: none !important;
+      transform: translateY(100%) !important;
+      position: fixed !important;
+      z-index: 99999 !important;
+    }
+    #support-chat-drag-handle { border-radius: 0px !important; height: 55px !important; }
+    #support-chat-drag-handle h3 { font-size: 1.05rem !important; }
+    .chat-bubble-widget-launcher {
+      bottom: 16px !important;
+      right: 16px !important;
+      display: flex !important;
+      transform: translateY(0) !important;
+      opacity: 1 !important;
+    }
+    .f4u-form-row {
+      flex-direction: column !important;
+      gap: 10px !important;
+      margin-bottom: 0px !important;
+    }
+    .f4u-spacing-mobile {
+      margin-bottom: 10px !important;
+    }
+  }
+
+  @keyframes f4uValidationShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+  }
+  .f4u-error-shake {
+    animation: f4uValidationShake 0.4s ease-in-out !important;
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+  }
+
+  /* =========================================================================
+ * STEP 9: DESKTOP CONTAINER EXPANSION EXTENSION
+ * Target: Enlarges the default structural footprint on large display targets
+ * ========================================================================= */
+@media screen and (min-width: 501px) {
+    #support-chat-flyout-panel {
+        width: 440px !important;       /* Increased from standard ~350px width */
+        max-width: 90vw !important;    /* Responsive safety guard boundary */
+        height: 650px !important;      /* Tall layout frame to scan conversation history */
+        max-height: 85vh !important;   /* Safe positioning space on short laptop views */
+        box-shadow: 0 12px 24px -4px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.08) !important;
+    }
+}
+
+/* ✨ SMOOTH SLIDE-IN POP-UP CHAT BUBBLE ANIMATION */
+@keyframes f4uBubbleSlideInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Attaches the pop animation dynamically onto freshly drawn conversation blocks */
+.admin-chat-row-bubble, .chat-bubble {
+  animation: f4uBubbleSlideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  transform-origin: bottom right;
+}
+
+/* Flips the animation anchor points cleanly across profile message boxes alignment lines */
+.chat-bubble.inbound {
+  transform-origin: bottom left !important;
+}
+
+/* 🖼️ HIGH-RESOLUTION CLICKABLE INLINE PREVIEW THUMBNAILS */
+.chat-inline-thumbnail-preview {
+  display: block !important;
+  max-width: 240px !important;
+  max-height: 180px !important;
+  border-radius: 6px !important;
+  margin-top: 6px !important;
+  cursor: pointer !important;
+  transition: opacity 0.15s ease !important;
+  border: 1px solid rgba(0,0,0,0.05) !important;
+}
+.chat-inline-thumbnail-preview:hover {
+  opacity: 0.9 !important;
+}
+
+</style>
+<!-- Floating launcher trigger button widget bubble -->
+<div class="chat-bubble-widget-launcher" data-chat-action="open" id="wizard-chat-launcher" style="cursor: pointer; position: fixed !important; bottom: 24px !important; right: 24px !important; background: #0a1f44 !important; width: 50px !important; height: 50px !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important; box-shadow: 0 4px 12px rgba(10,31,68,0.2) !important; z-index: 99998 !important;" title="Chat with an Expert">
+<svg fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" style="width: 22px; height: 22px; display: block; pointer-events: none;" viewbox="0 0 24 24" xmlns="http://w3.org">
+<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+</svg>
+</div>
+<!-- Main Support Sliding Overlay Container Panel Box -->
+<!-- FIXED MOBILE COMPRESSION: Changed fixed height to a fluid 'max-height' blueprint that dynamically adjusts sizing scales natively on mobile screens -->
+<div class="support-slide-container" id="support-chat-flyout-panel" style="display: none !important; position: fixed !important; bottom: 90px !important; right: 24px !important; top: auto !important; width: 380px !important; max-width: calc(100vw - 32px) !important; height: auto !important; max-height: calc(100vh - 120px) !important; background: #ffffff !important; border-radius: 12px !important; box-shadow: 0 12px 40px rgba(10,31,68,0.15) !important; z-index: 99999 !important; border: 1px solid #e2e8f0 !important; overflow: hidden; opacity: 0; transform: translateY(20px); transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, height 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;">
+<header id="support-chat-drag-handle" style="background: #0a1f44; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; color: #ffffff; user-select: none;">
+<h3 style="margin: 0; font-size: 0.95rem; font-weight: 800;">filings4u Support</h3>
+<div style="display: flex; align-items: center; gap: 12px;">
+<button data-chat-action="end" id="wizardHeaderEndChatBtn" style="display: none; background: #ef4444; border: none; color: #ffffff; font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; cursor: pointer;" type="button">End Chat</button>
+<button data-chat-action="close" style="background: transparent; border: none; color: #ffffff; font-size: 1.4rem; cursor: pointer; line-height: 1;" type="button">×</button>
+</div>
+</header>
+<!-- FIXED HOOK: This parent container box keeps your 520px height rules fully locked! -->
+<div id="wizardChatDynamicInterfaceBox" style="height: calc(100% - 49px) !important; width: 100% !important; display: flex !important; flex-direction: column !important; box-sizing: border-box !important; position: relative !important;">
+<!-- NEW: AUTO-TRIGGERED OUT OF OFFICE COVER MESSAGE LAYER (HIDDEN BY DEFAULT) -->
+<!-- FIXED VISUAL SPACE: Added explicit 24px inner padding to keep elements well away from the layout boundaries edges -->
+<div id="f4uChatClosedOfflineStateContainer" style="display: none; flex-direction: column; padding: 24px 24px 16px 24px !important; box-sizing: border-box !important; width: 100% !important; text-align: left !important;">
+<div style="width: 44px; height: 44px; background: rgba(10,31,68,0.06); color: #0a1f44; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-bottom: 16px;">⏱️</div>
+<h3 style="margin: 0 0 8px 0; color: #0a1f44; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.3px;">Live Chat is Currently Offline</h3>
+<p style="margin: 0 0 20px 0; font-size: 0.875rem; color: #475569; line-height: 1.5; font-weight: 500;">
+    Our expert fulfillment brokers are available live from <strong style="color:#0a1f44;">9:00 AM to 5:00 PM CST</strong>, Monday through Friday. 
+  </p>
+<div style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; box-sizing: border-box; margin-bottom: 24px;">
+<p style="margin: 0 0 6px 0; font-size: 0.825rem; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Next Immediate Step:</p>
+<p style="margin: 0; font-size: 0.875rem; color: #0f172a; line-height: 1.45; font-weight: 600;">
+      Please send an email directly to our support desk at 
+      <a href="mailto:support@filings4u.com" style="color: #10b981; text-decoration: underline; font-weight: 700;">support@filings4u.com</a>. 
+      A compliance broker will personally contact you on the very next business day!
+    </p>
+</div>
+<button data-chat-action="close" style="width: 100%; padding: 12px 0; background: #0a1f44; color: #ffffff; border: none; font-weight: 700; border-radius: 6px; cursor: pointer; font-size: 0.875rem;" type="button">Close Window</button>
+</div>
+<!-- THE INTAKE FORM WELL (Swapped away dynamically on user login) -->
+<div id="chat-preflight-input-form" style="padding: 26px 24px 12px 24px; display: flex; flex-direction: column; gap: 16px; box-sizing: border-box; background: #ffffff; flex: 1 !important; justify-content: center !important;">
+<p style="margin: 0; font-size: 0.875rem; color: #475569; line-height: 1.5; text-align: left; font-weight: 500;">Please provide your corporate contact credentials below to connect to a live compliance fulfillment agent.</p>
+<form id="f4uActiveIntakeForm" novalidate="" style="margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; width: 100%;">
+<div class="f4u-form-row" style="display: flex; gap: 12px; width: 100%;">
+<div class="f4u-input-group" style="flex: 1;">
+<input id="chat_first_name" placeholder="First Name" required="" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.875rem; box-sizing: border-box;" type="text"/>
+</div>
+<div class="f4u-input-group" style="flex: 1;">
+<input id="chat_last_name" placeholder="Last Name" required="" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.875rem; box-sizing: border-box;" type="text"/>
+</div>
+</div>
+<div class="f4u-input-group" style="width: 100%;">
+<input id="chat_phone" placeholder="Phone Number" required="" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.875rem; box-sizing: border-box;" type="tel"/>
+</div>
+<div class="f4u-input-group" style="width: 100%;">
+<input id="chat_email" placeholder="Email Address" required="" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.875rem; box-sizing: border-box;" type="email"/>
+</div>
+<button class="btn-wizard-main" id="f4uSubmitBtn" style="width:100%; padding:12px 0; background:#0a1f44; color:#ffffff; border:none; font-weight:700; border-radius:6px; cursor:pointer; font-size:0.875rem; margin-top: 4px; transition: background 0.15s ease;" type="submit">Connect to Live Agent</button>
+</form>
+</div>
+<!-- MONITORING PILL BAR -->
+<div id="f4uChatComplianceNoticeBar" style="background: #fff2e8 !important; border-top: 1px solid #ffd591 !important; padding: 10px 18px !important; font-size: 0.725rem !important; color: #d46b08 !important; font-weight: 600 !important; display: flex !important; align-items: center !important; gap: 8px !important; box-sizing: border-box !important; width: 100% !important; margin: 0 !important; flex-shrink: 0 !important;">
+<span>🔒</span>
+<span style="line-height: 1.4 !important; text-align: left !important;">Notice: For security and identity compliance tracking guidelines, this chat session is actively monitored and recorded.</span>
+</div>
+</div>
+</div>
+<!-- 🪟 BLURRED BACKDROP TERMINATION CONFIRMATION MODAL OVERLAY -->
+<div id="f4uChatTerminationModalOverlay" style="display: none !important; position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(15, 23, 42, 0.4) !important; backdrop-filter: blur(5px) !important; -webkit-backdrop-filter: blur(5px) !important; z-index: 999999 !important; align-items: center !important; justify-content: center !important; padding: 20px !important; box-sizing: border-box !important; opacity: 0; transition: opacity 0.2s ease;">
+<div style="background: #ffffff !important; width: 100% !important; max-width: 340px !important; border-radius: 12px !important; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important; border: 1px solid #e2e8f0 !important; overflow: hidden !important; transform: scale(0.95); transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important; box-sizing: border-box !important;">
+<div style="background: #0a1f44 !important; padding: 14px 18px !important; display: flex !important; align-items: center; gap: 8px !important;">
+<span style="font-size: 1.15rem !important;">⚠️</span>
+<h4 style="margin: 0 !important; font-size: 0.9rem !important; font-weight: 800 !important; color: #ffffff !important;">Terminate Conversation?</h4>
+</div>
+<!-- MAIN VIEW WELL -->
+<div id="f4uModalMainInteractiveContentWell" style="padding: 20px 18px !important; text-align: left !important; box-sizing: border-box !important;">
+<!-- ACTIVE CONFIRM DIALOG STATE SECTION -->
+<div id="f4uModalTerminationActivePromptState">
+<p style="margin: 0 0 16px 0 !important; font-size: 0.85rem !important; color: #475569 !important; line-height: 1.5 !important; font-weight: 500 !important;">
+          Are you sure you want to end this chat conversation? A copy of the full text discussion logs transcript will be immediately delivered to your business email address.
+        </p>
+<div style="display: flex !important; gap: 10px !important; justify-content: flex-end !important; width: 100% !important; box-sizing: border-box !important;">
+<button style="padding: 8px 14px !important; background: #f1f5f9 !important; color: #475569 !important; border: 1px solid #cbd5e1 !important; border-radius: 6px !important; font-size: 0.8rem !important; font-weight: 700 !important; cursor: pointer !important; transition: background 0.15s ease !important;" type="button">Cancel</button>
+<button id="f4uConfirmCloseActionBtn" style="padding: 8px 16px !important; background: #ef4444 !important; color: #ffffff !important; border: none !important; border-radius: 6px !important; font-size: 0.8rem !important; font-weight: 700 !important; cursor: pointer !important; transition: background 0.15s ease !important;" type="button">Yes, End Chat</button>
+</div>
+</div>
+<!-- NEW: SUCCESS STATE TRANSCRIPT TRANSFERS NOTIFICATION (HIDDEN ON START) -->
+<div id="f4uModalTerminationSuccessState" style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 10px 0; box-sizing: border-box; width: 100%;">
+<div style="width: 46px; height: 44px; background: rgba(16,185,129,0.1); color: #10b981; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-bottom: 12px;">✓</div>
+<h4 style="margin: 0 0 6px 0; color: #0a1f44; font-size: 0.95rem; font-weight: 800;">Transcript Sent Successfully!</h4>
+<p style="margin: 0; font-size: 0.825rem; color: #64748b; line-height: 1.4; font-weight: 500;">
+          Your logs summary has been dispatched. Closing secure chat workspace panel links now...
+        </p>
+</div>
+</div>
+</div>
+</div>
+<!-- ========================================================================== 
+     🚀 THE PLATFORM ENGINE PROGRAM CODE HOOK IS CURRENTLY OPEN
+     ========================================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://js.stripe.com/v3/"></script><script defer="" src="assets/js/supabase-client.js"></script><script defer="" src="assets/js/wizard.js"></script><script defer="" src="assets/js/step-1.js"></script><script defer="" src="assets/js/step-2.js"></script><script defer="" src="assets/js/step-3.js"></script><script defer="" src="assets/js/step-4.js"></script><script defer="" src="assets/js/step-5.js"></script><script defer="" src="assets/js/step-6.js"></script><script defer="" src="assets/js/step-7.js"></script><script defer="" src="assets/js/step-8.js"></script></body>
+</html>
