@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>filings4u Secure Filing Wizard</title>
+
+  <!-- The wizard subdomain should not be indexed by search engines. -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <style>
+    :root {
+      --navy: #0a1f44;
+      --emerald: #10b981;
+      --soft: #f8fafc;
+      --muted: #64748b;
+      --border: #dbe3ee;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(16, 185, 129, 0.09), transparent 34%),
+        var(--soft);
+      color: var(--navy);
+      font-family: Inter, Manrope, "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .handoff-card {
+      width: min(92vw, 430px);
+      padding: 36px 32px 32px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #ffffff;
+      box-shadow: 0 24px 70px rgba(10, 31, 68, 0.13);
+      text-align: center;
+    }
+
+    .brand {
+      margin-bottom: 24px;
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -1.2px;
+      color: var(--navy);
+    }
+
+    .brand span {
+      color: var(--emerald);
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 20px;
+      border: 4px solid #dfe7ef;
+      border-top-color: var(--emerald);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .fallback {
+      margin-top: 22px;
+    }
+
+    .fallback a {
+      color: var(--emerald);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .fallback a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .spinner {
+        animation-duration: 1.6s;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="handoff-card" aria-labelledby="page-title">
+    <div class="brand">filings4<span>u</span></div>
+    <div class="spinner" aria-hidden="true"></div>
+
+    <h1 id="page-title">Secure Filing Wizard</h1>
+    <p>
+      This secure workspace is opened from a filings4u service page after a filing
+      service and package have been selected.
+    </p>
+
+    <p class="fallback">
+      Redirecting to
+      <a href="https://filings4u.com/get-started.html">Get Started</a>…
+    </p>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const destination = "https://filings4u.com/get-started.html";
+
+      // Direct visits to the wizard root are intentionally sent back to the
+      // marketing site's Get Started page. Valid handoffs will enter through
+      // wizard.html once the secure handoff system is enabled.
+      window.setTimeout(function () {
+        window.location.replace(destination);
+      }, 1400);
+    })();
+  </script>
+</body>
+</html>
