@@ -1,0 +1,663 @@
+/* ==========================================================================
+   filings4u SERVICE APPLICATION FORMS
+   Shared brand layer for detailed wizard service forms.
+   ========================================================================== */
+
+.f4u-service-application{
+  --f4u-navy:#0a1f44;
+  --f4u-green:#10b981;
+  --f4u-green-dark:#0e9f6e;
+  --f4u-text:#334155;
+  --f4u-muted:#64748b;
+  --f4u-line:#e2e8f0;
+  --f4u-soft:#f8fafc;
+  --f4u-green-soft:#ecfdf5;
+}
+
+.f4u-service-application .f4u-entry-copy{
+  margin-bottom:18px !important;
+  padding-bottom:18px !important;
+  border-bottom:1px solid var(--f4u-line) !important;
+}
+
+.f4u-service-application .f4u-entry-kicker{
+  display:inline-flex;
+  align-items:center;
+  min-height:26px;
+  margin:0 0 9px;
+  padding:0 10px;
+  border-radius:999px;
+  background:var(--f4u-green-soft);
+  color:var(--f4u-green-dark);
+  font:800 .68rem/1 Manrope,sans-serif;
+  letter-spacing:.075em;
+  text-transform:uppercase;
+}
+
+.f4u-service-application .f4u-entry-copy h2{
+  margin:0 0 7px !important;
+  color:var(--f4u-navy) !important;
+  font:800 clamp(1.65rem,3vw,2.25rem)/1.08 Manrope,sans-serif !important;
+  letter-spacing:-.04em !important;
+}
+
+.f4u-service-application .f4u-entry-copy p{
+  max-width:720px;
+  margin:0 !important;
+  color:var(--f4u-muted) !important;
+  font-size:.96rem !important;
+  line-height:1.65 !important;
+}
+
+.f4u-service-application .context-jurisdiction-tooltip-banner{
+  margin:0 0 22px !important;
+  padding:13px 15px !important;
+  border:1px solid #ccefe2 !important;
+  border-left:4px solid var(--f4u-green) !important;
+  border-radius:12px !important;
+  background:#f3fdf9 !important;
+  color:var(--f4u-text) !important;
+  font-size:.82rem !important;
+}
+
+.f4u-service-form{
+  display:grid;
+  gap:18px;
+}
+
+.f4u-service-form__notice{
+  display:grid;
+  grid-template-columns:40px minmax(0,1fr);
+  gap:12px;
+  align-items:start;
+  padding:16px;
+  border:1px solid #ccefe2;
+  border-radius:14px;
+  background:linear-gradient(135deg,#f0fdf9 0%,#f8fffc 100%);
+}
+
+.f4u-service-form__notice-icon{
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:var(--f4u-green);
+  color:#fff;
+  font:900 1rem Manrope,sans-serif;
+  box-shadow:0 8px 18px rgba(16,185,129,.18);
+}
+
+.f4u-service-form__notice strong{
+  display:block;
+  margin:1px 0 4px;
+  color:var(--f4u-navy);
+  font:800 .92rem Manrope,sans-serif;
+}
+
+.f4u-service-form__notice p{
+  margin:0 !important;
+  color:var(--f4u-muted) !important;
+  font-size:.82rem !important;
+  line-height:1.5 !important;
+}
+
+.f4u-form-section{
+  overflow:hidden;
+  border:1px solid var(--f4u-line);
+  border-radius:16px;
+  background:#fff;
+}
+
+.f4u-form-section__head{
+  display:grid;
+  grid-template-columns:36px minmax(0,1fr);
+  gap:11px;
+  align-items:start;
+  padding:15px 16px;
+  border-bottom:1px solid #edf1f5;
+  background:#fbfcfe;
+}
+
+.f4u-form-section__number{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:var(--f4u-navy);
+  color:#fff;
+  font:800 .78rem Manrope,sans-serif;
+}
+
+.f4u-form-section__head h3{
+  margin:0 0 3px !important;
+  color:var(--f4u-navy) !important;
+  font:800 1rem/1.25 Manrope,sans-serif !important;
+  letter-spacing:-.015em !important;
+}
+
+.f4u-form-section__head p{
+  margin:0 !important;
+  color:var(--f4u-muted) !important;
+  font-size:.77rem !important;
+  line-height:1.45 !important;
+}
+
+.f4u-form-section__body{
+  display:grid;
+  gap:14px;
+  padding:16px;
+}
+
+.f4u-field-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:14px;
+}
+
+.f4u-field-grid--2{grid-template-columns:repeat(2,minmax(0,1fr));}
+.f4u-field-grid--3{grid-template-columns:2fr 1fr 1fr;}
+
+.f4u-form-field{
+  min-width:0;
+}
+
+.f4u-form-field label,
+.f4u-service-form label:not(.f4u-choice-row):not(.f4u-option-card){
+  display:block;
+  margin:0 0 6px !important;
+  color:var(--f4u-navy) !important;
+  font:800 .76rem/1.35 Manrope,sans-serif !important;
+}
+
+.f4u-service-form input:not([type="checkbox"]):not([type="radio"]),
+.f4u-service-form select,
+.f4u-service-form textarea{
+  width:100% !important;
+  min-height:50px !important;
+  padding:12px 13px !important;
+  border:1px solid #cbd5e1 !important;
+  border-radius:10px !important;
+  background:#fff !important;
+  color:#0f172a !important;
+  box-shadow:none !important;
+  font:500 .9rem/1.4 "DM Sans",sans-serif !important;
+}
+
+.f4u-service-form textarea{
+  min-height:112px !important;
+  resize:vertical;
+}
+
+.f4u-service-form input:focus,
+.f4u-service-form select:focus,
+.f4u-service-form textarea:focus{
+  outline:none !important;
+  border-color:var(--f4u-green) !important;
+  box-shadow:0 0 0 3px rgba(16,185,129,.12) !important;
+}
+
+.f4u-service-form [aria-invalid="true"]{
+  border-color:#dc2626 !important;
+  box-shadow:0 0 0 3px rgba(220,38,38,.08) !important;
+}
+
+.wizard-error-message{
+  display:none;
+  margin-top:6px;
+  color:#b91c1c !important;
+  font-size:.72rem;
+  font-weight:700;
+}
+
+.f4u-choice-row{
+  display:flex !important;
+  align-items:flex-start;
+  gap:10px;
+  margin:0 !important;
+  padding:12px 13px;
+  border:1px solid var(--f4u-line);
+  border-radius:12px;
+  background:var(--f4u-soft);
+  cursor:pointer;
+}
+
+.f4u-choice-row input{
+  flex:0 0 auto;
+  margin:2px 0 0;
+}
+
+.f4u-choice-row span{
+  min-width:0;
+}
+
+.f4u-choice-row strong{
+  display:block;
+  margin-bottom:2px;
+  color:var(--f4u-navy);
+  font:800 .79rem Manrope,sans-serif;
+}
+
+.f4u-choice-row small{
+  display:block;
+  color:var(--f4u-muted);
+  font-size:.72rem;
+  line-height:1.4;
+}
+
+.f4u-option-cards{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+.f4u-option-card{
+  position:relative;
+  display:grid !important;
+  grid-template-columns:20px minmax(0,1fr);
+  gap:10px;
+  align-items:start;
+  margin:0 !important;
+  padding:14px;
+  border:1px solid var(--f4u-line);
+  border-radius:13px;
+  background:#fff;
+  cursor:pointer;
+  transition:border-color .16s ease,background .16s ease,box-shadow .16s ease;
+}
+
+.f4u-option-card:has(input:checked){
+  border-color:var(--f4u-green);
+  background:#f2fdf9;
+  box-shadow:0 0 0 2px rgba(16,185,129,.08);
+}
+
+.f4u-option-card input{
+  margin:2px 0 0;
+  accent-color:var(--f4u-green);
+}
+
+.f4u-option-card strong{
+  display:block;
+  margin-bottom:4px;
+  color:var(--f4u-navy);
+  font:800 .8rem/1.35 Manrope,sans-serif;
+}
+
+.f4u-option-card small{
+  display:block;
+  color:var(--f4u-muted);
+  font-size:.71rem;
+  line-height:1.45;
+}
+
+.f4u-conditional-card{
+  display:grid;
+  gap:14px;
+  padding:14px;
+  border:1px solid #dbe5ec;
+  border-radius:13px;
+  background:#f8fafc;
+}
+
+.f4u-conditional-card[hidden]{
+  display:none !important;
+}
+
+/* Step navigation: clear visual hierarchy and deliberate spacing. */
+.f4u-service-application .wizard-footer-action-row{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:18px !important;
+  margin-top:28px !important;
+  padding-top:22px !important;
+  border-top:1px solid var(--f4u-line) !important;
+}
+
+.f4u-service-application .wizard-footer-action-row > button{
+  min-height:50px !important;
+  margin:0 !important;
+  padding:0 20px !important;
+  border-radius:11px !important;
+}
+
+.f4u-service-application .btn-wizard-nav-back{
+  min-width:190px !important;
+  border:1px solid #cbd5e1 !important;
+  background:#fff !important;
+  color:var(--f4u-navy) !important;
+}
+
+.f4u-service-application .btn-wizard-main{
+  min-width:190px !important;
+  margin-left:auto !important;
+  border:1px solid var(--f4u-green) !important;
+  background:var(--f4u-green) !important;
+  color:#052e25 !important;
+  box-shadow:0 10px 22px rgba(16,185,129,.18) !important;
+}
+
+@media (max-width:900px){
+  .f4u-service-application .f4u-entry-copy{
+    margin-bottom:14px !important;
+    padding-bottom:14px !important;
+  }
+
+  .f4u-service-application .f4u-entry-copy h2{
+    font-size:1.55rem !important;
+  }
+
+  .f4u-service-form{
+    gap:14px;
+  }
+
+  .f4u-service-form__notice{
+    grid-template-columns:34px minmax(0,1fr);
+    gap:10px;
+    padding:13px;
+    border-radius:12px;
+  }
+
+  .f4u-service-form__notice-icon{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+  }
+
+  .f4u-form-section{
+    border-radius:14px;
+  }
+
+  .f4u-form-section__head{
+    grid-template-columns:32px minmax(0,1fr);
+    gap:9px;
+    padding:13px 12px;
+  }
+
+  .f4u-form-section__number{
+    width:30px;
+    height:30px;
+    border-radius:9px;
+  }
+
+  .f4u-form-section__head h3{
+    font-size:.91rem !important;
+  }
+
+  .f4u-form-section__body{
+    gap:13px;
+    padding:13px 12px;
+  }
+
+  .f4u-field-grid,
+  .f4u-field-grid--2,
+  .f4u-field-grid--3,
+  .f4u-option-cards{
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:12px !important;
+  }
+
+  .f4u-service-form input:not([type="checkbox"]):not([type="radio"]),
+  .f4u-service-form select,
+  .f4u-service-form textarea{
+    min-height:52px !important;
+    border-radius:10px !important;
+    font-size:16px !important;
+  }
+
+  .f4u-choice-row,
+  .f4u-option-card{
+    padding:13px;
+  }
+
+  .f4u-service-application .wizard-footer-action-row{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:14px !important;
+    margin-top:28px !important;
+    padding-top:24px !important;
+  }
+
+  .f4u-service-application .wizard-footer-action-row > button,
+  .f4u-service-application .btn-wizard-nav-back,
+  .f4u-service-application .btn-wizard-main{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    min-height:52px !important;
+    margin:0 !important;
+  }
+
+  .f4u-service-application .btn-wizard-main{
+    order:1 !important;
+  }
+
+  .f4u-service-application .btn-wizard-nav-back{
+    order:2 !important;
+  }
+}
+
+@media (max-width:520px){
+  .f4u-service-application .context-jurisdiction-tooltip-banner{
+    padding:11px 12px !important;
+    margin-bottom:16px !important;
+  }
+
+  .f4u-service-form__notice p{
+    font-size:.76rem !important;
+  }
+
+  .f4u-form-section__head p{
+    font-size:.71rem !important;
+  }
+}
+
+
+/* ==========================================================================
+   STEP 2 — PACKAGE REVIEW DETAILS
+   ========================================================================== */
+
+.f4u-package-review .f4u-package-price{
+  color:#0e9f6e !important;
+}
+
+.f4u-package-review .f4u-review-meta{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+.f4u-package-review .f4u-review-meta > span{
+  display:block;
+  padding:13px 14px;
+  border:1px solid #e2e8f0;
+  border-radius:12px;
+  background:#f8fafc;
+}
+
+.f4u-package-review .f4u-review-meta small{
+  display:block;
+  margin-bottom:4px;
+  color:#64748b;
+  font-size:.67rem;
+  font-weight:800;
+  letter-spacing:.055em;
+  text-transform:uppercase;
+}
+
+.f4u-package-review .f4u-review-meta strong{
+  display:block;
+  color:#0a1f44;
+  font:800 .83rem/1.4 Manrope,sans-serif;
+}
+
+.f4u-review-features{
+  margin-top:4px;
+  padding:18px !important;
+  border:1px solid #dce5ec !important;
+  border-radius:16px !important;
+  background:#fff !important;
+}
+
+.f4u-review-features__head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:15px;
+  padding-bottom:14px;
+  border-bottom:1px solid #edf1f5;
+}
+
+.f4u-review-features__head .f4u-review-label{
+  display:block;
+  margin-bottom:4px;
+  color:#0a1f44;
+  font:800 1rem/1.3 Manrope,sans-serif;
+}
+
+.f4u-review-features__head p{
+  margin:0 !important;
+  max-width:620px;
+  color:#64748b !important;
+  font-size:.78rem !important;
+  line-height:1.5 !important;
+}
+
+.f4u-feature-count{
+  flex:0 0 auto;
+  padding:7px 10px;
+  border-radius:999px;
+  background:#ecfdf5;
+  color:#0e9f6e;
+  font:800 .68rem/1 Manrope,sans-serif;
+  white-space:nowrap;
+}
+
+.f4u-package-feature-list{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px !important;
+  margin:0 !important;
+  padding:0 !important;
+  list-style:none !important;
+}
+
+.f4u-package-feature-list li{
+  display:grid !important;
+  grid-template-columns:34px minmax(0,1fr);
+  gap:10px;
+  align-items:start;
+  min-width:0;
+  margin:0 !important;
+  padding:12px !important;
+  border:1px solid #e2e8f0;
+  border-radius:12px;
+  background:#fbfcfe;
+}
+
+.f4u-package-feature-list li i{
+  width:32px;
+  height:32px;
+  display:grid;
+  place-items:center;
+  margin:0 !important;
+  border-radius:9px;
+  background:#ecfdf5;
+  color:#0e9f6e;
+  font-style:normal;
+  font-size:.82rem;
+  font-weight:900;
+}
+
+.f4u-package-feature-list li span{
+  min-width:0;
+}
+
+.f4u-package-feature-list li small{
+  display:block;
+  margin:0 0 2px;
+  color:#94a3b8;
+  font-size:.62rem;
+  font-weight:800;
+  letter-spacing:.045em;
+  text-transform:uppercase;
+}
+
+.f4u-package-feature-list li strong{
+  display:block;
+  color:#334155;
+  font:700 .79rem/1.45 "DM Sans",sans-serif;
+  overflow-wrap:anywhere;
+}
+
+.f4u-package-feature-empty{
+  padding:16px;
+  border:1px dashed #cbd5e1;
+  border-radius:12px;
+  background:#f8fafc;
+}
+
+.f4u-package-feature-empty strong{
+  color:#0a1f44;
+}
+
+.f4u-package-feature-empty p{
+  margin:4px 0 0 !important;
+  color:#64748b !important;
+  font-size:.78rem !important;
+}
+
+.f4u-review-fee-note{
+  margin-top:9px;
+  padding-top:10px;
+  border-top:1px solid #edf1f5;
+  color:#64748b;
+  font-size:.72rem;
+  line-height:1.45;
+}
+
+@media(max-width:900px){
+  .f4u-package-review .f4u-review-meta,
+  .f4u-package-feature-list{
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+
+  .f4u-review-features{
+    padding:14px !important;
+  }
+
+  .f4u-review-features__head{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:10px;
+    margin-bottom:12px;
+    padding-bottom:12px;
+  }
+
+  .f4u-review-features__head .f4u-review-label{
+    font-size:.91rem;
+  }
+
+  .f4u-review-features__head p{
+    font-size:.72rem !important;
+  }
+
+  .f4u-package-feature-list{
+    gap:8px !important;
+  }
+
+  .f4u-package-feature-list li{
+    grid-template-columns:30px minmax(0,1fr);
+    gap:9px;
+    padding:11px !important;
+  }
+
+  .f4u-package-feature-list li i{
+    width:28px;
+    height:28px;
+    border-radius:8px;
+  }
+}

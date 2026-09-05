@@ -1,437 +1,420 @@
-﻿/**
- * Full LLC form script mapped to your Orders and client_profiles tables.
- * - Preserves original design and copy.
- * - Input element IDs match the visible fields.
- * - Navigation buttons (Back / Continue) are included.
- * - Validation error checks reference plain variables (no orders.<prop>).
- * - buildPayloadsForSupabase(...) returns { orders, client_profiles, errors }.
+/**
+ * filings4u — LLC Formation Application
+ * Clean customer-facing intake for Articles of Organization.
+ * Route owns the service/package/jurisdiction; this form only asks filing data.
  */
-
 (function () {
-  // Utilities
-  const MAX = {
-    COMPANY_NAME: 255, NAME: 255, EMAIL: 255, PHONE_ORDERS: 100, PHONE_PROFILES: 50,
-    TRACKING: 100, CITY: 100, STATE: 50, ZIP: 20, STRIPE_ID: 255, POA_SIG: 255, UPS: 2000
-  };
-
-  const truncate = (v, n) => (v == null ? null : String(v).slice(0, n || v.length));
-  const lower = (v) => (v == null ? null : String(v).toLowerCase());
-  const parseAmount = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.round(n*100)/100 : 0.00; };
-  const genUUID = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c=>{const r=(Math.random()*16)|0; return (c==='x'?r:(r&0x3)|0x8).toString(16);});
+  "use strict";
 
   window.formRegistry = window.formRegistry || {};
 
-  // Validation engine (IDs correspond to visible inputs)
-  window.formRegistry['llc-formation-validation-engine'] = {
-    requiredFields: [
-      { id: 'tracking_number', errId: 'err_tracking_number', msg: 'Please provide a tracking number.' },
-      { id: 'first_name', errId: 'err_first_name', msg: 'First name required.' },
-      { id: 'last_name', errId: 'err_last_name', msg: 'Last name required.' },
-      { id: 'email_address', errId: 'err_email_address', msg: 'Email address required.' },
-      { id: 'phone_number', errId: 'err_phone_number', msg: 'Phone number required.' },
-      { id: 'selected_plan', errId: 'err_selected_plan', msg: 'Please select a plan.' },
-      { id: 'selected_service', errId: 'err_selected_service', msg: 'Please select a service.' }
-    ],
+  const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[ch]));
 
-    setupLiveInputFilters: function () {
-      ['zip_code', 'agent_zip_code'].forEach(id => {
-        const node = document.getElementById(id);
-        if (node) node.addEventListener('input', function(){ this.value = this.value.replace(/\D/g, ''); });
-      });
-    },
+  const q = (id) => document.getElementById(id);
+  const val = (id) => String(q(id)?.value || "").trim();
 
-    validate: function () {
-      let isValid = true;
+  const FIELD = (id, label, type = "text", attrs = "") => `
+    <div class="f4u-form-field">
+      <label for="${id}">${label}</label>
+      <input id="${id}" name="${id}" type="${type}" class="wizard-input-field" ${attrs}>
+      <div id="err_${id}" class="wizard-error-message" aria-live="polite"></div>
+    </div>`;
+
+  const SELECT = (id, label, options, attrs = "") => `
+    <div class="f4u-form-field">
+      <label for="${id}">${label}</label>
+      <select id="${id}" name="${id}" class="wizard-input-field" ${attrs}>${options}</select>
+      <div id="err_${id}" class="wizard-error-message" aria-live="polite"></div>
+    </div>`;
+
+  const stateOptions = (optionsHtml, includeBlank = true) => {
+    if (!optionsHtml) return includeBlank ? '<option value="">Select state</option>' : "";
+    const hasBlank = /value=["']["']/.test(optionsHtml);
+    return includeBlank && !hasBlank ? '<option value="">Select state</option>' + optionsHtml : optionsHtml;
+  };
+
+  function section(number, title, description, body) {
+    return `
+      <section class="f4u-form-section">
+        <div class="f4u-form-section__head">
+          <span class="f4u-form-section__number">${number}</span>
+          <div>
+            <h3>${title}</h3>
+            ${description ? `<p>${description}</p>` : ""}
+          </div>
+        </div>
+        <div class="f4u-form-section__body">${body}</div>
+      </section>`;
+  }
+
+  window.formRegistry["llc-formation-form-master"] = function (stateDropdownOptionsHtml = "", context = {}) {
+    const filingState = context.state || window.F4UWizard?.state?.route?.jurisdiction || "";
+    const states = stateOptions(stateDropdownOptionsHtml);
+
+    return `
+      <div class="f4u-service-form" data-service-form="llc-formation">
+        <div class="f4u-service-form__notice">
+          <div class="f4u-service-form__notice-icon" aria-hidden="true">✓</div>
+          <div>
+            <strong>LLC Articles of Organization</strong>
+            <p>Provide the information that will be used to prepare your ${filingState ? `${esc(filingState)} ` : ""}LLC filing. Your package selection is already saved, so you will not be asked to select it again.</p>
+          </div>
+        </div>
+
+        ${section("1", "LLC name", "Tell us the legal name you want to register.", `
+          <div class="f4u-field-grid f4u-field-grid--2">
+            ${FIELD("company_name", "Proposed LLC name *", "text", 'required autocomplete="organization" placeholder="Example: Northstar Logistics"')}
+            ${SELECT("llc_designator", "Legal designator *", `
+              <option value="LLC">LLC</option>
+              <option value="L.L.C.">L.L.C.</option>
+              <option value="Limited Liability Company">Limited Liability Company</option>
+            `, "required")}
+          </div>
+          <div class="f4u-field-grid">
+            ${FIELD("alternate_company_name", "Alternate name (optional)", "text", 'placeholder="Second choice if the first name is unavailable"')}
+          </div>
+          <label class="f4u-choice-row">
+            <input type="checkbox" id="name_search_acknowledged">
+            <span><strong>Name availability</strong><small>I understand final name availability is determined by the filing office.</small></span>
+          </label>
+        `)}
+
+        ${section("2", "Principal business address", "Enter the primary physical address for the LLC.", `
+          <div class="f4u-field-grid">
+            ${FIELD("street_address", "Street address *", "text", 'required autocomplete="address-line1" placeholder="Street address — no P.O. box if prohibited by your state"')}
+            ${FIELD("address_line_2", "Suite / unit (optional)", "text", 'autocomplete="address-line2" placeholder="Suite, unit, floor, etc."')}
+          </div>
+          <div class="f4u-field-grid f4u-field-grid--3">
+            ${FIELD("city", "City *", "text", 'required autocomplete="address-level2"')}
+            ${SELECT("state", "State *", states, 'required autocomplete="address-level1"')}
+            ${FIELD("zip_code", "ZIP code *", "text", 'required inputmode="numeric" autocomplete="postal-code" maxlength="10"')}
+          </div>
+          <label class="f4u-choice-row">
+            <input type="checkbox" id="mailing_same_as_principal" checked>
+            <span><strong>Mailing address is the same</strong><small>Uncheck this if your mailing address is different.</small></span>
+          </label>
+          <div id="llc-mailing-fields" class="f4u-conditional-card" hidden>
+            <div class="f4u-field-grid">
+              ${FIELD("mailing_street_address", "Mailing street address *", "text", 'autocomplete="address-line1"')}
+              ${FIELD("mailing_address_line_2", "Mailing suite / unit (optional)", "text", 'autocomplete="address-line2"')}
+            </div>
+            <div class="f4u-field-grid f4u-field-grid--3">
+              ${FIELD("mailing_city", "Mailing city *")}
+              ${SELECT("mailing_state", "Mailing state *", states)}
+              ${FIELD("mailing_zip_code", "Mailing ZIP code *", "text", 'inputmode="numeric" maxlength="10"')}
+            </div>
+          </div>
+        `)}
+
+        ${section("3", "Registered agent", "Every LLC must maintain a registered agent in its filing state.", `
+          <div class="f4u-option-cards" role="radiogroup" aria-label="Registered agent selection">
+            <label class="f4u-option-card">
+              <input type="radio" name="registered_agent_option" value="filings4u" checked>
+              <span>
+                <strong>Use filings4u Registered Agent service</strong>
+                <small>Choose this if you want registered agent service added to your order when available.</small>
+              </span>
+            </label>
+            <label class="f4u-option-card">
+              <input type="radio" name="registered_agent_option" value="custom">
+              <span>
+                <strong>I already have a registered agent</strong>
+                <small>Provide the individual or company that will accept service of process.</small>
+              </span>
+            </label>
+          </div>
+
+          <div id="agent_details_wrapper" class="f4u-conditional-card" hidden>
+            <div class="f4u-field-grid f4u-field-grid--2">
+              ${SELECT("agent_type", "Agent type *", `
+                <option value="">Select type</option>
+                <option value="individual">Individual</option>
+                <option value="entity">Company / registered agent provider</option>
+              `)}
+              ${FIELD("agent_name", "Registered agent name *", "text", 'placeholder="Full legal name or company name"')}
+            </div>
+            <div class="f4u-field-grid">
+              ${FIELD("agent_street", "Registered office street address *", "text", 'placeholder="Physical address in the filing state"')}
+              ${FIELD("agent_address_line_2", "Suite / unit (optional)")}
+            </div>
+            <div class="f4u-field-grid f4u-field-grid--3">
+              ${FIELD("agent_city", "City *")}
+              ${SELECT("agent_state", "State *", states)}
+              ${FIELD("agent_zip_code", "ZIP code *", "text", 'inputmode="numeric" maxlength="10"')}
+            </div>
+            <label class="f4u-choice-row">
+              <input type="checkbox" id="agent_consent_confirmed">
+              <span><strong>Agent consent confirmed *</strong><small>I confirm this registered agent has agreed to serve in this role.</small></span>
+            </label>
+          </div>
+        `)}
+
+        ${section("4", "Management & ownership", "Tell us how the LLC will be managed and who should appear on the filing when required.", `
+          <div class="f4u-field-grid f4u-field-grid--2">
+            ${SELECT("mgmt_type", "Management structure *", `
+              <option value="">Select management structure</option>
+              <option value="member">Member-managed</option>
+              <option value="manager">Manager-managed</option>
+            `, "required")}
+            ${SELECT("owner_count", "Number of initial owners / members *", `
+              <option value="">Select</option>
+              ${Array.from({length: 10}, (_, i) => `<option value="${i+1}">${i+1}${i === 9 ? "+" : ""}</option>`).join("")}
+            `, "required")}
+          </div>
+          <div class="f4u-field-grid">
+            ${FIELD("authorized_person_name", "Primary member / manager full legal name *", "text", 'required autocomplete="name"')}
+            ${FIELD("authorized_person_title", "Title / capacity *", "text", 'required placeholder="Member, Manager, Managing Member, etc."')}
+          </div>
+          <label class="f4u-choice-row">
+            <input type="checkbox" id="additional_owners_exist">
+            <span><strong>Add additional members or managers</strong><small>Turn this on if there are additional people we should collect for your filing record.</small></span>
+          </label>
+          <div id="additional-owner-fields" class="f4u-conditional-card" hidden>
+            <div class="f4u-field-grid f4u-field-grid--2">
+              ${FIELD("additional_owner_1_name", "Additional member / manager name")}
+              ${FIELD("additional_owner_1_title", "Title / capacity")}
+            </div>
+            <div class="f4u-field-grid f4u-field-grid--2">
+              ${FIELD("additional_owner_2_name", "Additional member / manager name")}
+              ${FIELD("additional_owner_2_title", "Title / capacity")}
+            </div>
+          </div>
+        `)}
+
+        ${section("5", "Business details", "A few details help us prepare the filing correctly.", `
+          <div class="f4u-field-grid f4u-field-grid--2">
+            ${SELECT("business_purpose_type", "Business purpose *", `
+              <option value="general">Any lawful business purpose permitted by law</option>
+              <option value="custom">Use a specific business purpose</option>
+            `, "required")}
+            ${SELECT("duration_type", "Duration *", `
+              <option value="perpetual">Perpetual</option>
+              <option value="fixed">Ends on a specific date</option>
+            `, "required")}
+          </div>
+          <div id="custom-purpose-wrapper" class="f4u-conditional-card" hidden>
+            <div class="f4u-form-field">
+              <label for="business_purpose">Specific business purpose *</label>
+              <textarea id="business_purpose" class="wizard-input-field" placeholder="Describe the primary business activity"></textarea>
+              <div id="err_business_purpose" class="wizard-error-message" aria-live="polite"></div>
+            </div>
+          </div>
+          <div id="duration-date-wrapper" class="f4u-conditional-card" hidden>
+            ${FIELD("duration_end_date", "End date *", "date")}
+          </div>
+          <div class="f4u-field-grid f4u-field-grid--2">
+            ${SELECT("effective_date_type", "When should the LLC become effective? *", `
+              <option value="filing">When accepted by the state</option>
+              <option value="future">On a future date</option>
+            `, "required")}
+            <div id="future-effective-date-wrapper" hidden>
+              ${FIELD("future_effective_date", "Future effective date *", "date")}
+            </div>
+          </div>
+        `)}
+
+        ${section("6", "Primary contact", "We use this information for filing questions and order updates.", `
+          <div class="f4u-field-grid f4u-field-grid--2">
+            ${FIELD("first_name", "First name *", "text", 'required autocomplete="given-name"')}
+            ${FIELD("last_name", "Last name *", "text", 'required autocomplete="family-name"')}
+          </div>
+          <div class="f4u-field-grid f4u-field-grid--2">
+            ${FIELD("email_address", "Email address *", "email", 'required autocomplete="email" inputmode="email"')}
+            ${FIELD("phone_number", "Phone number *", "tel", 'required autocomplete="tel" inputmode="tel"')}
+          </div>
+        `)}
+
+        ${section("7", "Additional filing instructions", "Optional. Add only information you want our filing team to review.", `
+          <div class="f4u-form-field">
+            <label for="special_provisions">Special instructions or provisions (optional)</label>
+            <textarea id="special_provisions" class="wizard-input-field" placeholder="Example: preferred effective date wording, internal reference notes, or other filing instructions"></textarea>
+            <div id="err_special_provisions" class="wizard-error-message" aria-live="polite"></div>
+          </div>
+        `)}
+      </div>`;
+  };
+
+  function setRequired(container, required) {
+    if (!container) return;
+    container.querySelectorAll("input, select, textarea").forEach((el) => {
+      if (required) el.setAttribute("required", "required");
+      else el.removeAttribute("required");
+    });
+  }
+
+  function toggleBlock(id, show, requireFields = false) {
+    const el = q(id);
+    if (!el) return;
+    el.hidden = !show;
+    el.style.display = show ? "" : "none";
+    setRequired(el, show && requireFields);
+  }
+
+  function syncConditionalFields() {
+    const mailingSame = q("mailing_same_as_principal")?.checked !== false;
+    toggleBlock("llc-mailing-fields", !mailingSame, true);
+
+    const agentChoice = document.querySelector('input[name="registered_agent_option"]:checked')?.value || "filings4u";
+    toggleBlock("agent_details_wrapper", agentChoice === "custom", agentChoice === "custom");
+
+    toggleBlock("additional-owner-fields", !!q("additional_owners_exist")?.checked, false);
+    toggleBlock("custom-purpose-wrapper", val("business_purpose_type") === "custom", val("business_purpose_type") === "custom");
+    toggleBlock("duration-date-wrapper", val("duration_type") === "fixed", val("duration_type") === "fixed");
+    toggleBlock("future-effective-date-wrapper", val("effective_date_type") === "future", val("effective_date_type") === "future");
+  }
+
+  document.addEventListener("change", (event) => {
+    if (!event.target.closest?.('[data-service-form="llc-formation"]')) return;
+    syncConditionalFields();
+  });
+
+  document.addEventListener("input", (event) => {
+    if (!event.target.closest?.('[data-service-form="llc-formation"]')) return;
+    if (event.target.id === "zip_code" || event.target.id === "agent_zip_code" || event.target.id === "mailing_zip_code") {
+      event.target.value = event.target.value.replace(/[^\d-]/g, "").slice(0, 10);
+    }
+  });
+
+  window.formRegistry["llc-formation-validation-engine"] = {
+    validate() {
+      syncConditionalFields();
+      const root = document.querySelector('[data-service-form="llc-formation"]');
+      if (!root) return { isValid: false, errors: ["LLC form is not available."] };
+
+      let firstInvalid = null;
       const errors = [];
-      const markInvalid = (el, errEl, msg) => {
-        if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; }
-        if (el) el.style.borderColor = '#ef4444';
-        isValid = false; if (!errors.includes(msg)) errors.push(msg);
-      };
-      const markValid = (el, errEl) => {
-        if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
-        if (el) el.style.borderColor = '#cbd5e1';
-      };
 
-      this.requiredFields.forEach(f => {
-        const inputEl = document.getElementById(f.id);
-        const errorEl = document.getElementById(f.errId);
-        if (!inputEl || inputEl.offsetParent === null) return;
-        if (!String(inputEl.value || '').trim()) markInvalid(inputEl, errorEl, f.msg);
-        else markValid(inputEl, errorEl);
+      root.querySelectorAll("[required]").forEach((field) => {
+        if (field.closest("[hidden]")) return;
+        let valid = true;
+        if (field.type === "checkbox") valid = field.checked;
+        else if (field.type === "radio") {
+          valid = !!root.querySelector(`input[name="${CSS.escape(field.name)}"]:checked`);
+        } else valid = !!String(field.value || "").trim();
+
+        const err = q(`err_${field.id}`);
+        if (!valid) {
+          field.setAttribute("aria-invalid", "true");
+          if (err) {
+            err.textContent = "Please complete this required field.";
+            err.style.display = "block";
+          }
+          firstInvalid ||= field;
+          errors.push(field.id || field.name);
+        } else {
+          field.removeAttribute("aria-invalid");
+          if (err) {
+            err.textContent = "";
+            err.style.display = "none";
+          }
+        }
       });
 
-      // Agent conditional validation
-      const agentChoiceNode = document.getElementById('registered_agent_option');
-      if (agentChoiceNode && agentChoiceNode.value === 'individual') {
-        const agentFields = [
-          { id: 'agent_name', err: 'err_agent_name', m: 'Registered individual agent name is required.' },
-          { id: 'agent_street', err: 'err_agent_street', m: 'Statutory agent street location is required.' },
-          { id: 'agent_city', err: 'err_agent_city', m: 'Statutory agent city location is required.' },
-          { id: 'agent_state', err: 'err_agent_state', m: 'Please select a statutory agent state designation.' },
-          { id: 'agent_zip_code', err: 'err_agent_zip_code', m: 'Statutory agent zip tracking reference is required.' }
-        ];
-        agentFields.forEach(f => {
-          const inputEl = document.getElementById(f.id);
-          const errorEl = document.getElementById(f.err);
-          if (inputEl) {
-            if (!String(inputEl.value || '').trim()) markInvalid(inputEl, errorEl, f.m);
-            else markValid(inputEl, errorEl);
-          }
-        });
-        const azipNode = document.getElementById('agent_zip_code');
-        if (azipNode && azipNode.value.trim() && !/^\d{5}$/.test(azipNode.value.trim())) {
-          markInvalid(azipNode, document.getElementById('err_agent_zip_code'), 'Registered agent zip code must be exactly 5 digits.');
-        }
+      const email = q("email_address");
+      if (email?.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+        q("err_email_address").textContent = "Enter a valid email address.";
+        q("err_email_address").style.display = "block";
+        email.setAttribute("aria-invalid", "true");
+        firstInvalid ||= email;
+        errors.push("email_address");
       }
 
-      // Professional description conditional
-      const serviceNode = document.getElementById('selected_service');
-      const specWrapper = document.getElementById('professional_desc_wrapper');
-      const specField = document.getElementById('professional_desc');
-      if (serviceNode && serviceNode.value === 'professional' && specWrapper && specWrapper.style.display !== 'none') {
-        if (!specField || !specField.value.trim()) markInvalid(specField, document.getElementById('err_professional_desc'), 'Professional practice licensing description required.');
-        else markValid(specField, document.getElementById('err_professional_desc'));
+      const phone = q("phone_number");
+      if (phone?.value && phone.value.replace(/\D/g, "").length < 10) {
+        q("err_phone_number").textContent = "Enter a valid phone number with at least 10 digits.";
+        q("err_phone_number").style.display = "block";
+        phone.setAttribute("aria-invalid", "true");
+        firstInvalid ||= phone;
+        errors.push("phone_number");
       }
 
-      // Zip format
-      const zip = document.getElementById('zip_code');
-      if (zip && zip.offsetParent !== null && zip.value.trim() && !/^\d{5}$/.test(zip.value.trim())) {
-        markInvalid(zip, document.getElementById('err_zip_code'), 'Zip code must be exactly 5 digits.');
+      if (firstInvalid) {
+        firstInvalid.focus({ preventScroll: true });
+        firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
       }
-
-      // Email format + lowercase
-      const email = document.getElementById('email_address');
-      if (email && email.offsetParent !== null && email.value.trim()) {
-        const val = email.value.trim();
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-          markInvalid(email, document.getElementById('err_email_address'), 'Enter a valid email address.');
-        } else {
-          email.value = val.toLowerCase();
-          markValid(email, document.getElementById('err_email_address'));
-        }
-      }
-
-      // Phone length
-      const phone = document.getElementById('phone_number');
-      if (phone && phone.offsetParent !== null && phone.value.trim()) {
-        if (phone.value.replace(/\D/g, '').length < 10) {
-          markInvalid(phone, document.getElementById('err_phone_number'), 'Phone must contain at least 10 digits.');
-        }
-      }
-
-      return { isValid, errors };
+      return { isValid: errors.length === 0, errors };
     }
   };
 
-  // Part 1 layout (IDs match table column-friendly names)
-  window.formRegistry['llc-formation-part1-layout'] = function (stateDropdownOptionsHtml = '') {
-    return `
-      <div style="grid-column: span 2; background: rgba(10,31,68,0.03); border-left:4px solid var(--navy); padding:14px; border-radius:0 8px 8px 0; margin-bottom:8px;">
-        <strong style="color:var(--navy); display:block; margin-bottom:4px;">LLC Corporate Formation Structural Intake Blueprint</strong>
-        Filing Articles of Organization constructs a permanent statutory asset layer protecting personal holdings from operational risk exposures. Please confirm tracking fields match registry parameters.
-      </div>
-
-      <div style="grid-column: span 2; border-bottom:1px solid var(--border); padding-bottom:8px; margin-top:16px;">
-        <h3 style="color:var(--navy); font-size:1.1rem; font-weight:800;">1. Proposed Limited Liability Company Name</h3>
-      </div>
-
-      <div class="wizard-input-group" style="grid-column: span 1;">
-        <label for="company_name">Desired LLC Name *</label>
-        <input type="text" id="company_name" required class="wizard-input-field" placeholder="Enter your business name choice">
-        <div id="err_company_name" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-      </div>
-
-      <div class="wizard-input-group" style="grid-column: span 1;">
-        <label for="selected_plan">Legal Suffix / Plan *</label>
-        <select id="selected_plan" required class="wizard-input-field">
-          <option value="" disabled>Select...</option>
-          <option value="Standard LLC Plan">Standard LLC Plan</option>
-          <option value="Professional LLC">Professional LLC</option>
-        </select>
-        <div id="err_selected_plan" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-      </div>
-
-      <div class="wizard-input-group" style="grid-column: span 2;">
-        <label for="selected_service">Primary Business Purpose & Scope *</label>
-        <select id="selected_service" required class="wizard-input-field" onchange="toggleProfessionalDesc(this.value)">
-          <option value="general">General Commercial Operations</option>
-          <option value="real_estate">Real Estate Holdings</option>
-          <option value="professional">Professional Services</option>
-          <option value="freight_logistics">Freight & Logistics</option>
-        </select>
-        <div id="err_selected_service" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-      </div>
-
-      <div id="professional_desc_wrapper" style="grid-column: span 2; display:none;">
-        <label for="professional_desc">If professional, specify credentials *</label>
-        <input type="text" id="professional_desc" class="wizard-input-field" placeholder="e.g., Medical, Legal, Accounting">
-        <div id="err_professional_desc" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-      </div>
-
-      <div style="grid-column: span 2; border-bottom:1px solid var(--border); padding-bottom:8px; margin-top:16px;">
-        <h3 style="color:var(--navy); font-size:1.1rem; font-weight:800;">2. Corporate Headquarters (Principal Physical Location)</h3>
-      </div>
-
-      <div class="wizard-input-group" style="grid-column: span 2;">
-        <label for="street_address">Street Address (P.O. Boxes Prohibited) *</label>
-        <input type="text" id="street_address" required class="wizard-input-field" placeholder="Enter HQ street address">
-        <div id="err_street_address" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-      </div>
-
-      <div class="wizard-input-group" style="grid-column: span 2;">
-        <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:16px;">
-          <div>
-            <label for="city">City *</label>
-            <input type="text" id="city" required class="wizard-input-field">
-            <div id="err_city" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-          </div>
-          <div>
-            <label for="state">State *</label>
-            <select id="state" required class="wizard-input-field">${stateDropdownOptionsHtml}</select>
-            <div id="err_state" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-          </div>
-          <div>
-            <label for="zip_code">Zip Code *</label>
-            <input type="text" id="zip_code" required class="wizard-input-field">
-            <div id="err_zip_code" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-          </div>
-        </div>
-      </div>
-    `;
-  };
-
-  // Part 2 layout (management & agent) + contact fields + nav buttons appended in master
-  window.formRegistry['llc-formation-part2-layout'] = function (stateDropdownOptionsHtml = '') {
-    return `
-      <div style="grid-column: span 2; border-bottom:1px solid var(--border); padding-bottom:8px; margin-top:16px;">
-        <h3 style="color:var(--navy); font-size:1.1rem; font-weight:800;">3. Management Governance Matrix</h3>
-      </div>
-
-      <div class="wizard-input-group" style="grid-column: span 1;">
-        <label for="mgmt_type">Management Structure *</label>
-        <select id="mgmt_type" required class="wizard-input-field">
-          <option value="member">Member-Managed</option>
-          <option value="manager">Manager-Managed</option>
-        </select>
-        <div id="err_mgmt_type" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-      </div>
-
-      <div class="wizard-input-group" style="grid-column: span 1;">
-        <label for="registered_agent_option">Registered Agent Option *</label>
-        <select id="registered_agent_option" required class="wizard-input-field" onchange="toggleAgentDetails(this.value)">
-          <option value="standard">Utilize Premium Corporate Statutory Agent Service</option>
-          <option value="individual">Assign Custom Individual Statutory Agent</option>
-        </select>
-        <div id="err_registered_agent_option" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-      </div>
-
-      <div id="agent_details_wrapper" style="grid-column: span 2; display:none; flex-direction:column; gap:16px;">
-        <div style="border-top:1px dashed var(--border); padding-top:16px;">
-          <h4 style="color:var(--navy); font-size:0.95rem; font-weight:700;">Custom Registered Agent Profile</h4>
-        </div>
-
-        <div style="grid-column: span 2;">
-          <label for="agent_name">Agent Full Name / Entity *</label>
-          <input type="text" id="agent_name" class="wizard-input-field">
-          <div id="err_agent_name" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-        </div>
-
-        <div style="grid-column: span 2;">
-          <label for="agent_street">Agent Physical Statutory Address (P.O. Boxes Prohibited) *</label>
-          <input type="text" id="agent_street" class="wizard-input-field">
-          <div id="err_agent_street" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:16px; grid-column: span 2;">
-          <div>
-            <label for="agent_city">City *</label>
-            <input type="text" id="agent_city" class="wizard-input-field">
-            <div id="err_agent_city" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-          </div>
-          <div>
-            <label for="agent_state">State *</label>
-            <select id="agent_state" class="wizard-input-field">${stateDropdownOptionsHtml}</select>
-            <div id="err_agent_state" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-          </div>
-          <div>
-            <label for="agent_zip_code">Zip *</label>
-            <input type="text" id="agent_zip_code" class="wizard-input-field">
-            <div id="err_agent_zip_code" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-          </div>
-        </div>
-      </div>
-
-      <div style="grid-column: span 2; border-bottom:1px solid var(--border); padding-bottom:8px; margin-top:16px;">
-        <h3 style="color:var(--navy); font-size:1.1rem; font-weight:800;">4. Primary Communications Contact Person</h3>
-      </div>
-
-      <div class="wizard-input-group" style="grid-column: span 2;">
-        <label for="first_name">Contact First Name *</label>
-        <input type="text" id="first_name" required class="wizard-input-field">
-        <div id="err_first_name" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-      </div>
-
-      <div style="grid-column: span 1;">
-        <label for="last_name">Contact Last Name *</label>
-        <input type="text" id="last_name" required class="wizard-input-field">
-        <div id="err_last_name" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-      </div>
-
-      <div style="grid-column: span 1;">
-        <label for="phone_number">Phone Number *</label>
-        <input type="tel" id="phone_number" required class="wizard-input-field">
-        <div id="err_phone_number" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-      </div>
-
-      <div style="grid-column: span 1;">
-        <label for="email_address">Email Address *</label>
-        <input type="email" id="email_address" required class="wizard-input-field">
-        <div id="err_email_address" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-      </div>
-    `;
-  };
-
-  // Part 3 layout (supplemental)
-  window.formRegistry['llc-formation-part3-layout'] = function () {
-    return `
-      <div style="grid-column: span 2; border-bottom:1px solid var(--border); padding-bottom:8px; margin-top:16px;">
-        <h3 style="color:var(--navy); font-size:1.1rem; font-weight:800;">5. Custom Special Provisions</h3>
-      </div>
-
-      <div style="grid-column: span 2;">
-        <label for="selected_upsells">Supplemental Operating Guidelines or Background Provisions</label>
-        <textarea id="selected_upsells" class="wizard-input-field" style="width:100%; min-height:90px;"></textarea>
-        <div id="err_selected_upsells" class="wizard-error-message" style="display:none;color:#ef4444;"></div>
-      </div>
-    `;
-  };
-
-  // Toggle helpers adapted to new IDs
-  window.toggleProfessionalDesc = function (value) {
-    const wrapper = document.getElementById('professional_desc_wrapper');
-    const input = document.getElementById('professional_desc');
-    if (!wrapper) return;
-    if (value === 'professional') { wrapper.style.display = 'block'; if (input) input.setAttribute('required','required'); }
-    else { wrapper.style.display = 'none'; if (input) { input.removeAttribute('required'); input.value=''; input.style.borderColor='#cbd5e1'; } }
-  };
-
-  window.toggleAgentDetails = function (value) {
-    const wrapper = document.getElementById('agent_details_wrapper');
-    if (!wrapper) return;
-    const inputs = wrapper.querySelectorAll('input, select');
-    if (value === 'individual') { wrapper.style.display = 'flex'; inputs.forEach(i => i.setAttribute('required','required')); }
-    else { wrapper.style.display = 'none'; inputs.forEach(i => { i.removeAttribute('required'); i.value=''; i.style.borderColor='#cbd5e1'; }); }
-  };
-
-  // Master renderer with Back/Continue buttons (IDs preserved from screenshot pattern)
-  window.formRegistry['llc-formation-form-master'] = function (stateDropdownOptionsHtml = '') {
-    const part1 = window.formRegistry['llc-formation-part1-layout'] ? window.formRegistry['llc-formation-part1-layout'](stateDropdownOptionsHtml) : '';
-    const part2 = window.formRegistry['llc-formation-part2-layout'] ? window.formRegistry['llc-formation-part2-layout'](stateDropdownOptionsHtml) : '';
-    const part3 = window.formRegistry['llc-formation-part3-layout'] ? window.formRegistry['llc-formation-part3-layout']() : '';
-
-    const navHtml = `
-     
-    `;
-
-    // Attach listeners after DOM is inserted (microtask)
-    setTimeout(() => {
-      const back = document.getElementById('llc_nav_back');
-      const next = document.getElementById('llc_nav_next');
-      if (back) back.addEventListener('click', () => window.dispatchEvent(new CustomEvent('wizard:prev')));
-      if (next) next.addEventListener('click', () => window.dispatchEvent(new CustomEvent('wizard:next')));
-    }, 0);
-
-    return part1 + part2 + part3 + navHtml;
-  };
-
-  // Payload builder: returns objects matching your tables
+  // Preserve compatibility with existing payload builders / order code.
   window.buildPayloadsForSupabase = function (opts = {}) {
-    const { userId = null } = opts;
-
-    // Read DOM values
-    const tracking_number = truncate(document.getElementById('tracking_number')?.value || genUUID(), MAX.TRACKING);
-
-    const first_name = truncate(document.getElementById('first_name')?.value || 'Not Specified', MAX.NAME);
-    const last_name = truncate(document.getElementById('last_name')?.value || 'Not Specified', MAX.NAME);
-    const email_address = truncate(lower(document.getElementById('email_address')?.value || ''), MAX.EMAIL);
-    const phone_number = truncate(document.getElementById('phone_number')?.value || '', MAX.PHONE_ORDERS);
-
-    const company_name = truncate(document.getElementById('company_name')?.value || 'Not Specified', MAX.COMPANY_NAME);
-    const street_address = document.getElementById('street_address')?.value || null;
-    const city = truncate(document.getElementById('city')?.value || null, MAX.CITY);
-    const state = truncate(document.getElementById('state')?.value || null, MAX.STATE);
-    const zip_code = truncate(document.getElementById('zip_code')?.value || null, MAX.ZIP);
-
-    const selected_plan = truncate(document.getElementById('selected_plan')?.value || 'Standard LLC Plan', MAX.COMPANY_NAME);
-    const selected_service = truncate(document.getElementById('selected_service')?.value || 'Not Specified', MAX.COMPANY_NAME);
-    const selected_upsells = truncate(document.getElementById('selected_upsells')?.value || null, MAX.UPS);
-
-    const total_paid_amount = parseAmount(document.getElementById('total_paid_amount')?.value || 0.00);
-    const stripe_payment_id = truncate(document.getElementById('stripe_payment_id')?.value || null, MAX.STRIPE_ID);
-    const poa_signature = truncate(document.getElementById('poa_signature')?.value || null, MAX.POA_SIG);
-
-    // Agent data if individual
-    const agent_choice = document.getElementById('registered_agent_option')?.value || 'standard';
-    let agent_data = null;
-    if (agent_choice === 'individual') {
-      agent_data = {
-        agent_name: document.getElementById('agent_name')?.value || null,
-        agent_street: document.getElementById('agent_street')?.value || null,
-        agent_city: document.getElementById('agent_city')?.value || null,
-        agent_state: document.getElementById('agent_state')?.value || null,
-        agent_zip: document.getElementById('agent_zip_code')?.value || null
-      };
-    }
-
-    // Build payload objects (flat keys matching your DDL)
-    const orders = {
-      tracking_number,
-      first_name,
-      last_name,
-      email_address,
-      phone_number,
-      company_name,
-      street_address,
-      city,
-      state,
-      zip_code,
-      selected_plan,
-      selected_upsells: selected_upsells || (agent_data ? JSON.stringify(agent_data) : null),
-      total_paid_amount,
-      stripe_payment_id,
-      poa_signature,
-      account_created: false,
-      selected_service
+    const get = (id) => q(id)?.type === "checkbox" ? !!q(id)?.checked : (q(id)?.value || null);
+    const agentChoice = document.querySelector('input[name="registered_agent_option"]:checked')?.value || "filings4u";
+    const route = window.F4UWizard?.refreshRoute?.() || {};
+    const formData = {
+      entity_name: get("company_name"),
+      legal_designator: get("llc_designator"),
+      alternate_name: get("alternate_company_name"),
+      principal_address: {
+        street: get("street_address"), line2: get("address_line_2"), city: get("city"),
+        state: get("state"), zip: get("zip_code")
+      },
+      mailing_same_as_principal: get("mailing_same_as_principal"),
+      mailing_address: get("mailing_same_as_principal") ? null : {
+        street: get("mailing_street_address"), line2: get("mailing_address_line_2"), city: get("mailing_city"),
+        state: get("mailing_state"), zip: get("mailing_zip_code")
+      },
+      registered_agent: agentChoice === "filings4u" ? { option: "filings4u" } : {
+        option: "custom", type: get("agent_type"), name: get("agent_name"), street: get("agent_street"),
+        line2: get("agent_address_line_2"), city: get("agent_city"), state: get("agent_state"),
+        zip: get("agent_zip_code"), consent_confirmed: get("agent_consent_confirmed")
+      },
+      management_structure: get("mgmt_type"),
+      owner_count: get("owner_count"),
+      primary_authorized_person: { name: get("authorized_person_name"), title: get("authorized_person_title") },
+      additional_owners_exist: get("additional_owners_exist"),
+      additional_people: [
+        { name: get("additional_owner_1_name"), title: get("additional_owner_1_title") },
+        { name: get("additional_owner_2_name"), title: get("additional_owner_2_title") }
+      ].filter(x => x.name || x.title),
+      business_purpose_type: get("business_purpose_type"),
+      business_purpose: get("business_purpose"),
+      duration_type: get("duration_type"),
+      duration_end_date: get("duration_end_date"),
+      effective_date_type: get("effective_date_type"),
+      future_effective_date: get("future_effective_date"),
+      contact: {
+        first_name: get("first_name"), last_name: get("last_name"),
+        email: get("email_address"), phone: get("phone_number")
+      },
+      special_provisions: get("special_provisions")
     };
 
-    const client_profiles = {
-      ...(userId ? { id: userId } : {}),
-      email_address,
-      first_name,
-      last_name,
-      phone_number: truncate(document.getElementById('phone_number')?.value || '', MAX.PHONE_PROFILES),
-      street_address,
-      city,
-      state,
-      zip_code,
-      tracking_number
+    return {
+      orders: {
+        first_name: get("first_name") || "",
+        last_name: get("last_name") || "",
+        email_address: String(get("email_address") || "").toLowerCase(),
+        phone_number: get("phone_number") || "",
+        company_name: [get("company_name"), get("llc_designator")].filter(Boolean).join(" "),
+        street_address: get("street_address"),
+        city: get("city"),
+        state: get("state"),
+        zip_code: get("zip_code"),
+        selected_plan: route.planTier || null,
+        selected_service: route.serviceKey || "llc-formation"
+      },
+      client_profiles: {
+        ...(opts.userId ? { id: opts.userId } : {}),
+        first_name: get("first_name"),
+        last_name: get("last_name"),
+        email_address: String(get("email_address") || "").toLowerCase(),
+        phone_number: get("phone_number"),
+        street_address: get("street_address"),
+        city: get("city"),
+        state: get("state"),
+        zip_code: get("zip_code")
+      },
+      form_payload: formData,
+      errors: []
     };
-
-    // Validation errors using plain variable names (no orders.<prop>)
-    const errors = [];
-    if (!tracking_number) errors.push('tracking_number is required');
-    if (!first_name) errors.push('first_name is required');
-    if (!last_name) errors.push('last_name is required');
-    if (!email_address) errors.push('email_address is required');
-    if (!phone_number) errors.push('phone_number is required');
-    if (!selected_plan) errors.push('selected_plan is required');
-    if (!selected_service) errors.push('selected_service is required');
-    if (!client_profiles.email_address) errors.push('client_profiles.email_address is required');
-
-    return { orders, client_profiles, errors };
   };
 
-  // Initialize live filters
-  window.formRegistry['llc-formation-validation-engine'].setupLiveInputFilters();
+  // Render-time conditional state. Step 3 injects the HTML asynchronously.
+  const observer = new MutationObserver(() => {
+    if (document.querySelector('[data-service-form="llc-formation"]')) syncConditionalFields();
+  });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
 })();
