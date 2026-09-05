@@ -429,9 +429,25 @@
     return async function () {
       await ensureServiceModule();
 
+      // The modern service modules register into window.formRegistry through
+      // service-form-engine.js. Re-check the exact registry key after the
+      // dynamic service script has executed so renderer resolution is
+      // deterministic and does not depend on global function discovery.
+      const route = refreshRoute();
+      const registry = window.formRegistry || {};
+      const exactRenderer = registry[`${route.serviceKey}-form-master`];
+      if (typeof exactRenderer === "function") {
+        discoveredRenderer = exactRenderer;
+      }
+      const exactValidator =
+        registry[`${route.serviceKey}-validation-engine`] ||
+        registry[`${route.serviceKey}-validation`];
+      if (exactValidator && typeof exactValidator.validate === "function") {
+        discoveredValidator = exactValidator;
+      }
+
       if (!discoveredRenderer) {
         // Fallback scan for older modules that were already loaded.
-        const route = refreshRoute();
         const slugWords = route.serviceKey
           .split("-")
           .map(x => x.charAt(0).toUpperCase() + x.slice(1))
@@ -445,8 +461,9 @@
         ];
 
         for (const name of likelyNames) {
-          if (typeof window[name] === "function") {
-            discoveredRenderer = window[name];
+          const candidate = safeWindowValue(name);
+          if (typeof candidate === "function") {
+            discoveredRenderer = candidate;
             break;
           }
         }
