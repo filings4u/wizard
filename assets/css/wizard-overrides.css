@@ -1,0 +1,295 @@
+
+/* ==========================================================================
+   filings4u — Package Review / Visual Step 2
+   Fixes missing layout rules for the canonical step-1-fixed.js markup.
+   ========================================================================== */
+
+.f4u-package-review{
+  width:100%;
+  box-sizing:border-box;
+}
+
+.f4u-package-review .f4u-entry-copy{
+  margin-bottom:22px;
+  padding-bottom:22px;
+  border-bottom:1px solid var(--line,#e2e8f0);
+}
+
+.f4u-package-review .f4u-entry-kicker{
+  display:block;
+  margin-bottom:10px;
+  color:var(--green-dark,#0e9f6e);
+  font:800 .7rem/1.2 Manrope,sans-serif;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+
+.f4u-package-review .f4u-selection-summary{
+  margin-top:0;
+  margin-bottom:20px;
+}
+
+.f4u-review-meta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin:0;
+  padding:14px 2px 18px;
+  border-bottom:1px solid var(--line,#e2e8f0);
+}
+
+.f4u-review-meta span{
+  color:var(--slate,#64748b);
+  font-size:.84rem;
+  font-weight:650;
+}
+
+.f4u-review-meta strong{
+  color:var(--navy,#0a1f44);
+  font:800 .84rem Manrope,sans-serif;
+}
+
+.f4u-review-features{
+  margin:0;
+  padding:22px 0;
+  border-bottom:1px solid var(--line,#e2e8f0);
+}
+
+.f4u-review-label{
+  display:block;
+  margin-bottom:12px;
+  color:var(--navy,#0a1f44);
+  font:800 .82rem Manrope,sans-serif;
+}
+
+.f4u-review-features ul{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px 18px;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.f4u-review-features li{
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  min-width:0;
+  color:#334155;
+  font-size:.85rem;
+  line-height:1.45;
+}
+
+.f4u-review-features li i{
+  flex:0 0 auto;
+  margin-top:3px;
+  color:var(--green,#10b981);
+  font-size:.72rem;
+}
+
+.f4u-review-pricing{
+  margin-top:0;
+  padding:18px 0 0;
+}
+
+.f4u-review-fee-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  width:100%;
+  padding:12px 0;
+  color:#334155;
+  border-bottom:1px dashed #e2e8f0;
+  box-sizing:border-box;
+}
+
+.f4u-review-fee-row:last-child{
+  border-bottom:0;
+}
+
+.f4u-review-fee-row > span{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  color:#475569;
+  font-size:.84rem;
+  line-height:1.4;
+}
+
+.f4u-review-fee-row small{
+  color:var(--muted,#94a3b8);
+  font-size:.72rem;
+}
+
+.f4u-review-fee-row > strong{
+  flex:0 0 auto;
+  color:var(--navy,#0a1f44);
+  font:800 .9rem Manrope,sans-serif;
+  white-space:nowrap;
+}
+
+.f4u-package-review .wizard-action-footer{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+}
+
+.btn-wizard-secondary{
+  min-height:48px !important;
+  padding:0 18px !important;
+  border:1px solid #cbd5e1 !important;
+  border-radius:11px !important;
+  background:#fff !important;
+  color:var(--navy,#0a1f44) !important;
+  box-shadow:none !important;
+  font:800 .84rem Manrope,sans-serif !important;
+  cursor:pointer !important;
+  transition:.18s ease !important;
+}
+
+.btn-wizard-secondary:hover{
+  border-color:#94a3b8 !important;
+  background:#f8fafc !important;
+  transform:translateY(-1px);
+}
+
+.f4u-package-review .btn-wizard-main{
+  min-height:48px !important;
+  padding:0 20px !important;
+  border-radius:11px !important;
+}
+
+@media (max-width:700px){
+  .f4u-review-features ul{
+    grid-template-columns:1fr;
+  }
+
+  .f4u-review-meta{
+    align-items:flex-start;
+  }
+
+  .f4u-package-review .wizard-action-footer{
+    flex-direction:column-reverse !important;
+    align-items:stretch !important;
+  }
+
+  .f4u-package-review .wizard-action-footer button{
+    width:100% !important;
+  }
+}
+
+
+/* filings4u — Floating Application Map positioning/overflow repair */
+
+/* Keep the floating tools clear of the main wizard card. */
+.wizard-floating-tools{
+  left:18px !important;
+  top:158px !important;
+}
+
+/* Narrow the open map so it never overlaps the centered wizard workspace. */
+.wizard-floating-map{
+  left:18px !important;
+  top:310px !important;
+  width:286px !important;
+  max-height:none !important;
+}
+
+/* Remove the nested scrollbar; make eight steps compact enough to fit. */
+.floating-map-card{
+  overflow:visible !important;
+  max-height:none !important;
+  padding:15px !important;
+  border-radius:18px !important;
+}
+
+.floating-map-card__head{
+  padding:1px 1px 11px !important;
+  margin-bottom:7px !important;
+}
+
+.floating-map-card__steps{
+  gap:2px !important;
+}
+
+.floating-map-step{
+  gap:9px !important;
+  padding:6px 7px !important;
+  min-height:0 !important;
+}
+
+.floating-map-step__number{
+  width:27px !important;
+  height:27px !important;
+  flex:0 0 27px !important;
+  font-size:.72rem !important;
+}
+
+.floating-map-step__copy strong{
+  font-size:.75rem !important;
+  line-height:1.2 !important;
+}
+
+.floating-map-step__copy small{
+  margin-top:1px !important;
+  font-size:.62rem !important;
+  line-height:1.25 !important;
+}
+
+/* At shorter desktop heights, move the card upward instead of introducing
+   its own scrollbar. */
+@media (min-width:901px) and (max-height:760px){
+  .wizard-floating-map{
+    top:270px !important;
+  }
+  .floating-map-step{
+    padding:4px 7px !important;
+  }
+  .floating-map-step__copy small{
+    display:none !important;
+  }
+}
+
+/* Preserve the existing mobile bottom-sheet behavior. */
+@media (max-width:900px){
+  .wizard-floating-map{
+    left:12px !important;
+    right:12px !important;
+    top:auto !important;
+    bottom:84px !important;
+    width:auto !important;
+    max-height:70vh !important;
+  }
+  .floating-map-card{
+    overflow:auto !important;
+    max-height:70vh !important;
+  }
+}
+
+
+
+/* Wizard HTML structural normalization */
+.wizard-panel{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+.wizard-panel > [id$="-injection-placeholder"]{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+#step-panel-2,
+#step-panel-3,
+#step-panel-4,
+#step-panel-5,
+#step-panel-6,
+#step-panel-7,
+#step-panel-8{
+  overflow:visible;
+}
