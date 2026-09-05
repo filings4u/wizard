@@ -10,6 +10,13 @@
 
   const STORAGE_KEY = "f4u_wizard_runtime_state_v1";
   const SERVICE_BASE = "assets/js/";
+  const US_STATES = Object.freeze({
+    AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",CO:"Colorado",CT:"Connecticut",DE:"Delaware",FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",KS:"Kansas",KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",MA:"Massachusetts",MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",MT:"Montana",NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",RI:"Rhode Island",SC:"South Carolina",SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming"
+  });
+  const STATE_CODES = Object.freeze(Object.fromEntries(Object.entries(US_STATES).map(([code,name])=>[name.toLowerCase(),code])));
+  function stateName(value){ const raw=String(value||'').trim(); if(!raw)return ''; return US_STATES[raw.toUpperCase()]||raw.replace(/\b\w/g,c=>c.toUpperCase()); }
+  function stateCode(value){ const raw=String(value||'').trim(); if(!raw)return ''; const upper=raw.toUpperCase(); return US_STATES[upper]?upper:(STATE_CODES[raw.toLowerCase()]||''); }
+
 
   const state = {
     jurisdiction: "",
@@ -71,7 +78,13 @@
 
     const jurisdiction = government
       ? ""
-      : String(p.get("state") || state.jurisdiction || "").toUpperCase().trim();
+      : stateName(p.get("state") || state.jurisdiction || "");
+
+    if (!government && jurisdiction && p.get("state") !== jurisdiction) {
+      const normalizedUrl = new URL(location.href);
+      normalizedUrl.searchParams.set("state", jurisdiction);
+      history.replaceState({}, "", normalizedUrl.pathname + "?" + normalizedUrl.searchParams.toString());
+    }
 
     state.jurisdiction = jurisdiction;
     persist();
@@ -86,31 +99,22 @@
   }
 
   function stateOptions(selectedValue) {
-    const selected = String(selectedValue || "").toUpperCase();
+    const selectedName = stateName(selectedValue);
     const fees = window.STATE_FILING_FEES || {};
-
-    return Object.keys(fees)
-      .sort((a, b) => {
-        const an = String(fees[a]?.name || a);
-        const bn = String(fees[b]?.name || b);
-        return an.localeCompare(bn);
-      })
-      .map(code => {
-        const name = fees[code]?.name || code;
-        return `<option value="${esc(code)}"${code === selected ? " selected" : ""}>${esc(name)}</option>`;
-      })
+    return Object.keys(US_STATES)
+      .sort((a,b)=>US_STATES[a].localeCompare(US_STATES[b]))
+      .map(code=>{ const name=fees[code]?.name||US_STATES[code]; return `<option value="${esc(name)}"${name===selectedName?' selected':''}>${esc(name)}</option>`; })
       .join("");
   }
 
   function setJurisdiction(value) {
-    const code = String(value || "").toUpperCase().trim();
-    if (!/^[A-Z]{2}$/.test(code)) return false;
-
-    state.jurisdiction = code;
+    const name = stateName(value);
+    const code = stateCode(value);
+    if (!name || !code) return false;
+    state.jurisdiction = name;
     persist();
-
     const url = new URL(location.href);
-    url.searchParams.set("state", code);
+    url.searchParams.set("state", name);
     history.replaceState({}, "", url.pathname + "?" + url.searchParams.toString());
     return true;
   }
@@ -505,6 +509,8 @@
     money,
     refreshRoute,
     stateOptions,
+    stateName,
+    stateCode,
     setJurisdiction,
     go,
     captureAnswers,

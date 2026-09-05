@@ -25,6 +25,8 @@ function itemsFor(r){
  return FALLBACK.general;
 }
 window.F4U_ADDON_PRICE_MAP={"registered-agent":75,"annual-compliance":99,"operating-agreement":89,"ein-service":75,"good-standing":45,"boc3-filing":75,"safety-audit-prep":149};
+window.F4U_ADDON_CATALOG={};
+[...Object.values(CATALOG),...Object.values(FALLBACK)].flat().forEach(([id,name,price,desc])=>{window.F4U_ADDON_CATALOG[id]={id,name,price:Number(price||0),description:desc};});
 window.renderWizardStep4=function(){
  const host=document.getElementById("step-4-injection-placeholder");if(!host)return;
  const w=window.F4UWizard,r=w.refreshRoute(),items=itemsFor(r);
