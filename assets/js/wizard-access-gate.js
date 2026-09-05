@@ -21,15 +21,10 @@
   function safeReturn(value) {
     try {
       const url = new URL(String(value || ""));
-
-      if (url.protocol !== "https:") {
-        return CONFIG.fallback;
-      }
-
+      if (url.protocol !== "https:") return CONFIG.fallback;
       if (!["filings4u.com", "www.filings4u.com"].includes(url.hostname)) {
         return CONFIG.fallback;
       }
-
       return url.toString();
     } catch (_) {
       return CONFIG.fallback;
@@ -51,7 +46,6 @@
     });
 
     let payload = null;
-
     try {
       payload = await response.json();
     } catch (_) {}
@@ -83,7 +77,9 @@
     });
 
     if (!verified.service || !verified.plan) {
-      throw new Error("The verified handoff is missing service or package information.");
+      throw new Error(
+        "The verified handoff is missing service or package information."
+      );
     }
 
     if (data.session_token) {
@@ -103,7 +99,6 @@
      * These values are inserted ONLY after the backend verifies the handoff.
      */
     const current = new URL(window.location.href);
-
     current.searchParams.delete("handoff");
     current.searchParams.set("service", verified.service);
     current.searchParams.set("plan", verified.plan);
@@ -218,7 +213,9 @@
         return installContext(result);
       }
 
-      return deny("No verified handoff token or wizard session was found.");
+      return deny(
+        "No verified handoff token or wizard session was found."
+      );
 
     } catch (error) {
       return deny(error?.message || error);
