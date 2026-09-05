@@ -180,14 +180,85 @@ function beginPolling(){
   pollTimer=setInterval(pollMessages,4000);
 }
 
-async function end(){
-  if(!clientId||!chatToken){open(false);return;}
-  if(!window.confirm("End this support chat? We’ll close this session and email the transcript to the email address you used to start the chat."))return;
+function closeEndChatModal(){
+  document.getElementById("f4u-end-chat-modal")?.remove();
+}
+
+function confirmEndChat(){
+  if(document.getElementById("f4u-end-chat-modal"))return;
+
+  const root=document.createElement("div");
+  root.id="f4u-end-chat-modal";
+  root.className="f4u-chat-confirm";
+  root.innerHTML=`
+    <div class="f4u-chat-confirm__backdrop" data-chat-confirm-close></div>
+    <section class="f4u-chat-confirm__card" role="dialog" aria-modal="true" aria-labelledby="f4u-chat-confirm-title">
+      <button type="button" class="f4u-chat-confirm__close" data-chat-confirm-close aria-label="Close">×</button>
+
+      <div class="f4u-chat-confirm__icon" aria-hidden="true">?</div>
+      <span class="f4u-chat-confirm__kicker">filings4u Support</span>
+      <h2 id="f4u-chat-confirm-title">End this support chat?</h2>
+      <p>
+        This will close the current chat session. We’ll email a copy of the conversation
+        to <strong>${esc(contact?.email||"the email address you entered")}</strong>.
+      </p>
+
+      <div id="f4u-chat-confirm-status"></div>
+
+      <div class="f4u-chat-confirm__actions">
+        <button type="button" class="f4u-chat-confirm__cancel" data-chat-confirm-close>Keep Chat Open</button>
+        <button type="button" class="f4u-chat-confirm__end" id="f4u-chat-confirm-end">End Chat</button>
+      </div>
+    </section>`;
+
+  document.body.appendChild(root);
+  root.querySelectorAll("[data-chat-confirm-close]").forEach(el=>el.addEventListener("click",closeEndChatModal));
+  root.querySelector("#f4u-chat-confirm-end")?.addEventListener("click",endConfirmed);
+}
+
+async function endConfirmed(){
+  if(!clientId||!chatToken){closeEndChatModal();open(false);return;}
+
+  const button=document.getElementById("f4u-chat-confirm-end");
+  const status=document.getElementById("f4u-chat-confirm-status");
+
+  if(button){
+    button.disabled=true;
+    button.textContent="Ending…";
+  }
+
   try{
     const data=await callChat({action:"end",client_id:clientId,chat_token:chatToken});
-    clearInterval(pollTimer); pollTimer=null; clientId=null; chatToken=null; contact={}; seenMessageIds.clear(); sessionStorage.removeItem("f4u_guest_chat"); open(false);
-    notify("Chat ended",data.email?`Your transcript was sent to ${data.email}.`:"Your chat session has been closed.","success");
-  }catch(error){notify("Could not end chat",error.message||"Please try again.");}
+    clearInterval(pollTimer);
+    pollTimer=null;
+    clientId=null;
+    chatToken=null;
+    contact={};
+    seenMessageIds.clear();
+    sessionStorage.removeItem("f4u_guest_chat");
+
+    closeEndChatModal();
+    open(false);
+
+    notify(
+      "Chat ended",
+      data.email?`Your transcript was sent to ${data.email}.`:"Your chat session has been closed.",
+      "success"
+    );
+  }catch(error){
+    if(status){
+      status.innerHTML=`<div class="f4u-chat-confirm__error">${esc(error.message||"Please try again.")}</div>`;
+    }
+    if(button){
+      button.disabled=false;
+      button.textContent="End Chat";
+    }
+  }
+}
+
+async function end(){
+  if(!clientId||!chatToken){open(false);return;}
+  confirmEndChat();
 }
 
 function restoreChat(){
@@ -220,6 +291,13 @@ document.addEventListener("click",event=>{
   if(action==="open")open(true);
   if(action==="close")open(false);
   if(action==="end")end();
+});
+
+
+document.addEventListener("keydown",event=>{
+  if(event.key==="Escape" && document.getElementById("f4u-end-chat-modal")){
+    closeEndChatModal();
+  }
 });
 
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",wire,{once:true});

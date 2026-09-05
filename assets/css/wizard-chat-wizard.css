@@ -427,3 +427,169 @@
 @media(prefers-reduced-motion:reduce){
   #support-chat-flyout-panel,.chat-bubble-widget-launcher{transition:none !important;}
 }
+
+
+/* ==========================================================================
+   BRANDED END CHAT CONFIRMATION
+   Replaces native window.confirm().
+   ========================================================================== */
+
+.f4u-chat-confirm{
+  position:fixed;
+  inset:0;
+  z-index:2147483646;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  font-family:"DM Sans",Arial,sans-serif;
+}
+
+.f4u-chat-confirm__backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(10,31,68,.56);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+
+.f4u-chat-confirm__card{
+  position:relative;
+  z-index:1;
+  width:min(92vw,440px);
+  padding:26px;
+  border:1px solid #dce5ee;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 28px 70px rgba(10,31,68,.25);
+}
+
+.f4u-chat-confirm__close{
+  position:absolute;
+  top:14px;
+  right:14px;
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  padding:0;
+  border:0;
+  border-radius:10px;
+  background:#f1f5f9;
+  color:#0a1f44;
+  font-size:1.25rem;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.f4u-chat-confirm__icon{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  margin-bottom:12px;
+  border-radius:12px;
+  background:#ecfdf5;
+  color:#0e9f6e;
+  font:800 1rem/1 Manrope,sans-serif;
+}
+
+.f4u-chat-confirm__kicker{
+  display:block;
+  margin-bottom:6px;
+  color:#10b981;
+  font:800 .68rem/1.2 Manrope,sans-serif;
+  letter-spacing:.075em;
+  text-transform:uppercase;
+}
+
+.f4u-chat-confirm__card h2{
+  margin:0 42px 8px 0;
+  color:#0a1f44;
+  font:800 1.3rem/1.2 Manrope,sans-serif;
+  letter-spacing:-.025em;
+}
+
+.f4u-chat-confirm__card p{
+  margin:0;
+  color:#64748b;
+  font-size:.86rem;
+  font-weight:400;
+  line-height:1.55;
+}
+
+.f4u-chat-confirm__card p strong{
+  color:#334155;
+  font-weight:700;
+  overflow-wrap:anywhere;
+}
+
+.f4u-chat-confirm__actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:12px;
+  margin-top:22px;
+}
+
+.f4u-chat-confirm__cancel,
+.f4u-chat-confirm__end{
+  min-height:44px;
+  padding:0 16px;
+  border-radius:10px;
+  font:800 .78rem/1 Manrope,sans-serif;
+  cursor:pointer;
+}
+
+.f4u-chat-confirm__cancel{
+  border:1px solid #cbd5e1;
+  background:#fff;
+  color:#0a1f44;
+}
+
+.f4u-chat-confirm__end{
+  border:1px solid #ef4444;
+  background:#ef4444;
+  color:#fff;
+}
+
+.f4u-chat-confirm__end:disabled{
+  opacity:.65;
+  cursor:wait;
+}
+
+.f4u-chat-confirm__error{
+  margin-top:14px;
+  padding:10px 12px;
+  border:1px solid #fecaca;
+  border-radius:10px;
+  background:#fff7f7;
+  color:#b91c1c;
+  font-size:.76rem;
+  line-height:1.4;
+}
+
+@media(max-width:520px){
+  .f4u-chat-confirm{
+    align-items:flex-end;
+    padding:12px;
+  }
+
+  .f4u-chat-confirm__card{
+    width:100%;
+    padding:22px 17px calc(18px + env(safe-area-inset-bottom));
+    border-radius:18px 18px 14px 14px;
+  }
+
+  .f4u-chat-confirm__actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .f4u-chat-confirm__end{
+    order:1;
+  }
+
+  .f4u-chat-confirm__cancel{
+    order:2;
+  }
+}
