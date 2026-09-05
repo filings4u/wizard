@@ -27,8 +27,8 @@ function inferredFormat(field){
  return "";
 }
 function formatAttrs(kind){
- if(kind==="phone")return ' inputmode="tel" autocomplete="tel" maxlength="14" placeholder="(555) 555-5555"';
- if(kind==="ein")return ' inputmode="numeric" maxlength="10" placeholder="12-3456789"';
+ if(kind==="phone")return ' inputmode="tel" autocomplete="tel" maxlength="14" pattern="\\(\\d{3}\\) \\d{3}-\\d{4}" placeholder="(555) 555-5555"';
+ if(kind==="ein")return ' inputmode="numeric" maxlength="10" pattern="\\d{2}-\\d{7}" placeholder="12-3456789"';
  if(kind==="npi")return ' inputmode="numeric" maxlength="10" placeholder="10 digits"';
  if(kind==="zip")return ' inputmode="numeric" maxlength="10" placeholder="12345 or 12345-6789"';
  if(kind==="usdot")return ' inputmode="numeric" maxlength="8" placeholder="USDOT number"';

@@ -8,7 +8,7 @@ window.renderWizardStep3=async function(){
  const renderer=w.currentServiceRenderer();
  if(typeof renderer!=="function"){canvas.innerHTML=`<div class="wizard-runtime-error"><strong>Service form unavailable.</strong><div style="margin-top:6px">No renderer is registered for ${w.esc(r.serviceKey)}.</div></div>`;return;}
  try{
-   const html=await Promise.resolve(renderer(r.government?"":w.stateOptions(r.jurisdiction),{serviceKey:r.serviceKey,state:r.jurisdiction,isGovernment:r.government}));
+   const html=await Promise.resolve(renderer(w.stateOptions(r.government?"":r.jurisdiction),{serviceKey:r.serviceKey,state:r.jurisdiction,isGovernment:r.government}));
    if(typeof html!=="string") throw new Error("The service renderer did not return HTML.");
    canvas.innerHTML=html;
    w.restoreAnswers(canvas);
