@@ -1,0 +1,75 @@
+FILINGS4U WIZARD REVIEW & UPDATE REPORT
+=========================================
+
+Reviewed source package: wizard(2).zip
+
+FLOW
+- State services: jurisdiction -> package review -> service form -> service-specific upsells -> POA -> summary -> payment -> receipt/account setup.
+- Government services bypass state jurisdiction selection and continue to package review.
+- Application Map now uses the actual 1-8 runtime step number and opens as a floating navigation-style container.
+
+SERVICE FORMS
+- Reviewed all service JS modules against state-pricing.js and government-pricing.js.
+- 47 priced service slugs are present in the pricing registry.
+- Added missing heavy-use-tax.js compatibility module for the heavy-use-tax pricing slug.
+- Fixed process-agents-boc-3 master renderer incorrectly registered as cage-code-form-master.
+- Added canonical driver-file-form-master and validation bridge.
+- Core renderer now prefers each service's explicit *-form-master registry, avoiding accidental selection of partial form builders. This is critical for multi-part detailed forms and their existing conditional logic.
+
+UPSELLS
+- Rebuilt step 4 around service-specific recommendations.
+- LLC Formation now recommends EIN, Registered Agent, Operating Agreement, Annual Compliance, and Good Standing.
+- Corporation, Series LLC, Nonprofit, Trucker Authority, Broker Authority, UCR, EIN, Registered Agent, Annual Reports, and Business Licenses have tailored mappings; related services fall back to category-appropriate recommendations.
+- No add-on is preselected. Quote-only items show $0 due today.
+
+POWER OF ATTORNEY
+- Two signer fields: first name and last name.
+- Live cursive signature viewport updates while typing.
+- Limited filing authorization copy identifies the selected service and jurisdiction.
+- Consent is required before continuing.
+- Signed name and execution timestamp are retained in wizard state/order form payload.
+
+SAVE PROGRESS
+- Branded modal collects first name, last name, email, and phone.
+- Progress payload includes current step, service, plan, jurisdiction, answers, selected add-ons, POA state, and verified wizard session token when available.
+- Supabase wizard_abandoned_leads table already existed. It was enhanced with service_key, plan_tier, jurisdiction_state, session_token, progress_payload, and updated_at.
+- New wizard-save-progress Edge Function deployed so the browser does not need broad UPDATE access to the table.
+
+ALERTS
+- Added branded modal compatibility for remaining legacy window.alert calls.
+- New wizard validation and POA messages use branded modal notices directly.
+
+PAYMENT / FINAL STEP
+- Existing Supabase wizard-checkout and wizard-order-status Edge Functions were reviewed.
+- wizard-checkout already calculates service pricing server-side, validates selected upsells against platform_upsells, creates an order/tracking number, and creates a Stripe PaymentIntent.
+- The current uploaded step-7.js is NOT connected to that production function; it intentionally displays a backend-not-enabled message.
+- The current uploaded step-8.js only displays basic payment verification and links to wizard-success.html. It does not yet render the requested branded receipt/POA print documents.
+- I did not fake a payment success path. Production checkout/receipt/account creation should be wired against verified Stripe payment status, not a browser-generated paid flag.
+
+SECURITY FINDINGS
+- wizard_abandoned_leads currently has legacy broad public INSERT/UPDATE RLS policies. The new save-progress Edge Function makes those broad browser policies unnecessary; they should be tightened after confirming no other production page depends on direct writes.
+- wizard-access-gate.js contains a browser-safe anon key; this is acceptable only with correct RLS/Edge Function authorization and is not a service-role secret.
+- stripe-paid-signup contains legacy code that should not be used as the source of truth for this wizard checkout. wizard-checkout is materially safer because it retrieves prices server-side.
+
+FILES CHANGED
+- wizard.html
+- assets/js/core.js
+- assets/js/application-map.js
+- assets/js/wizard-floating-ui.js
+- assets/js/save-progress.js
+- assets/js/alerts-modal.js (new)
+- assets/js/step-4.js
+- assets/js/step-5.js
+- assets/js/step-6.js
+- assets/js/driver-file.js
+- assets/js/process-agents-boc-3.js
+- assets/js/heavy-use-tax.js (new compatibility module)
+- assets/css/wizard-overrides.css
+
+SUPABASE CHANGES
+- Migration: enhance_wizard_abandoned_leads
+- Edge Function: wizard-save-progress v1
+
+NEXT PRODUCTION BLOCKER
+- Connect step-7.js to wizard-checkout + Stripe Elements and verify payment via wizard-order-status/webhook.
+- Then build the final receipt/account-creation screen and print-only receipt/POA documents from the verified order.

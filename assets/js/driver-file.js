@@ -321,3 +321,17 @@ window.formRegistry['cage-code-form-master'] = function(stateDropdownOptionsHtml
            window.formRegistry['driver-file-part3-layout'](stateDropdownOptionsHtml);
 };
 
+
+// Canonical wizard master renderer.
+window.formRegistry['driver-file-form-master'] = function(stateDropdownOptionsHtml = '') {
+  return window.formRegistry['driver-file-part1-layout'](stateDropdownOptionsHtml) +
+         window.formRegistry['driver-file-part2-layout'](stateDropdownOptionsHtml) +
+         window.formRegistry['driver-file-part3-layout'](stateDropdownOptionsHtml);
+};
+window.formRegistry['driver-file-validation-engine'] = {
+  validate: function(){
+    const a=window.formRegistry['driver-file-part1-validation']?.validate?.();
+    const b=window.formRegistry['driver-file-parts2-and-3-validation']?.validate?.();
+    return {isValid:(a?.isValid!==false)&&(b?.isValid!==false),errors:[...(a?.errors||[]),...(b?.errors||[])]};
+  }
+};

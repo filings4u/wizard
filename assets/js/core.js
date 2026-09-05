@@ -16,7 +16,8 @@
     addons: [],
     authorization: {},
     answers: {},
-    verifiedPayment: null
+    verifiedPayment: null,
+    currentStep: 1
   };
 
   try {
@@ -152,6 +153,17 @@
       document.querySelector("[data-progress-title]");
 
     if (titleNode && labels[safeStep]) titleNode.textContent = labels[safeStep];
+
+    const exactStepText = document.getElementById("wizard-progress-step-text");
+    const exactTitle = document.getElementById("wizard-progress-title");
+    const exactPercent = document.getElementById("wizard-progress-percent");
+    const exactMeter = document.getElementById("wizard-progress-meter");
+    const exactFloating = document.getElementById("wizard-floating-step-label");
+    if (exactStepText) exactStepText.textContent = `Step ${safeStep} of 8`;
+    if (exactTitle && labels[safeStep]) exactTitle.textContent = labels[safeStep];
+    if (exactPercent) exactPercent.textContent = `${pct}%`;
+    if (exactMeter) exactMeter.style.width = `${pct}%`;
+    if (exactFloating) exactFloating.textContent = `Step ${safeStep} of 8`;
   }
 
   async function renderStep(step) {
@@ -163,6 +175,9 @@
 
   async function go(step) {
     const target = Math.min(8, Math.max(1, Number(step) || 1));
+    state.currentStep = target;
+    window.currentWizardActiveStep = target;
+    persist();
 
     document.querySelectorAll(".wizard-panel").forEach(panel => {
       const isTarget = panel.id === `step-panel-${target}`;
@@ -262,6 +277,42 @@
     return true;
   }
 
+  function modal(options = {}) {
+    const old = document.getElementById("f4u-brand-modal-root");
+    if (old) old.remove();
+    const root = document.createElement("div");
+    root.id = "f4u-brand-modal-root";
+    root.className = "f4u-brand-modal";
+    root.innerHTML = `
+      <div class="f4u-brand-modal__backdrop" data-f4u-modal-close></div>
+      <section class="f4u-brand-modal__card" role="dialog" aria-modal="true" aria-labelledby="f4u-modal-title">
+        <button class="f4u-brand-modal__close" type="button" data-f4u-modal-close aria-label="Close">×</button>
+        <span class="f4u-brand-modal__kicker">filings4u Secure Wizard</span>
+        <h2 id="f4u-modal-title">${esc(options.title || "Action required")}</h2>
+        <div class="f4u-brand-modal__body">${options.html || `<p>${esc(options.message || "Please review the information below.")}</p>`}</div>
+        <div class="f4u-brand-modal__actions">
+          ${options.cancel === false ? "" : `<button type="button" class="btn-wizard-secondary" data-f4u-modal-close>${esc(options.cancelText || "Close")}</button>`}
+          ${options.confirmText ? `<button type="button" class="btn-wizard-main" id="f4u-brand-modal-confirm">${esc(options.confirmText)}</button>` : ""}
+        </div>
+      </section>`;
+    document.body.appendChild(root);
+    const close = () => root.remove();
+    root.querySelectorAll("[data-f4u-modal-close]").forEach(x => x.addEventListener("click", close));
+    root.querySelector("#f4u-brand-modal-confirm")?.addEventListener("click", () => {
+      if (typeof options.onConfirm === "function") options.onConfirm(close, root);
+      else close();
+    });
+    return root;
+  }
+
+  function notify(titleText, message, type = "info") {
+    return modal({
+      title: titleText,
+      html: `<div class="f4u-modal-status f4u-modal-status--${esc(type)}">${esc(message)}</div>`,
+      cancelText: "Got it"
+    });
+  }
+
   let serviceModulePromise = null;
   let discoveredRenderer = null;
   let discoveredValidator = null;
@@ -272,20 +323,39 @@
   }
 
   function findRenderer(beforeFns) {
+    const route = refreshRoute();
+    const registry = window.formRegistry || {};
+    const master = registry[`${route.serviceKey}-form-master`];
+    if (typeof master === "function") return master;
+
+    const aliases = {
+      "dbe-certification": "dbe-certificate-form-master",
+      "wbe-certification": "woman-owned-certificate-form-master"
+    };
+    if (aliases[route.serviceKey] && typeof registry[aliases[route.serviceKey]] === "function") {
+      return registry[aliases[route.serviceKey]];
+    }
+
     const candidates = Object.keys(window).filter(key => {
       if (beforeFns.has(key)) return false;
       if (typeof window[key] !== "function") return false;
       return /^build/i.test(key) && /(field|form|layout|html|application)/i.test(key);
     });
 
-    const preferred = candidates.find(key => /LayoutHtml$/i.test(key)) ||
-                      candidates.find(key => /Fields.*Html/i.test(key)) ||
+    const preferred = candidates.find(key => /FormMaster$/i.test(key)) ||
+                      candidates.find(key => /Fields.*LayoutHtml$/i.test(key)) ||
+                      candidates.find(key => /Form$/i.test(key)) ||
+                      candidates.find(key => /LayoutHtml$/i.test(key)) ||
                       candidates[0];
 
     return preferred ? window[preferred] : null;
   }
 
   function findValidator(beforeObjs) {
+    const route = refreshRoute();
+    const registry = window.formRegistry || {};
+    const exact = registry[`${route.serviceKey}-validation-engine`] || registry[`${route.serviceKey}-validation`];
+    if (exact && typeof exact.validate === "function") return exact;
     const candidates = Object.keys(window).filter(key => {
       if (beforeObjs.has(key)) return false;
       const value = window[key];
@@ -413,7 +483,10 @@
     restoreAnswers,
     validateRequired,
     currentServiceRenderer,
-    currentServiceValidator
+    currentServiceValidator,
+    modal,
+    notify,
+    persist
   });
 
   window.currentOrderCorePayload = window.currentOrderCorePayload || {};
