@@ -322,6 +322,16 @@
     return r.serviceKey ? `${SERVICE_BASE}${encodeURIComponent(r.serviceKey)}.js` : "";
   }
 
+  function safeWindowValue(key) {
+    try {
+      return window[key];
+    } catch (_) {
+      // Named cross-origin frames can appear as Window properties. Reading them
+      // may throw a SecurityError, so service discovery must ignore them.
+      return undefined;
+    }
+  }
+
   function findRenderer(beforeFns) {
     const route = refreshRoute();
     const registry = window.formRegistry || {};
@@ -338,7 +348,8 @@
 
     const candidates = Object.keys(window).filter(key => {
       if (beforeFns.has(key)) return false;
-      if (typeof window[key] !== "function") return false;
+      const value = safeWindowValue(key);
+      if (typeof value !== "function") return false;
       return /^build/i.test(key) && /(field|form|layout|html|application)/i.test(key);
     });
 
@@ -348,7 +359,7 @@
                       candidates.find(key => /LayoutHtml$/i.test(key)) ||
                       candidates[0];
 
-    return preferred ? window[preferred] : null;
+    return preferred ? safeWindowValue(preferred) : null;
   }
 
   function findValidator(beforeObjs) {
@@ -358,12 +369,12 @@
     if (exact && typeof exact.validate === "function") return exact;
     const candidates = Object.keys(window).filter(key => {
       if (beforeObjs.has(key)) return false;
-      const value = window[key];
+      const value = safeWindowValue(key);
       return value && typeof value === "object" && typeof value.validate === "function";
     });
 
     const preferred = candidates.find(key => /validation$/i.test(key)) || candidates[0];
-    return preferred ? window[preferred] : null;
+    return preferred ? safeWindowValue(preferred) : null;
   }
 
   function ensureServiceModule() {
@@ -376,11 +387,11 @@
     }
 
     const beforeFns = new Set(
-      Object.keys(window).filter(key => typeof window[key] === "function")
+      Object.keys(window).filter(key => typeof safeWindowValue(key) === "function")
     );
     const beforeObjs = new Set(
       Object.keys(window).filter(key => {
-        const v = window[key];
+        const v = safeWindowValue(key);
         return v && typeof v === "object" && typeof v.validate === "function";
       })
     );
