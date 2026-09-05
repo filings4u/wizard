@@ -94,9 +94,17 @@ async function finalizePaidOrder(w,checkout,status,payButton){
 
 
 function printableWindow(title,body){
- const win=window.open("","_blank","noopener,noreferrer,width=900,height=760");if(!win)return;
- win.document.write(`<!doctype html><html><head><title>${title}</title><style>body{font-family:Arial,sans-serif;color:#0a1f44;margin:40px}img{width:135px}.head{border-bottom:3px solid #10b981;padding-bottom:18px;margin-bottom:24px}.meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}.box{border:1px solid #cbd5e1;padding:20px}.row{display:flex;justify-content:space-between;gap:24px;padding:12px 0;border-bottom:1px solid #e2e8f0}.total{font-weight:800;font-size:18px;border-top:2px solid #0a1f44;margin-top:4px}.poa{font-family:Georgia,serif;line-height:1.7;color:#172033}.sig{margin-top:28px;border-top:1px solid #94a3b8;padding-top:14px}@media print{button{display:none}}</style></head><body>${body}<script>window.onload=()=>window.print()<\/script></body></html>`);win.document.close();
+ const root=document.createElement("section");
+ root.id="f4u-print-root";
+ root.innerHTML=`<style>#f4u-print-root{font-family:Arial,sans-serif;color:#0a1f44;background:#fff;padding:32px;max-width:900px;margin:0 auto}#f4u-print-root img{width:135px;height:auto}#f4u-print-root .head{border-bottom:3px solid #10b981;padding-bottom:18px;margin-bottom:24px}#f4u-print-root .meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}#f4u-print-root .box{border:1px solid #cbd5e1;padding:20px}#f4u-print-root .row{display:flex;justify-content:space-between;gap:24px;padding:12px 0;border-bottom:1px solid #e2e8f0}#f4u-print-root .total{font-weight:800;font-size:18px;border-top:2px solid #0a1f44;margin-top:4px}#f4u-print-root .poa{font-family:Georgia,serif;line-height:1.7;color:#172033}#f4u-print-root .sig{margin-top:28px;border-top:1px solid #94a3b8;padding-top:14px}@media print{#f4u-print-root{padding:0;max-width:none}}</style>${body}`;
+ document.body.appendChild(root);
+ document.body.classList.add("f4u-print-document");
+ const cleanup=()=>{document.body.classList.remove("f4u-print-document");root.remove();};
+ const after=()=>setTimeout(cleanup,150);
+ window.addEventListener("afterprint",cleanup,{once:true});
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{window.print();after();}));
 }
+
 function paidLineItems(w,order){
  const r=w.refreshRoute(),items=[];
  items.push({name:`${r.service?.name||w.title(r.serviceKey)} — ${w.title(r.planKey)}`,price:Number(order.service_fee||0)});
@@ -120,6 +128,15 @@ function renderPaidSummary(w,order){
  <div class="f4u-final-actions"><button id="f4u-print-receipt" type="button" class="btn-wizard-secondary">Print Receipt</button><button id="f4u-print-poa" type="button" class="btn-wizard-secondary">Print Power of Attorney</button>${portal?'<a class="btn-wizard-main" href="https://portal.filings4u.com/client-login.html">Access Client Portal</a>':'<span class="f4u-account-invite-note">A separate account activation email will be sent to the email used for this order. Portal access appears after your account is activated.</span>'}</div></section>`;
  document.getElementById("f4u-print-receipt")?.addEventListener("click",()=>printableWindow("filings4u Receipt",`<div class="head"><img src="${location.origin}/images/logo.png"><h1>Paid Receipt</h1></div><div class="meta"><div><b>Order number</b><br>${w.esc(order.id||"")}</div><div><b>Tracking number</b><br>${w.esc(order.tracking_number||"")}</div></div><div class="box">${items.map(x=>`<div class="row"><span>${w.esc(x.name)}</span><b>${w.money(x.price)}</b></div>`).join("")}<div class="row total"><span>Total paid</span><b>${w.money(paid)}</b></div></div>`));
  document.getElementById("f4u-print-poa")?.addEventListener("click",()=>printableWindow("Signed Power of Attorney",`<div class="head"><img src="${location.origin}/images/logo.png"><h1>Limited Power of Attorney & Corporate Agency Agreement</h1></div><div class="poa">${poaDoc}</div><div class="sig"><b>Electronically signed by:</b> ${w.esc(a.signer_name||a.signature||"")}<br><b>Executed:</b> ${signed?w.esc(new Date(signed).toLocaleString()):"Recorded with order"}<br><b>Order:</b> ${w.esc(order.id||"")}<br><b>Tracking:</b> ${w.esc(order.tracking_number||"")}</div>`));
+ if(!w.state.__completionLifecycleDone){
+  w.state.__completionLifecycleDone=true;
+  w.persist?.();
+  window.endFilings4uWizardSession?.("purchase_complete",{signOut:true,clearState:false});
+  try{sessionStorage.setItem("f4u_wizard_completed_at",String(Date.now()));}catch(_){}
+ }
+ window.currentWizardActiveStep=7;
+ w.updateProgress?.(7);
+ document.dispatchEvent(new CustomEvent("f4u:wizard-step-change",{detail:{step:7,complete:true}}));
  window.scrollTo({top:0,behavior:"instant"});
 }
 

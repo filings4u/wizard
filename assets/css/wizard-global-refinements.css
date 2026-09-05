@@ -22,3 +22,10 @@
   white-space:nowrap;
 }
 .f4u-boot-card{display:none !important;}
+
+/* 2026-09-05 — application-map stacking repair */
+@media (min-width:901px){
+  .wizard-floating-tools{z-index:9000!important;}
+  .wizard-floating-map{left:216px!important;top:158px!important;z-index:12000!important;width:300px!important;max-height:calc(100vh - 178px)!important;}
+  .floating-map-card{overflow:auto!important;max-height:calc(100vh - 178px)!important;}
+}
