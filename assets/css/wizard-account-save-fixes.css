@@ -21,3 +21,219 @@ input[data-f4u-format="phone"],#vault_client_phone,#chat_phone{font-variant-nume
 .f4u-poa-document__meta span:first-child{display:none!important}
 .f4u-login-state{position:fixed;right:18px;top:18px;z-index:900000;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;padding:9px 12px;color:#065f46;font-size:.78rem;box-shadow:0 8px 20px rgba(10,31,68,.08)}.f4u-login-state strong{font-weight:750}.f4u-login-state small{display:block;color:#047857;margin-top:2px}
 @media(max-width:680px){.f4u-poa-document{padding:12px!important}.f4u-login-state{position:static;margin:8px 12px 0;text-align:center}}
+
+
+/* ==========================================================================
+   FINAL PRE-STRIPE — LEGAL LETTER POA + INVOICE SUMMARY
+   ========================================================================== */
+
+.f4u-poa-document{
+  background:#fff !important;
+  border:1px solid #cfd8e3 !important;
+  border-radius:0 !important;
+  box-shadow:0 8px 24px rgba(10,31,68,.05) !important;
+}
+
+.f4u-poa-document .f4u-document-brand{
+  padding:18px 22px 12px !important;
+  border-bottom:0 !important;
+  background:#fff !important;
+}
+
+.f4u-poa-document .f4u-document-brand img{
+  height:31px !important;
+}
+
+.f4u-poa-document .f4u-document-brand strong{
+  color:#0a1f44 !important;
+  font-size:.76rem !important;
+  font-weight:700 !important;
+}
+
+.f4u-poa-document .f4u-document-brand span{
+  color:#475569 !important;
+  font-size:.62rem !important;
+  letter-spacing:.055em !important;
+  text-transform:uppercase !important;
+}
+
+.f4u-poa-document__meta{
+  margin:0 22px !important;
+  padding:8px 0 10px !important;
+  border-top:2px solid #10b981 !important;
+  border-bottom:0 !important;
+}
+
+.f4u-poa-document__meta span{
+  padding:0 !important;
+  background:transparent !important;
+  color:#334155 !important;
+  font-size:.72rem !important;
+  font-weight:500 !important;
+  border-radius:0 !important;
+}
+
+.f4u-poa-document > h3{
+  margin:8px 22px 12px !important;
+  color:#0a1f44 !important;
+  font-family:Georgia,"Times New Roman",serif !important;
+  font-size:1rem !important;
+  font-weight:700 !important;
+  letter-spacing:0 !important;
+}
+
+.f4u-poa-scroll{
+  height:330px !important;
+  max-height:330px !important;
+  min-height:330px !important;
+  margin:0 22px !important;
+  padding:26px 34px 28px !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  border:1px solid #d6dde6 !important;
+  border-radius:0 !important;
+  background:#fff !important;
+  color:#111827 !important;
+  font-family:Georgia,"Times New Roman",serif !important;
+  font-size:.78rem !important;
+  line-height:1.72 !important;
+  text-align:left !important;
+  -webkit-overflow-scrolling:touch !important;
+  overscroll-behavior:contain !important;
+  scrollbar-width:thin;
+}
+
+.f4u-poa-scroll p{
+  margin:0 0 15px !important;
+  color:#111827 !important;
+  font-family:Georgia,"Times New Roman",serif !important;
+  font-size:.78rem !important;
+  font-weight:400 !important;
+  line-height:1.72 !important;
+  text-indent:1.6em !important;
+}
+
+.f4u-poa-scroll p:first-of-type{
+  text-indent:0 !important;
+}
+
+.f4u-poa-scroll h4{
+  margin:20px 0 8px !important;
+  color:#0a1f44 !important;
+  font-family:Georgia,"Times New Roman",serif !important;
+  font-size:.76rem !important;
+  font-weight:700 !important;
+  letter-spacing:0 !important;
+  text-transform:none !important;
+}
+
+.f4u-poa-scroll strong{
+  font-weight:700 !important;
+}
+
+.f4u-poa-scroll-end{
+  margin-top:24px !important;
+  padding-top:12px !important;
+  border-top:1px solid #cfd8e3 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:#64748b !important;
+  font-family:Georgia,"Times New Roman",serif !important;
+  font-size:.68rem !important;
+  font-weight:400 !important;
+  letter-spacing:.03em !important;
+  text-transform:none !important;
+}
+
+.f4u-price-summary{
+  overflow:hidden !important;
+  padding:0 !important;
+  border:1px solid #d8e0e8 !important;
+  border-radius:12px !important;
+  background:#fff !important;
+}
+
+.f4u-price-summary .f4u-invoice-row{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:center !important;
+  min-height:52px !important;
+  margin:0 !important;
+  padding:0 16px !important;
+  border:0 !important;
+  border-bottom:1px solid #e7edf3 !important;
+  background:#fff !important;
+  gap:18px !important;
+}
+
+.f4u-price-summary .f4u-invoice-row__description{
+  color:#0f172a !important;
+  font-size:.88rem !important;
+  font-weight:500 !important;
+  line-height:1.35 !important;
+}
+
+.f4u-price-summary .f4u-invoice-row__amount{
+  min-width:92px !important;
+  color:#0a1f44 !important;
+  font-size:.9rem !important;
+  font-weight:800 !important;
+  text-align:right !important;
+  white-space:nowrap !important;
+}
+
+.f4u-price-summary .f4u-invoice-total{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:center !important;
+  min-height:58px !important;
+  margin:0 !important;
+  padding:0 16px !important;
+  border:0 !important;
+  background:#f8fafc !important;
+  gap:18px !important;
+}
+
+.f4u-price-summary .f4u-invoice-total span{
+  color:#0a1f44 !important;
+  font:800 .95rem/1.3 Manrope,sans-serif !important;
+}
+
+.f4u-price-summary .f4u-invoice-total strong{
+  min-width:92px !important;
+  color:#0e9f6e !important;
+  font:800 1rem/1.3 Manrope,sans-serif !important;
+  text-align:right !important;
+  white-space:nowrap !important;
+}
+
+@media(max-width:680px){
+  .f4u-poa-document .f4u-document-brand{
+    padding:16px 15px 10px !important;
+  }
+
+  .f4u-poa-document__meta,
+  .f4u-poa-document > h3,
+  .f4u-poa-scroll{
+    margin-left:15px !important;
+    margin-right:15px !important;
+  }
+
+  .f4u-poa-scroll{
+    height:315px !important;
+    max-height:315px !important;
+    min-height:315px !important;
+    padding:22px 20px 24px !important;
+  }
+
+  .f4u-price-summary .f4u-invoice-row{
+    min-height:50px !important;
+    padding:0 13px !important;
+    gap:10px !important;
+  }
+
+  .f4u-price-summary .f4u-invoice-row__amount,
+  .f4u-price-summary .f4u-invoice-total strong{
+    min-width:78px !important;
+  }
+}
