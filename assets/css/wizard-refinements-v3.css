@@ -1,0 +1,81 @@
+/* ========================================================================== 
+   filings4u Wizard Refinements V3 — loaded last
+   ========================================================================== */
+:root{--f4u-navy:#0a1f44;--f4u-green:#10b981;--f4u-green-dark:#0e9f6e;--f4u-line:#e2e8f0;--f4u-muted:#64748b;--f4u-soft:#f8fafc}
+
+/* Smaller, calmer hierarchy */
+.f4u-entry-copy h2,.step-main-title,.step-header-container h1,.step-header-container h2{font-size:clamp(1.38rem,1.75vw,1.72rem)!important;line-height:1.12!important;letter-spacing:-.025em!important}
+.f4u-entry-copy p,.step-subtitle{font-size:.88rem!important;line-height:1.55!important}
+.f4u-form-section__head h3{font-size:.92rem!important;line-height:1.25!important}
+.f4u-form-section__head p{font-size:.72rem!important;line-height:1.4!important}
+.f4u-form-section__number{font-size:.74rem!important}
+
+/* Desktop forms should use available horizontal space */
+@media(min-width:760px){
+  .f4u-field-grid--schema{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:15px 18px!important;align-items:start!important}
+  .f4u-field-grid--schema>.f4u-schema-field[data-f4u-span="full"],
+  .f4u-field-grid--schema>.f4u-schema-field:has(textarea),
+  .f4u-field-grid--schema>.f4u-schema-field:has(.f4u-option-cards),
+  .f4u-field-grid--schema>.f4u-choice-row{grid-column:1/-1!important}
+  .f4u-field-grid--schema>.f4u-schema-field[data-f4u-span="half"]{grid-column:auto!important}
+}
+@media(max-width:759px){.f4u-field-grid--schema{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}}
+
+/* Tooltip: real info icon + breathing room */
+.f4u-filing-tooltip{display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;gap:13px!important;align-items:start!important;margin:0 0 18px!important;padding:15px 16px!important;border:1px solid #ccefe2!important;border-radius:14px!important;background:#f2fcf8!important;color:#334155!important}
+.f4u-filing-tooltip__icon{width:36px!important;height:36px!important;display:grid!important;place-items:center!important;border-radius:50%!important;background:#10b981!important;color:#fff!important}
+.f4u-filing-tooltip__icon svg{width:18px!important;height:18px!important;display:block!important;fill:none!important;stroke:currentColor!important;stroke-width:2.2!important}
+.f4u-filing-tooltip strong{display:block!important;margin:0 0 6px!important;color:#0a1f44!important;font:800 .8rem/1.25 Manrope,sans-serif!important}
+.f4u-filing-tooltip p{margin:0!important;color:#526174!important;font-size:.77rem!important;line-height:1.58!important}
+
+/* Action rows: clear separation */
+.wizard-action-footer,.wizard-footer-action-row{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:32px!important;margin-top:36px!important;padding-top:26px!important;border-top:1px solid #e2e8f0!important}
+.wizard-action-footer>button,.wizard-footer-action-row>button{min-height:50px!important;margin:0!important;padding-left:22px!important;padding-right:22px!important}
+.wizard-action-footer>button:last-child,.wizard-footer-action-row>button:last-child{margin-left:auto!important}
+@media(max-width:700px){.wizard-action-footer,.wizard-footer-action-row{display:grid!important;grid-template-columns:1fr!important;gap:14px!important}.wizard-action-footer>button,.wizard-footer-action-row>button{width:100%!important;margin:0!important}}
+
+/* POA typography + true scroll well */
+.f4u-poa-document>h3{font-size:1.02rem!important;line-height:1.3!important;font-weight:750!important}
+.f4u-poa-scroll{display:block!important;height:310px!important;max-height:310px!important;min-height:310px!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;font-family:"DM Sans",sans-serif!important;font-size:.76rem!important;line-height:1.62!important;font-weight:400!important;text-align:left!important;touch-action:pan-y!important}
+.f4u-poa-scroll p{font-size:.76rem!important;line-height:1.62!important;font-weight:400!important;margin:0 0 13px!important}
+.f4u-poa-scroll strong{font-weight:650!important}
+.f4u-poa-scroll h4{font-size:.74rem!important;line-height:1.35!important;font-weight:700!important;margin:16px 0 6px!important}
+.f4u-document-brand strong{font-weight:700!important}
+.f4u-document-brand span{font-weight:400!important}
+@media(max-width:700px){.f4u-poa-scroll{height:285px!important;max-height:285px!important;min-height:285px!important}.f4u-poa-document>h3{font-size:.96rem!important}}
+
+/* Live totals on add-ons and summary */
+.f4u-upsell-live-total{margin-top:22px;padding:16px 18px;border:1px solid #d8e3ec;border-radius:14px;background:#f8fafc}
+.f4u-upsell-live-total__row{display:flex;justify-content:space-between;gap:18px;padding:8px 0;color:#475569;font-size:.82rem}
+.f4u-upsell-live-total__row.is-total{margin-top:6px;padding-top:13px;border-top:1px solid #dbe3eb;color:#0a1f44;font:800 .9rem Manrope,sans-serif}
+.f4u-upsell-live-total__row strong{color:#0e9f6e}
+.f4u-summary-line{display:flex!important;justify-content:space-between!important;gap:18px!important;padding:11px 0!important;border-bottom:1px dashed #e2e8f0!important}
+.f4u-summary-line--subtotal{font-weight:800!important;color:#0a1f44!important}
+
+/* Floating application map sits beside its trigger instead of hanging below */
+@media(min-width:901px){
+ .wizard-floating-tools{left:18px!important;top:158px!important;bottom:auto!important;display:flex!important;flex-direction:column!important;gap:10px!important}
+ .wizard-floating-map{position:fixed!important;left:92px!important;top:158px!important;bottom:auto!important;width:300px!important;max-height:calc(100vh - 180px)!important;transform:translateX(-10px) scale(.985)!important;transform-origin:top left!important}
+ .wizard-floating-map.is-open{transform:translateX(0) scale(1)!important}
+ .floating-map-card{max-height:calc(100vh - 180px)!important;overflow:auto!important}
+}
+
+/* Save/login controls */
+.f4u-save-exit-notice{display:grid!important;gap:4px!important;margin:14px 0!important;padding:13px 14px!important;border:1px solid #fde68a!important;border-left:4px solid #f59e0b!important;border-radius:11px!important;background:#fffbeb!important;color:#475569!important;font-size:.78rem!important;line-height:1.48!important}
+.f4u-save-exit-notice strong{color:#92400e!important}
+
+/* Keep inputs compact enough for paired desktop fields */
+.f4u-service-form input:not([type="checkbox"]):not([type="radio"]),.f4u-service-form select,.f4u-service-form textarea{min-height:48px!important}
+.f4u-field-help{display:block!important;margin-top:6px!important;color:#64748b!important;font-size:.69rem!important;line-height:1.42!important}
+
+/* Never show a blank application panel during verified boot. */
+.f4u-boot-card{min-height:280px;display:flex;align-items:center;justify-content:center;gap:14px;padding:28px;text-align:left;color:#0a1f44}
+.f4u-boot-card__spinner{width:30px;height:30px;flex:0 0 30px;border:3px solid #d9f5ea;border-top-color:#10b981;border-radius:50%;animation:f4uBootSpin .75s linear infinite}
+.f4u-boot-card strong{display:block;font:800 .92rem/1.3 Manrope,sans-serif}.f4u-boot-card small{display:block;margin-top:3px;color:#64748b;font-size:.76rem}
+@keyframes f4uBootSpin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.f4u-boot-card__spinner{animation:none}}
+/* Final compact heading scale */
+.f4u-entry-copy h2,.step-main-title,.step-header-container h1,.step-header-container h2{font-size:clamp(1.28rem,1.5vw,1.55rem)!important}
+.f4u-poa-document>h3{font-size:.96rem!important}
+.f4u-poa-scroll,.f4u-poa-scroll p{font-size:.74rem!important;line-height:1.58!important}
+.f4u-poa-scroll strong{font-weight:600!important}.f4u-poa-scroll h4{font-weight:650!important;font-size:.72rem!important}

@@ -12,6 +12,8 @@ window.renderWizardStep3=async function(){
    if(typeof html!=="string") throw new Error("The service renderer did not return HTML.");
    canvas.innerHTML=html;
    w.restoreAnswers(canvas);
+   window.F4UServiceForms?.sync?.(canvas);
+   canvas.querySelectorAll("[data-f4u-format]").forEach(el=>window.F4UServiceForms?.format?.(el));
    canvas.addEventListener("input",()=>w.captureAnswers(canvas));
    canvas.addEventListener("change",()=>w.captureAnswers(canvas));
  }catch(error){

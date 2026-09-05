@@ -26,12 +26,22 @@ function itemsFor(r){
 }
 window.F4U_ADDON_PRICE_MAP={"registered-agent":75,"annual-compliance":99,"operating-agreement":89,"ein-service":75,"good-standing":45,"boc3-filing":75,"safety-audit-prep":149};
 window.F4U_ADDON_CATALOG={};
-[...Object.values(CATALOG),...Object.values(FALLBACK)].flat().forEach(([id,name,price,desc])=>{window.F4U_ADDON_CATALOG[id]={id,name,price:Number(price||0),description:desc};});
+[...Object.values(CATALOG),...Object.values(FALLBACK)].flat().forEach(([id,name,price,desc])=>{window.F4U_ADDON_CATALOG[id]={id,name,price:Number(price||0),description:desc};if(!(id in window.F4U_ADDON_PRICE_MAP))window.F4U_ADDON_PRICE_MAP[id]=Number(price||0);});
+
 window.renderWizardStep4=function(){
  const host=document.getElementById("step-4-injection-placeholder");if(!host)return;
- const w=window.F4UWizard,r=w.refreshRoute(),items=itemsFor(r);
- host.innerHTML=`<section class="f4u-entry-layout"><div class="f4u-entry-copy"><span class="f4u-entry-kicker">Step 4 · Recommended Services</span><h2>Complete your ${w.esc(r.service?.name||w.title(r.serviceKey))} package</h2><p>These recommendations are based only on the service you selected. Nothing is added unless you choose it.</p></div><div class="f4u-upsell-grid">${items.map(([id,name,price,desc])=>`<label class="f4u-upsell-card"><span class="f4u-upsell-card__copy"><strong>${w.esc(name)}</strong><small>${w.esc(desc)}</small><b>${price?w.money(price):"Quote request · $0 today"}</b></span><span class="f4u-upsell-card__control"><input type="checkbox" class="f4u-addon-check" value="${id}" ${w.state.addons.includes(id)?"checked":""}><i></i></span></label>`).join("")}</div><div class="wizard-action-footer"><button id="step4-back" type="button" class="btn-wizard-secondary">← Back to Application</button><button id="step4-next" type="button" class="btn-wizard-main">Continue to Power of Attorney</button></div></section>`;
- document.querySelectorAll(".f4u-addon-check").forEach(b=>b.addEventListener("change",()=>{w.state.addons=[...document.querySelectorAll(".f4u-addon-check:checked")].map(x=>x.value);w.persist();}));
+ const w=window.F4UWizard,r=w.refreshRoute(),items=itemsFor(r),serviceFee=Number(r.service?.[r.planKey]||0);
+ host.innerHTML=`<section class="f4u-entry-layout"><div class="f4u-entry-copy"><span class="f4u-entry-kicker">Step 4 · Recommended Services</span><h2>Recommended Services</h2><p>These recommendations are based on the service you selected. Nothing is added unless you choose it.</p></div><div class="f4u-upsell-grid">${items.map(([id,name,price,desc])=>`<label class="f4u-upsell-card"><span class="f4u-upsell-card__copy"><strong>${w.esc(name)}</strong><small>${w.esc(desc)}</small><b>${price?w.money(price):"Quote request · $0 today"}</b></span><span class="f4u-upsell-card__control"><input type="checkbox" class="f4u-addon-check" value="${id}" ${w.state.addons.includes(id)?"checked":""}><i></i></span></label>`).join("")}</div><div class="f4u-upsell-live-total"><div class="f4u-upsell-live-total__row"><span>${w.esc(r.service?.name||w.title(r.serviceKey))} — ${w.esc(w.title(r.planKey))}</span><strong>${w.money(serviceFee)}</strong></div><div class="f4u-upsell-live-total__row"><span>Selected add-ons</span><strong id="step4-addons-total">${w.money(0)}</strong></div><div class="f4u-upsell-live-total__row is-total"><span>Current order total</span><strong id="step4-order-total">${w.money(serviceFee)}</strong></div></div><div class="wizard-action-footer"><button id="step4-back" type="button" class="btn-wizard-secondary">← Back to Application</button><button id="step4-next" type="button" class="btn-wizard-main">Continue to Power of Attorney</button></div></section>`;
+ function recalc(){
+   w.state.addons=[...document.querySelectorAll(".f4u-addon-check:checked")].map(x=>x.value);
+   const addons=w.state.addons.reduce((sum,id)=>sum+Number(window.F4U_ADDON_PRICE_MAP[id]||0),0);
+   const total=serviceFee+addons;
+   const a=document.getElementById("step4-addons-total"),t=document.getElementById("step4-order-total");
+   if(a)a.textContent=w.money(addons); if(t)t.textContent=w.money(total);
+   w.persist();
+ }
+ document.querySelectorAll(".f4u-addon-check").forEach(b=>b.addEventListener("change",recalc));
+ recalc();
  document.getElementById("step4-back")?.addEventListener("click",()=>w.go(3));
  document.getElementById("step4-next")?.addEventListener("click",()=>w.go(5));
 };

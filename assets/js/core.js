@@ -16,6 +16,11 @@
   const STATE_CODES = Object.freeze(Object.fromEntries(Object.entries(US_STATES).map(([code,name])=>[name.toLowerCase(),code])));
   function stateName(value){ const raw=String(value||'').trim(); if(!raw)return ''; return US_STATES[raw.toUpperCase()]||raw.replace(/\b\w/g,c=>c.toUpperCase()); }
   function stateCode(value){ const raw=String(value||'').trim(); if(!raw)return ''; const upper=raw.toUpperCase(); return US_STATES[upper]?upper:(STATE_CODES[raw.toLowerCase()]||''); }
+  const GOVERNMENT_ONLY_SERVICES = new Set([
+    "clia-certificate",
+    "payroll-tax-940-941",
+    "duns-number"
+  ]);
 
 
   const state = {
@@ -24,7 +29,8 @@
     authorization: {},
     answers: {},
     verifiedPayment: null,
-    currentStep: 1
+    currentStep: 1,
+    routeKey: ""
   };
 
   try {
@@ -74,16 +80,38 @@
 
     const government =
       !!service &&
-      (service.requiresJurisdiction === false || service.serviceType === "government");
+      (GOVERNMENT_ONLY_SERVICES.has(serviceKey) ||
+       service.requiresJurisdiction === false ||
+       service.serviceType === "government");
 
     const jurisdiction = government
       ? ""
       : stateName(p.get("state") || state.jurisdiction || "");
 
-    if (!government && jurisdiction && p.get("state") !== jurisdiction) {
-      const normalizedUrl = new URL(location.href);
+    const normalizedCode = government ? "FEDERAL" : stateCode(jurisdiction);
+    const routeKey = [serviceKey, planKey, normalizedCode].join("|");
+
+    // A new product/package/jurisdiction is a new application. Do not leak
+    // answers or add-ons from a previous order into it. Refreshes of the same
+    // route preserve everything.
+    if (state.routeKey && routeKey && state.routeKey !== routeKey) {
+      state.addons = [];
+      state.authorization = {};
+      state.answers = {};
+      state.verifiedPayment = null;
+      state.currentStep = 1;
+    }
+    if (routeKey) state.routeKey = routeKey;
+
+    const normalizedUrl = new URL(location.href);
+    if (government) {
+      if (normalizedUrl.searchParams.has("state")) {
+        normalizedUrl.searchParams.delete("state");
+        history.replaceState(history.state || {}, "", normalizedUrl.pathname + "?" + normalizedUrl.searchParams.toString());
+      }
+    } else if (jurisdiction && p.get("state") !== jurisdiction) {
       normalizedUrl.searchParams.set("state", jurisdiction);
-      history.replaceState({}, "", normalizedUrl.pathname + "?" + normalizedUrl.searchParams.toString());
+      history.replaceState(history.state || {}, "", normalizedUrl.pathname + "?" + normalizedUrl.searchParams.toString());
     }
 
     state.jurisdiction = jurisdiction;
@@ -216,6 +244,10 @@
     root.querySelectorAll("input,select,textarea").forEach(el => {
       const key = fieldKey(el);
       if (!key) return;
+      if (el.disabled) {
+        delete state.answers[key];
+        return;
+      }
 
       if (el.type === "checkbox") {
         state.answers[key] = !!el.checked;
@@ -318,6 +350,7 @@
   }
 
   let serviceModulePromise = null;
+  let serviceModuleSrc = "";
   let discoveredRenderer = null;
   let discoveredValidator = null;
 
@@ -382,9 +415,15 @@
   }
 
   function ensureServiceModule() {
-    if (serviceModulePromise) return serviceModulePromise;
-
     const src = serviceModuleUrl();
+    if (serviceModulePromise && serviceModuleSrc === src) return serviceModulePromise;
+    if (serviceModuleSrc !== src) {
+      serviceModulePromise = null;
+      serviceModuleSrc = src;
+      discoveredRenderer = null;
+      discoveredValidator = null;
+    }
+
     if (!src) {
       serviceModulePromise = Promise.resolve(false);
       return serviceModulePromise;
@@ -485,21 +524,36 @@
     return discoveredValidator;
   }
 
-  async function initialPaint() {
-    // The access gate can delay boot past DOMContentLoaded, so poll briefly until
-    // the step module has actually been injected by wizard.html.
-    const started = Date.now();
+  let booted = false;
+  function installNavigationGuard() {
+    if (window.__F4U_NAV_GUARD_INSTALLED) return;
+    window.__F4U_NAV_GUARD_INSTALLED = true;
+    try {
+      history.replaceState({ ...(history.state || {}), f4uWizard: true }, "", location.href);
+      history.pushState({ f4uWizard: true }, "", location.href);
+      window.addEventListener("popstate", function () {
+        try { history.pushState({ f4uWizard: true }, "", location.href); } catch (_) {}
+      });
+    } catch (_) {}
+  }
 
-    while (typeof window.renderWizardStep1 !== "function") {
-      if (Date.now() - started > 3000) {
-        console.error("[filings4u] Step 1 renderer did not load.");
+  async function initialPaint() {
+    if (booted) return;
+    const started = Date.now();
+    while (typeof window.renderWizardStep1 !== "function" || typeof window.renderWizardStep8 !== "function") {
+      if (Date.now() - started > 15000) {
+        console.error("[filings4u] Wizard step renderers did not finish loading.");
         return;
       }
-      await new Promise(r => setTimeout(r, 20));
+      await new Promise(r => setTimeout(r, 25));
     }
-
-    ensureServiceModule();
-    go(1);
+    booted = true;
+    installNavigationGuard();
+    const route = refreshRoute();
+    await ensureServiceModule();
+    let target = Math.min(8, Math.max(1, Number(state.currentStep) || 1));
+    if (!route.government && !route.jurisdiction && target > 1) target = 1;
+    await go(target);
   }
 
   window.F4UWizard = Object.freeze({
@@ -520,12 +574,10 @@
     currentServiceValidator,
     modal,
     notify,
-    persist
+    persist,
+    boot: initialPaint
   });
 
   window.currentOrderCorePayload = window.currentOrderCorePayload || {};
 
-  // Do not wait for DOMContentLoaded; the secure access check may already have
-  // delayed the page beyond that event.
-  setTimeout(initialPaint, 0);
 })();

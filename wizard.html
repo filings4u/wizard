@@ -20,7 +20,7 @@
 <link href="assets/css/wizard-floating-map.css" rel="stylesheet"/>
 <link href="assets/css/wizard-overrides.css" rel="stylesheet"/>
 <link href="assets/css/wizard-mobile.css" rel="stylesheet"/>
-<link href="assets/css/service-forms.css" rel="stylesheet"/></head>
+<link href="assets/css/service-forms.css" rel="stylesheet"/><link href="assets/css/wizard-refinements-v3.css" rel="stylesheet"/></head>
 
 <body>
 <header class="wizard-shell-topbar">
@@ -72,7 +72,7 @@
 <span id="wizard-progress-meter"></span>
 </div>
 </div>
-<div class="wizard-container-wrapper"><div aria-label="Wizard step 1" class="wizard-panel active" id="step-panel-1" role="region"><div id="step-1-injection-placeholder"></div></div>
+<div class="wizard-container-wrapper"><div aria-label="Wizard step 1" class="wizard-panel active" id="step-panel-1" role="region"><div id="step-1-injection-placeholder"><div class="f4u-boot-card" role="status" aria-live="polite"><span class="f4u-boot-card__spinner" aria-hidden="true"></span><div><strong>Preparing your secure application</strong><small>Your verified service, package, and saved progress are loading.</small></div></div></div></div>
 <div aria-label="Wizard step 2" class="wizard-panel" hidden="" id="step-panel-2" role="region"><div id="step-2-injection-placeholder"></div></div>
 <div aria-label="Wizard step 3" class="wizard-panel" hidden="" id="step-panel-3" role="region"><div id="step-3-injection-placeholder"></div></div>
 <div aria-label="Wizard step 4" class="wizard-panel" hidden="" id="step-panel-4" role="region"><div id="step-4-injection-placeholder"></div></div>
@@ -230,6 +230,9 @@
         s.onerror = function () { reject(new Error("Could not load " + s.src)); };
         document.body.appendChild(s);
       });
+    }
+    if (window.F4UWizard?.boot) {
+      await window.F4UWizard.boot();
     }
     console.log("[filings4u] Verified wizard boot complete.");
   }
