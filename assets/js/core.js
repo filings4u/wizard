@@ -222,7 +222,7 @@
     await renderStep(target);
 
     try {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "auto" });
     } catch (_) {
       window.scrollTo(0, 0);
     }
@@ -539,14 +539,6 @@
 
   async function initialPaint() {
     if (booted) return;
-    const started = Date.now();
-    while (typeof window.renderWizardStep1 !== "function" || typeof window.renderWizardStep8 !== "function") {
-      if (Date.now() - started > 15000) {
-        console.error("[filings4u] Wizard step renderers did not finish loading.");
-        return;
-      }
-      await new Promise(r => setTimeout(r, 25));
-    }
     booted = true;
     installNavigationGuard();
     const route = refreshRoute();

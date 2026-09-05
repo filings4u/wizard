@@ -3,151 +3,120 @@
 
 const CHECKOUT_URL="https://lrbimrlbskjweynxlgas.supabase.co/functions/v1/wizard-checkout";
 const STATUS_URL="https://lrbimrlbskjweynxlgas.supabase.co/functions/v1/wizard-order-status";
+let stripeInstance=null,elementsInstance=null,paymentElement=null,activeMountKey="";
 
 function clean(v){return String(v??"").trim();}
+function errorText(err){
+ if(!err)return "Payment could not be prepared.";
+ if(typeof err==="string")return err;
+ if(typeof err.message==="string")return err.message;
+ if(typeof err.error==="string")return err.error;
+ if(err.error?.message)return String(err.error.message);
+ try{return JSON.stringify(err);}catch(_){return "Payment could not be prepared.";}
+}
 function getContact(w){
- const s=w.state||{}, answers=s.answers||{}, auth=s.authorization||{};
- const pick=(...keys)=>{
-   for(const key of keys){
-     const candidates=[s[key],answers[key],localStorage.getItem(key)];
-     for(const v of candidates) if(clean(v)) return clean(v);
-   }
-   return "";
- };
+ const s=w.state||{},a=s.answers||{},auth=s.authorization||{};
+ const pick=(...keys)=>{for(const k of keys){for(const v of [s[k],a[k],localStorage.getItem(k)])if(clean(v))return clean(v);}return "";};
  return {
-   first_name:pick("first_name","contact_first_name","authorized_first_name")||clean(auth.first_name),
-   last_name:pick("last_name","contact_last_name","authorized_last_name")||clean(auth.last_name),
-   email_address:pick("email_address","email","contact_email"),
-   phone_number:pick("phone_number","phone","contact_phone"),
-   company_name:pick("company_name","business_name","legal_business_name","llc_desired_name","corp_proposed_name","clia_lab_name")||"Not Specified"
+  first_name:pick("first_name","contact_first_name","authorized_first_name")||clean(auth.first_name),
+  last_name:pick("last_name","contact_last_name","authorized_last_name")||clean(auth.last_name),
+  email_address:pick("email_address","email","contact_email"),
+  phone_number:pick("phone_number","phone","contact_phone"),
+  company_name:pick("company_name","business_name","legal_business_name","llc_desired_name","corp_proposed_name","clia_lab_name","sp_proposed_name")||"Not Specified"
  };
 }
 function getUpsells(w){
- const raw=w.state?.selectedUpsells||w.state?.upsells||[];
- if(Array.isArray(raw)) return raw.map(x=>typeof x==="string"?x:(x?.slug||x?.upsell_slug)).filter(Boolean);
- if(raw&&typeof raw==="object") return Object.entries(raw).filter(([,v])=>!!v).map(([k])=>k);
+ const raw=w.state?.addons||w.state?.selectedUpsells||w.state?.upsells||[];
+ if(Array.isArray(raw))return [...new Set(raw.map(x=>typeof x==="string"?x:(x?.slug||x?.upsell_slug)).filter(Boolean))];
+ if(raw&&typeof raw==="object")return Object.entries(raw).filter(([,v])=>!!v).map(([k])=>k);
  return [];
 }
-function checkoutState(){
- const q=new URLSearchParams(location.search);
- return {mode:q.get("checkout"),orderId:q.get("order_id"),tracking:q.get("tracking")};
+function sessionToken(){
+ let t=sessionStorage.getItem("f4u_wizard_session_token");
+ if(!t){t=crypto.randomUUID();sessionStorage.setItem("f4u_wizard_session_token",t);}return t;
 }
-function clearCheckoutParams(){
- const u=new URL(location.href);
- ["checkout","order_id","tracking"].forEach(k=>u.searchParams.delete(k));
- history.replaceState(null,"",u.pathname+(u.searchParams.toString()?`?${u.searchParams}`:"")+u.hash);
+function loadStripeJs(){
+ if(window.Stripe)return Promise.resolve(window.Stripe);
+ if(window.__F4U_STRIPE_LOADER)return window.__F4U_STRIPE_LOADER;
+ window.__F4U_STRIPE_LOADER=new Promise((resolve,reject)=>{
+  const existing=document.querySelector('script[src="https://js.stripe.com/v3/"]');
+  if(existing){existing.addEventListener("load",()=>resolve(window.Stripe),{once:true});existing.addEventListener("error",()=>reject(new Error("Stripe.js could not load.")),{once:true});return;}
+  const s=document.createElement("script");s.src="https://js.stripe.com/v3/";s.async=true;s.onload=()=>resolve(window.Stripe);s.onerror=()=>reject(new Error("Stripe.js could not load."));document.head.appendChild(s);
+ });
+ return window.__F4U_STRIPE_LOADER;
 }
-async function verifyReturnedOrder(w,orderId,tracking){
+async function orderStatus(orderId,tracking){
  const r=await fetch(STATUS_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({order_id:orderId,tracking_number:tracking})});
- const data=await r.json().catch(()=>({}));
- if(!r.ok) throw new Error(data.error||"We could not verify the payment status.");
- if(String(data.order?.payment_status||"").toLowerCase()==="paid"){
-   w.state.verifiedPayment=data.order;
-   sessionStorage.setItem("f4u_verified_payment_result",JSON.stringify(data.order));
-   w.persist?.();
-   clearCheckoutParams();
-   w.go(8);
-   return true;
+ const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(errorText(d));return d.order||null;
+}
+async function preparePayment(w,r,status,mount,payButton){
+ const contact=getContact(w);
+ if(!contact.email_address)throw new Error("A customer email address is required before payment.");
+ status.className="f4u-stripe-status is-loading";
+ status.innerHTML='<span class="f4u-stripe-spinner" aria-hidden="true"></span><span>Loading secure payment form…</span>';
+ const payload={service_key:r.serviceKey,plan_tier:r.planKey,jurisdiction_state:r.government?"":r.jurisdiction,upsells:getUpsells(w),session_token:sessionToken(),...contact,form_payload:w.state?.answers||{}};
+ const [stripeCtor,response]=await Promise.all([
+  loadStripeJs(),
+  fetch(CHECKOUT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)})
+ ]);
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok||!data.client_secret)throw new Error(errorText(data));
+ const publishableKey=data.publishable_key||window.FILINGS4U_ENV?.STRIPE_PUBLISHABLE_KEY||window.stripePublicKey||"";
+ if(!publishableKey)throw new Error("Stripe publishable key is not configured for the wizard.");
+ const mountKey=`${data.payment_intent_id||""}:${data.client_secret}`;
+ if(paymentElement&&activeMountKey!==mountKey){try{paymentElement.destroy();}catch(_){} paymentElement=null;elementsInstance=null;stripeInstance=null;}
+ stripeInstance=stripeCtor(publishableKey);
+ elementsInstance=stripeInstance.elements({clientSecret:data.client_secret,appearance:{theme:"stripe",variables:{colorPrimary:"#10b981",colorText:"#0a1f44",colorDanger:"#dc2626",borderRadius:"8px",fontFamily:'"DM Sans", system-ui, sans-serif'}}});
+ paymentElement=elementsInstance.create("payment",{layout:{type:"tabs",defaultCollapsed:false}});
+ mount.innerHTML="";paymentElement.mount(mount);activeMountKey=mountKey;
+ w.state.checkout={order_id:data.order_id,tracking_number:data.tracking_number,payment_intent_id:data.payment_intent_id,pricing:data.pricing,created_at:new Date().toISOString()};w.persist?.();
+ status.className="f4u-stripe-status";status.innerHTML="";payButton.disabled=false;
+}
+async function finalizePaidOrder(w,checkout,status,payButton){
+ const order=await orderStatus(checkout.order_id,checkout.tracking_number);
+ if(order&&String(order.payment_status||"").toLowerCase()==="paid"){
+  w.state.verifiedPayment=order;sessionStorage.setItem("f4u_verified_payment_result",JSON.stringify(order));w.persist?.();w.go(8);return true;
  }
- return false;
+ status.className="f4u-stripe-status is-loading";status.innerHTML='<span class="f4u-stripe-spinner" aria-hidden="true"></span><span>Payment received. Finalizing your order…</span>';
+ payButton.disabled=true;
+ // This is not an artificial transition delay: the webhook is the payment authority.
+ // Recheck on animation frames / network completion instead of a long fixed timer.
+ for(let i=0;i<30;i++){
+  await new Promise(requestAnimationFrame);
+  const current=await orderStatus(checkout.order_id,checkout.tracking_number).catch(()=>null);
+  if(current&&String(current.payment_status||"").toLowerCase()==="paid"){
+   w.state.verifiedPayment=current;sessionStorage.setItem("f4u_verified_payment_result",JSON.stringify(current));w.persist?.();w.go(8);return true;
+  }
+ }
+ status.className="f4u-stripe-status is-warning";status.innerHTML="<strong>Payment received.</strong><span>Your order is still being finalized. Click below to check again.</span>";
+ payButton.disabled=false;payButton.textContent="Check Payment Status";return false;
 }
 
 window.renderWizardStep7=async function(){
  const host=document.getElementById("step-7-injection-placeholder");if(!host)return;
- const w=window.F4UWizard,r=w.refreshRoute(),contact=getContact(w);
- const localTotal=Number(window.currentOrderCorePayload?.total_amount||window.wizardCalculatedFinalTotalAmount||0);
- const returned=checkoutState();
-
- host.innerHTML=`<section class="f4u-entry-layout f4u-checkout-shell">
-   <div class="f4u-entry-copy">
-     <span class="f4u-entry-kicker">Step 7 · Secure Checkout</span>
-     <h2>Secure Checkout</h2>
-     <p>Review the amount due, then continue to Stripe's encrypted checkout to complete payment.</p>
+ const w=window.F4UWizard,r=w.refreshRoute();
+ host.innerHTML=`<section class="f4u-entry-layout f4u-stripe-checkout-shell">
+   <div class="f4u-entry-copy f4u-stripe-heading"><span class="f4u-entry-kicker">Step 7 · Secure Checkout</span><h2>Secure Checkout</h2><p>Enter your payment information below to complete your order.</p></div>
+   <div class="f4u-stripe-frame">
+     <div id="f4u-stripe-status" class="f4u-stripe-status" aria-live="polite"></div>
+     <div id="stripe-payment-element-mount-point" class="f4u-stripe-payment-mount"></div>
    </div>
-   <div class="f4u-checkout-total-card">
-     <div><span>Total due</span><strong>${w.money(localTotal)}</strong></div>
-     <small>The final amount is recalculated on our secure server from the selected service, package, add-ons, and applicable government filing fee before Stripe opens.</small>
-   </div>
-   <div id="f4u-checkout-status" class="f4u-checkout-status" aria-live="polite"></div>
-   <div class="f4u-checkout-security">
-     <strong>Secure payment</strong>
-     <span>Payment information is entered directly on Stripe's secure checkout. filings4u does not store your card number.</span>
-   </div>
-   <div class="wizard-action-footer f4u-checkout-actions">
-     <button id="step7-back" type="button" class="btn-wizard-secondary">← Back to Review</button>
-     <button id="step7-pay" type="button" class="btn-wizard-main">Continue to Secure Payment</button>
-   </div>
+   <div class="wizard-action-footer f4u-stripe-actions"><button id="step7-back" type="button" class="btn-wizard-secondary">← Back to Review</button><button id="step7-pay" type="button" class="btn-wizard-main" disabled>Pay Securely</button></div>
+   <p class="f4u-stripe-footnote">Payment details are securely handled by Stripe. filings4u does not store your card number.</p>
  </section>`;
-
- const status=document.getElementById("f4u-checkout-status");
- const pay=document.getElementById("step7-pay");
-
+ const status=document.getElementById("f4u-stripe-status"),mount=document.getElementById("stripe-payment-element-mount-point"),pay=document.getElementById("step7-pay");
  document.getElementById("step7-back")?.addEventListener("click",()=>w.go(6));
-
- if(returned.mode==="cancelled"){
-   status.className="f4u-checkout-status is-warning";
-   status.innerHTML="<strong>Payment was not completed.</strong><span>Your application is still here. You can return to secure payment whenever you are ready.</span>";
-   clearCheckoutParams();
- }
- if(returned.mode==="success"&&returned.orderId){
-   pay.disabled=true;
-   status.className="f4u-checkout-status is-loading";
-   status.innerHTML="<strong>Confirming payment…</strong><span>Please keep this page open while Stripe confirmation is verified.</span>";
-   try{
-     for(let i=0;i<8;i++){
-       if(await verifyReturnedOrder(w,returned.orderId,returned.tracking)) return;
-       await new Promise(res=>setTimeout(res,750));
-     }
-     throw new Error("Stripe is still confirming this payment. Please wait a moment and try again.");
-   }catch(err){
-     pay.disabled=false;
-     status.className="f4u-checkout-status is-error";
-     status.innerHTML=`<strong>Payment confirmation is still processing.</strong><span>${w.esc(err.message||err)}</span>`;
-   }
- }
-
- pay?.addEventListener("click",async()=>{
-   if(pay.disabled)return;
-   if(!contact.email_address){
-     w.notify("Email required","Enter your email in the application before continuing to payment.","error");
-     return;
-   }
-   pay.disabled=true;
-   pay.textContent="Preparing secure payment…";
-   status.className="f4u-checkout-status is-loading";
-   status.innerHTML="<strong>Preparing secure payment…</strong><span>We are verifying the order total before opening Stripe.</span>";
-   try{
-     const sessionToken=sessionStorage.getItem("f4u_wizard_session_token")||localStorage.getItem("f4u_wizard_session_token")||crypto.randomUUID();
-     sessionStorage.setItem("f4u_wizard_session_token",sessionToken);
-     const payload={
-       service_key:r.serviceKey,
-       plan_tier:r.planKey,
-       jurisdiction_state:r.government?"":r.jurisdiction,
-       upsells:getUpsells(w),
-       session_token:sessionToken,
-       ...contact,
-       form_payload:w.state?.answers||{}
-     };
-     const response=await fetch(CHECKOUT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-     const data=await response.json().catch(()=>({}));
-     if(!response.ok||!data.checkout_url) throw new Error(data.error||"Secure checkout could not be started.");
-     w.state.checkout={order_id:data.order_id,tracking_number:data.tracking_number,pricing:data.pricing,created_at:new Date().toISOString()};
-     w.persist?.();
-     location.assign(data.checkout_url);
-   }catch(err){
-     pay.disabled=false;
-     pay.textContent="Continue to Secure Payment";
-     status.className="f4u-checkout-status is-error";
-     status.innerHTML=`<strong>Checkout could not be started.</strong><span>${w.esc(err.message||err)}</span>`;
-   }
+ try{await preparePayment(w,r,status,mount,pay);}catch(err){status.className="f4u-stripe-status is-error";status.innerHTML=`<strong>Payment form could not load.</strong><span>${w.esc(errorText(err))}</span>`;pay.disabled=true;return;}
+ pay.addEventListener("click",async()=>{
+  if(!stripeInstance||!elementsInstance)return;
+  if(pay.textContent==="Check Payment Status"){await finalizePaidOrder(w,w.state.checkout,status,pay);return;}
+  pay.disabled=true;pay.textContent="Processing…";status.className="f4u-stripe-status is-loading";status.innerHTML='<span class="f4u-stripe-spinner" aria-hidden="true"></span><span>Processing payment…</span>';
+  const result=await stripeInstance.confirmPayment({elements:elementsInstance,redirect:"if_required",confirmParams:{return_url:location.href}});
+  if(result.error){status.className="f4u-stripe-status is-error";status.innerHTML=`<strong>Payment was not completed.</strong><span>${w.esc(result.error.message||"Please review your payment information and try again.")}</span>`;pay.disabled=false;pay.textContent="Pay Securely";return;}
+  if(result.paymentIntent?.status==="succeeded"||result.paymentIntent?.status==="processing"||result.paymentIntent?.status==="requires_capture"){
+    await finalizePaidOrder(w,w.state.checkout,status,pay);return;
+  }
+  status.className="f4u-stripe-status is-warning";status.innerHTML="<strong>Payment needs additional action.</strong><span>Please complete the Stripe instructions above.</span>";pay.disabled=false;pay.textContent="Pay Securely";
  });
 };
-
-document.addEventListener("DOMContentLoaded",()=>{
- const q=new URLSearchParams(location.search);
- if(q.get("checkout")==="success"||q.get("checkout")==="cancelled"){
-   const tryOpen=()=>window.F4UWizard?.go?window.F4UWizard.go(7):setTimeout(tryOpen,50);
-   tryOpen();
- }
-},{once:true});
 })();

@@ -467,3 +467,23 @@ input[data-f4u-format="phone"],#vault_client_phone,#chat_phone{font-variant-nume
  .f4u-checkout-total-card small,.f4u-checkout-security{padding-left:15px;padding-right:15px}
  .f4u-checkout-actions{gap:14px!important}
 }
+
+
+/* ==========================================================================\n   STRIPE PAYMENT ELEMENT — IMMEDIATE STEP 7 MOUNT\n   ========================================================================== */
+.f4u-stripe-checkout-shell{width:100%!important;max-width:100%!important}
+.f4u-stripe-heading{max-width:none!important;margin-bottom:20px!important}
+.f4u-stripe-frame{width:100%!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important}
+.f4u-stripe-payment-mount{width:100%!important;min-height:300px!important;padding:22px!important;box-sizing:border-box!important;border:1px solid #d8e0e8!important;border-radius:12px!important;background:#fff!important;box-shadow:0 10px 28px rgba(10,31,68,.045)!important}
+.f4u-stripe-payment-mount iframe{width:100%!important}
+.f4u-stripe-status{display:none!important;width:100%!important;box-sizing:border-box!important;margin:0 0 14px!important;padding:12px 14px!important;border-radius:10px!important;font-size:.78rem!important;line-height:1.45!important}
+.f4u-stripe-status.is-loading,.f4u-stripe-status.is-error,.f4u-stripe-status.is-warning{display:flex!important;align-items:center!important;gap:9px!important}
+.f4u-stripe-status.is-loading{border:1px solid #a7f3d0!important;background:#ecfdf5!important;color:#065f46!important}
+.f4u-stripe-status.is-error{border:1px solid #fecaca!important;background:#fff7f7!important;color:#b91c1c!important;flex-direction:column!important;align-items:flex-start!important}
+.f4u-stripe-status.is-warning{border:1px solid #fde68a!important;background:#fffbeb!important;color:#92400e!important;flex-direction:column!important;align-items:flex-start!important}
+.f4u-stripe-status strong{font-weight:800!important}.f4u-stripe-status span{font-weight:400!important}
+.f4u-stripe-spinner{width:16px!important;height:16px!important;flex:0 0 16px!important;border:2px solid #a7f3d0!important;border-top-color:#10b981!important;border-radius:50%!important;animation:f4u-stripe-spin .55s linear infinite!important}
+@keyframes f4u-stripe-spin{to{transform:rotate(360deg)}}
+.f4u-stripe-actions{width:100%!important;margin-top:22px!important;padding-top:20px!important;border-top:1px solid #e2e8f0!important;gap:24px!important}
+.f4u-stripe-actions .btn-wizard-main:disabled{opacity:.58!important;cursor:wait!important}
+.f4u-stripe-footnote{margin:12px 0 0!important;color:#64748b!important;font-size:.7rem!important;line-height:1.45!important;text-align:right!important}
+@media(max-width:680px){.f4u-stripe-payment-mount{padding:15px!important;border-radius:10px!important}.f4u-stripe-actions{gap:14px!important}.f4u-stripe-footnote{text-align:left!important}}
