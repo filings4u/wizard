@@ -428,3 +428,42 @@ input[data-f4u-format="phone"],#vault_client_phone,#chat_phone{font-variant-nume
     padding-bottom:10px !important;
   }
 }
+
+
+/* ==========================================================================
+   STRIPE CHECKOUT — HOSTED SECURE PAYMENT
+   ========================================================================== */
+.f4u-checkout-shell{max-width:100%}
+.f4u-checkout-total-card{
+  margin-top:22px;border:1px solid #d8e0e8;border-radius:12px;background:#f8fafc;overflow:hidden
+}
+.f4u-checkout-total-card>div{
+  min-height:76px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:20px
+}
+.f4u-checkout-total-card span{
+  color:#64748b;font:800 .68rem/1 Manrope,sans-serif;letter-spacing:.08em;text-transform:uppercase
+}
+.f4u-checkout-total-card strong{color:#0a1f44;font:800 1.25rem/1.2 Manrope,sans-serif}
+.f4u-checkout-total-card small{
+  display:block;padding:12px 20px;border-top:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:.74rem;line-height:1.5
+}
+.f4u-checkout-security{
+  margin-top:18px;padding:18px 20px;border:1px solid #d8e0e8;border-left:4px solid #10b981;border-radius:10px;background:#fff;
+  display:flex;flex-direction:column;gap:5px
+}
+.f4u-checkout-security strong{color:#0a1f44;font:800 .85rem/1.2 Manrope,sans-serif}
+.f4u-checkout-security span{color:#64748b;font-size:.78rem;line-height:1.5}
+.f4u-checkout-status{display:none;margin-top:18px;padding:15px 18px;border-radius:10px}
+.f4u-checkout-status.is-loading,.f4u-checkout-status.is-warning,.f4u-checkout-status.is-error{display:flex;flex-direction:column;gap:4px}
+.f4u-checkout-status.is-loading{background:#ecfdf5;border:1px solid #a7f3d0}
+.f4u-checkout-status.is-warning{background:#fffbeb;border:1px solid #fde68a}
+.f4u-checkout-status.is-error{background:#fff1f2;border:1px solid #fecdd3}
+.f4u-checkout-status strong{color:#0a1f44;font:800 .82rem/1.3 Manrope,sans-serif}
+.f4u-checkout-status span{color:#475569;font-size:.76rem;line-height:1.45}
+.f4u-checkout-actions{margin-top:24px!important;gap:20px!important}
+.f4u-checkout-actions .btn-wizard-main:disabled{opacity:.65;cursor:wait}
+@media(max-width:680px){
+ .f4u-checkout-total-card>div{min-height:68px;padding:0 15px}
+ .f4u-checkout-total-card small,.f4u-checkout-security{padding-left:15px;padding-right:15px}
+ .f4u-checkout-actions{gap:14px!important}
+}
