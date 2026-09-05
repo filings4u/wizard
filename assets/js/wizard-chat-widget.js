@@ -240,11 +240,17 @@ async function endConfirmed(){
     closeEndChatModal();
     open(false);
 
-    notify(
-      "Chat ended",
-      data.email?`Your transcript was sent to ${data.email}.`:"Your chat session has been closed.",
-      "success"
-    );
+    if(data.email_sent){
+      notify("Chat ended",`Your chat is closed and the transcript was sent to ${data.email}.`,"success");
+    }else{
+      notify(
+        "Chat ended",
+        data.email
+          ? `Your chat is closed. We could not confirm transcript delivery to ${data.email}; support can resend it if needed.`
+          : "Your chat session has been closed.",
+        "success"
+      );
+    }
   }catch(error){
     if(status){
       status.innerHTML=`<div class="f4u-chat-confirm__error">${esc(error.message||"Please try again.")}</div>`;
