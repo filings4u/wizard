@@ -180,15 +180,14 @@ function beginPolling(){
   pollTimer=setInterval(pollMessages,4000);
 }
 
-function end(){
-  clearInterval(pollTimer);
-  pollTimer=null;
-  clientId=null;
-  chatToken=null;
-  contact={};
-  seenMessageIds.clear();
-  sessionStorage.removeItem("f4u_guest_chat");
-  open(false);
+async function end(){
+  if(!clientId||!chatToken){open(false);return;}
+  if(!window.confirm("End this support chat? We’ll close this session and email the transcript to the email address you used to start the chat."))return;
+  try{
+    const data=await callChat({action:"end",client_id:clientId,chat_token:chatToken});
+    clearInterval(pollTimer); pollTimer=null; clientId=null; chatToken=null; contact={}; seenMessageIds.clear(); sessionStorage.removeItem("f4u_guest_chat"); open(false);
+    notify("Chat ended",data.email?`Your transcript was sent to ${data.email}.`:"Your chat session has been closed.","success");
+  }catch(error){notify("Could not end chat",error.message||"Please try again.");}
 }
 
 function restoreChat(){

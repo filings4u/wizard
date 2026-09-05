@@ -13,3 +13,11 @@
 .f4u-schema-form select[id*="state"],.f4u-schema-form select[name*="state"]{background-color:#fff!important;color:#0f172a!important}
 input[data-f4u-format="phone"],#vault_client_phone,#chat_phone{font-variant-numeric:tabular-nums}
 @media(max-width:680px){.f4u-brand-modal__card{padding:22px 17px!important}.f4u-brand-modal__card h2{font-size:1.18rem!important}.f4u-save-exit-notice{grid-template-columns:26px minmax(0,1fr)!important}.f4u-brand-modal__actions{grid-template-columns:1fr 1fr!important;gap:12px!important}}
+/* Global wizard corrections: POA readability, flat agreement, account status */
+.f4u-poa-document{border-radius:4px!important;padding:18px!important;box-shadow:none!important}
+.f4u-poa-scroll{height:auto!important;max-height:none!important;min-height:0!important;overflow:visible!important;border-radius:0!important;font-size:.82rem!important;line-height:1.62!important}
+.f4u-poa-scroll p{font-size:.82rem!important;line-height:1.62!important;font-weight:400!important}.f4u-poa-scroll strong{font-weight:600!important}.f4u-poa-scroll h4{font-size:.8rem!important;font-weight:650!important}
+.f4u-document-brand>div{display:none!important}.f4u-document-brand{justify-content:flex-start!important}.f4u-document-brand img{height:30px!important}
+.f4u-poa-document__meta span:first-child{display:none!important}
+.f4u-login-state{position:fixed;right:18px;top:18px;z-index:900000;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;padding:9px 12px;color:#065f46;font-size:.78rem;box-shadow:0 8px 20px rgba(10,31,68,.08)}.f4u-login-state strong{font-weight:750}.f4u-login-state small{display:block;color:#047857;margin-top:2px}
+@media(max-width:680px){.f4u-poa-document{padding:12px!important}.f4u-login-state{position:static;margin:8px 12px 0;text-align:center}}
