@@ -309,7 +309,9 @@ window.renderWizardStep5=function(){
       document_version:"2026-09-05",
       principal_acknowledgment:true,
       electronic_signature_intent:true,
-      parent_company:"Roseland Companies, LLC"
+      parent_company:"Roseland Companies, LLC",
+      document_html:scrollBox?.innerHTML||"",
+      document_text:scrollBox?.innerText||""
     };
 
     w.persist();

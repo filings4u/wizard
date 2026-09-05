@@ -148,8 +148,8 @@
   }
 
   function updateProgress(step) {
-    const safeStep = Math.min(8, Math.max(1, Number(step) || 1));
-    const pct = Math.round((safeStep / 8) * 100);
+    const safeStep = Math.min(7, Math.max(1, Number(step) || 1));
+    const pct = Math.round((safeStep / 7) * 100);
 
     const stepLabel =
       document.querySelector(".wizard-progress-step-label") ||
@@ -164,7 +164,7 @@
       document.querySelector(".progress-bar-fill") ||
       document.querySelector("[data-progress-fill]");
 
-    if (stepLabel) stepLabel.textContent = `STEP ${safeStep} OF 8`;
+    if (stepLabel) stepLabel.textContent = `STEP ${safeStep} OF 7`;
     if (percent) percent.textContent = `${pct}%`;
     if (bar) bar.style.width = `${pct}%`;
 
@@ -191,11 +191,11 @@
     const exactPercent = document.getElementById("wizard-progress-percent");
     const exactMeter = document.getElementById("wizard-progress-meter");
     const exactFloating = document.getElementById("wizard-floating-step-label");
-    if (exactStepText) exactStepText.textContent = `Step ${safeStep} of 8`;
+    if (exactStepText) exactStepText.textContent = `Step ${safeStep} of 7`;
     if (exactTitle && labels[safeStep]) exactTitle.textContent = labels[safeStep];
     if (exactPercent) exactPercent.textContent = `${pct}%`;
     if (exactMeter) exactMeter.style.width = `${pct}%`;
-    if (exactFloating) exactFloating.textContent = `Step ${safeStep} of 8`;
+    if (exactFloating) exactFloating.textContent = `Step ${safeStep} of 7`;
   }
 
   async function renderStep(step) {
@@ -206,7 +206,7 @@
   }
 
   async function go(step) {
-    const target = Math.min(8, Math.max(1, Number(step) || 1));
+    const target = Math.min(7, Math.max(1, Number(step) || 1));
     state.currentStep = target;
     window.currentWizardActiveStep = target;
     persist();
@@ -543,7 +543,7 @@
     installNavigationGuard();
     const route = refreshRoute();
     await ensureServiceModule();
-    let target = Math.min(8, Math.max(1, Number(state.currentStep) || 1));
+    let target = Math.min(7, Math.max(1, Number(state.currentStep) || 1));
     if (!route.government && !route.jurisdiction && target > 1) target = 1;
     await go(target);
   }
