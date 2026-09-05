@@ -487,3 +487,62 @@ input[data-f4u-format="phone"],#vault_client_phone,#chat_phone{font-variant-nume
 .f4u-stripe-actions .btn-wizard-main:disabled{opacity:.58!important;cursor:wait!important}
 .f4u-stripe-footnote{margin:12px 0 0!important;color:#64748b!important;font-size:.7rem!important;line-height:1.45!important;text-align:right!important}
 @media(max-width:680px){.f4u-stripe-payment-mount{padding:15px!important;border-radius:10px!important}.f4u-stripe-actions{gap:14px!important}.f4u-stripe-footnote{text-align:left!important}}
+
+
+/* ==========================================================================\n   FINAL ALIGNMENT + POA REVIEW GATE\n   ========================================================================== */
+/* Steps 2-8 are direct children of portal-main, so center every active panel\n   independently to match the progress shell exactly. */
+.wizard-panel.active{
+  width:100%!important;
+  max-width:var(--f4u-wizard-content-width,940px)!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  box-sizing:border-box!important;
+}
+
+/* Review instruction reads as guidance, not a heavy warning. */
+.f4u-poa-status{
+  display:flex!important;
+  align-items:flex-start!important;
+  gap:10px!important;
+  margin:0 0 14px!important;
+  padding:11px 13px!important;
+  border:1px solid #d8e0e8!important;
+  border-radius:8px!important;
+  background:#f8fafc!important;
+  color:#475569!important;
+  font-size:.78rem!important;
+  font-weight:400!important;
+  line-height:1.45!important;
+}
+.f4u-poa-status strong,#poa-tooltip-text{font-weight:400!important}
+.f4u-poa-status__icon{
+  width:20px!important;height:20px!important;flex:0 0 20px!important;
+  display:grid!important;place-items:center!important;
+  border-radius:50%!important;background:#e2e8f0!important;color:#0a1f44!important;
+  font:800 .7rem/1 Manrope,sans-serif!important;
+}
+.f4u-poa-status.is-complete{border-color:#a7f3d0!important;background:#ecfdf5!important;color:#065f46!important}
+.f4u-poa-status.is-complete .f4u-poa-status__icon{background:#10b981!important;color:#fff!important}
+.f4u-poa-status.needs-attention{border-color:#fbbf24!important;background:#fffbeb!important;color:#92400e!important}
+
+/* Signature controls are visibly unavailable until the agreement is reviewed. */
+.f4u-poa-signature-fields:not(.is-unlocked) input,
+.f4u-poa-consent-wrap:not(.is-unlocked) input{
+  background:#eef2f7!important;color:#94a3b8!important;border-color:#d7dee8!important;cursor:not-allowed!important;
+}
+.f4u-signature-viewport:not(.is-unlocked){opacity:.52!important;background:#f1f5f9!important}
+.f4u-poa-consent-wrap:not(.is-unlocked){opacity:.58!important;background:#f8fafc!important}
+
+/* Consent is normal legal copy, not a bold callout. */
+.f4u-consent-row span,
+.f4u-poa-consent-wrap .f4u-consent-row span,
+.f4u-poa-consent-wrap label,
+.f4u-poa-consent-wrap label span{
+  font-weight:400!important;
+  font-size:.78rem!important;
+  line-height:1.5!important;
+  color:#334155!important;
+}
+
+/* Keep the next button clickable so an early click can explain the review requirement. */
+#step5-next[aria-disabled="true"]{opacity:.55!important;cursor:pointer!important}

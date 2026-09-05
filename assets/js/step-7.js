@@ -54,7 +54,7 @@ async function preparePayment(w,r,status,mount,payButton){
  if(!contact.email_address)throw new Error("A customer email address is required before payment.");
  status.className="f4u-stripe-status is-loading";
  status.innerHTML='<span class="f4u-stripe-spinner" aria-hidden="true"></span><span>Loading secure payment form…</span>';
- const payload={service_key:r.serviceKey,plan_tier:r.planKey,jurisdiction_state:r.government?"":r.jurisdiction,upsells:getUpsells(w),session_token:sessionToken(),...contact,form_payload:w.state?.answers||{}};
+ const payload={service_key:r.serviceKey,plan_tier:r.planKey,jurisdiction_state:r.jurisdiction,upsells:getUpsells(w),session_token:sessionToken(),...contact,form_payload:w.state?.answers||{}};
  const [stripeCtor,response]=await Promise.all([
   loadStripeJs(),
   fetch(CHECKOUT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)})

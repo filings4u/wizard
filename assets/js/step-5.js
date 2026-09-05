@@ -23,8 +23,8 @@ window.renderWizardStep5=function(){
         <span id="poa-tooltip-icon" class="f4u-poa-status__icon" aria-hidden="true">${a.document_reviewed?"✓":"!"}</span>
         <span id="poa-tooltip-text">
           ${a.document_reviewed
-            ? `<strong>Document reviewed.</strong> You may now enter your legal name and complete the electronic signature.`
-            : `<strong>Review required.</strong> Scroll to the bottom of the authorization document below to unlock the signature fields.`}
+            ? `Document reviewed. You may now enter your legal name and complete the electronic signature.`
+            : `Scroll through the entire authorization agreement to the bottom before signing. Your signature fields will unlock when the review is complete.`}
         </span>
       </div>
 
@@ -170,8 +170,8 @@ window.renderWizardStep5=function(){
           <label class="f4u-consent-row">
             <input type="checkbox" id="poa_consent_checkbox" ${a.consent?"checked":""} ${a.document_reviewed?"":"disabled"}>
             <span>
-              I have reviewed this Limited Power of Attorney, consent to electronic execution, intend my typed
-              first and last name to serve as my electronic signature, and certify that I am authorized to act
+              I have reviewed this Limited Power of Attorney and consent to electronic execution. I intend my typed
+              first and last name to serve as my electronic signature. I certify that I am authorized to act
               for the applicant or business identified in this order.
             </span>
           </label>
@@ -180,7 +180,7 @@ window.renderWizardStep5=function(){
 
       <div class="wizard-action-footer">
         <button id="step5-back" type="button" class="btn-wizard-secondary">← Back to Recommended Services</button>
-        <button id="step5-next" type="button" class="btn-wizard-main" ${a.document_reviewed?"":"disabled"}>
+        <button id="step5-next" type="button" class="btn-wizard-main" ${a.document_reviewed?"":'aria-disabled="true"'}>
           Sign & Continue to Summary
         </button>
       </div>
@@ -216,11 +216,11 @@ window.renderWizardStep5=function(){
     if(first)first.disabled=false;
     if(last)last.disabled=false;
     if(consent)consent.disabled=false;
-    if(next)next.disabled=false;
+    if(next){next.disabled=false;next.removeAttribute("aria-disabled");}
 
     status?.classList.add("is-complete");
     if(statusIcon)statusIcon.textContent="✓";
-    if(statusText)statusText.innerHTML="<strong>Document reviewed.</strong> You may now enter your legal name and complete the electronic signature.";
+    if(statusText)statusText.textContent="Document reviewed. You may now enter your legal name and complete the electronic signature.";
 
     w.state.authorization={
       ...(w.state.authorization||{}),
@@ -259,7 +259,10 @@ window.renderWizardStep5=function(){
         "Scroll to the bottom of the Power of Attorney document before signing.",
         "error"
       );
+      status?.classList.add("needs-attention");
+      if(statusText)statusText.textContent="Please scroll through the entire Power of Attorney agreement to the bottom before you can sign and continue.";
       scrollBox?.focus();
+      scrollBox?.scrollIntoView({block:"center"});
       return;
     }
 
