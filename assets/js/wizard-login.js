@@ -2,10 +2,17 @@
 "use strict";
 const $=s=>document.querySelector(s),esc=v=>window.F4UWizard?.esc?.(v)||String(v||"");
 function showLoggedIn(user){
- const old=document.getElementById("f4u-wizard-login-state"); if(old)old.remove();
- const meta=user?.user_metadata||{}, first=meta.first_name||meta.firstName||"", last=meta.last_name||meta.lastName||"", name=(first+" "+last).trim()||user?.email||"Customer";
- const el=document.createElement("div"); el.id="f4u-wizard-login-state"; el.className="f4u-login-state"; el.innerHTML=`<strong>You are logged in as ${esc(name)}</strong>${user?.email&&name!==user.email?`<small>${esc(user.email)}</small>`:""}`; document.body.appendChild(el);
- const b=document.getElementById("f4u-wizard-login-button"); if(b)b.style.display="none";
+ const b=document.getElementById("f4u-wizard-login-button");
+ if(!b)return;
+ const meta=user?.user_metadata||{};
+ const first=meta.first_name||meta.firstName||"";
+ const last=meta.last_name||meta.lastName||"";
+ const name=(first+" "+last).trim()||user?.email||"Customer";
+ b.classList.add("is-authenticated");
+ b.disabled=true;
+ b.setAttribute("aria-label",`Logged in as ${name}`);
+ b.innerHTML=`<span class="wizard-floating-tool__icon">✓</span><span class="wizard-floating-tool__text"><strong>Logged in</strong><small>${esc(name)}</small></span>`;
+ window.__F4U_WIZARD_EXPLICIT_LOGIN=true;
 }
 function modal(){
  if(document.getElementById("f4u-wizard-login-modal"))return;
@@ -30,6 +37,13 @@ async function login(e){
   status.innerHTML=`<div class="f4u-modal-status f4u-modal-status--success"><strong>Account verified.</strong><span>${restored?"Your saved application has been restored.":"Your customer profile is ready."}</span></div>`;setTimeout(()=>{document.getElementById("f4u-wizard-login-modal")?.remove();window.F4UWizard.go(restored?window.F4UWizard.state.currentStep:1)},700);
  }catch(error){status.innerHTML=`<div class="f4u-modal-status f4u-modal-status--error">${esc(error.message||error)}</div>`;btn.disabled=false;btn.textContent="Log In";}
 }
-async function restoreAuth(){try{const sb=window.f4uSupabase||window.supabaseClientInstance;if(!sb)return;const {data}=await sb.auth.getUser();if(data?.user)showLoggedIn(data.user);}catch(_){}}
-window.displayWizardLoginModal=modal;restoreAuth();document.addEventListener("click",e=>{if(e.target.closest("#f4u-wizard-login-button")){e.preventDefault();modal();}},true);
+window.displayWizardLoginModal=modal;document.addEventListener("click",e=>{if(e.target.closest("#f4u-wizard-login-button")){e.preventDefault();modal();}},true);
+
+window.addEventListener("pagehide",()=>{
+ if(!window.__F4U_WIZARD_EXPLICIT_LOGIN)return;
+ const sb=window.f4uSupabase||window.supabaseClientInstance;
+ try{sb?.auth?.signOut?.({scope:"local"});}catch(_){}
+ window.__F4U_WIZARD_EXPLICIT_LOGIN=false;
+});
+
 })();

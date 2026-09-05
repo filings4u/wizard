@@ -1,0 +1,24 @@
+
+/* Public wizard login is an optional resume helper, not an auth guard. */
+#f4u-wizard-login-button.is-authenticated{
+  cursor:default !important;
+  border-color:#a7f3d0 !important;
+  background:#ecfdf5 !important;
+  box-shadow:none !important;
+}
+#f4u-wizard-login-button.is-authenticated .wizard-floating-tool__icon{
+  background:#d1fae5 !important;
+  color:#047857 !important;
+}
+#f4u-wizard-login-button.is-authenticated .wizard-floating-tool__text strong{
+  color:#065f46 !important;
+}
+#f4u-wizard-login-button.is-authenticated .wizard-floating-tool__text small{
+  display:block !important;
+  max-width:118px;
+  overflow:hidden;
+  color:#047857 !important;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.f4u-boot-card{display:none !important;}

@@ -25,9 +25,9 @@
 
     const client = window.supabase.createClient(url, key, {
       auth: {
-        persistSession: true,
+        persistSession: false,
         autoRefreshToken: true,
-        detectSessionInUrl: true
+        detectSessionInUrl: false
       },
       global: {
         headers: { "x-client-info": "filings4u-wizard" }
