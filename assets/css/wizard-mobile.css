@@ -1,223 +1,1123 @@
-/* ============================================================================ */
-/* 📱 UNIFIED WIZARD RESPONSIVE SYSTEM STYLESHEET                               */
-/* ============================================================================ */
+/* ==========================================================================
+   filings4u WIZARD — MOBILE EXPERIENCE 2.0
+   Replaces the legacy responsive stylesheet.
+   Brand: navy #0a1f44 / emerald #10b981
+   ========================================================================== */
 
-/* Target viewports below desktop breakout exclusively via media query bounds */
-@media screen and (max-width: 991px) {
-
-    /* --- 1. GLOBAL ROOT CONTAINER FLUIDITY --- */
-    body {
-        overflow-x: hidden;
-    }
-
-    .wizard-container, 
-    .wizard-container-wrapper,
-    .master-onboarding-form {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 12px !important;
-        box-sizing: border-box !important;
-        box-shadow: none !important;
-    }
-
-    /* --- 2. STEP PANEL DISPLAY CONSTRAINT SAFEGUARDS --- */
-    /* 🔥 FIX: Explicitly target only the specific top-level layout panel elements */
-    div.wizard-panel,
-    div.wizard-step-panel,
-    div[id^="step-panel-"] {
-        width: 100% !important;
-        min-width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-        padding: 16px !important;
-        margin-bottom: 16px !important;
-    }
-
-    /* --- 3. MULTI-COLUMN ASYMMETRIC GRID BREAKDOWNS --- */
-    .form-row, 
-    .grid-2-col, 
-    .grid-3-col,
-    .wizard-split-layout,
-    .checkout-split-view {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 16px !important;
-        width: 100% !important;
-    }
-
-    /* Force input wrapper blocks to expand horizontally without squeezing */
-    .form-group-wrapper, 
-    .wizard-input-group, 
-    .column-cell,
-    .half-width-field,
-    .third-width-field {
-        width: 100% !important;
-        max-width: 100% !important;
-        flex: none !important;
-        box-sizing: border-box !important;
-    }
-
-    /* --- 4. STEP PROGRESS NAVIGATION & TIMELINE LIGHTS --- */
-    /* 🔥 FIX: Safely convert progress tracks without crushing raw multi-level tree modules */
-    .portal-sidebar, 
-    .wizard-navigation-sidebar, 
-    .multi-sidebar-progress {
-        width: 100% !important;
-        max-width: 100% !important;
-        position: relative !important;
-        top: 0 !important;
-        left: 0 !important;
-        margin: 0 0 20px 0 !important;
-        padding: 12px !important;
-        background: #ffffff !important;
-        border-radius: 8px !important;
-        box-sizing: border-box !important;
-    }
-
-    /* Force child list wrappers to stack linearly across horizontal tracks */
-    .portal-sidebar ul,
-    .wizard-navigation-sidebar ul,
-    .multi-sidebar-progress .timeline-track-wrapper {
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: space-around !important;
-        align-items: center !important;
-        width: 100% !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        list-style: none !important;
-    }
-
-    .portal-sidebar li,
-    .wizard-navigation-sidebar li {
-        margin: 0 !important;
-        padding: 0 !important;
-        display: inline-block !important;
-    }
-
-    /* Hide text labels on small screens to save valuable layout real estate */
-    .sidebar-timeline-node-text, 
-    .progress-label-text, 
-    .timeline-description {
-        display: none !important;
-    }
-
-    .timeline-bubble, 
-    .step-node-indicator {
-        margin: 0 !important;
-        width: 34px !important;
-        height: 34px !important;
-        font-size: 0.85rem !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-    /* --- 5. MARKETPLACE UPSELL CARDS & PRICING SLOTS --- */
-    .upsell-market-card, 
-    .marketplace-panel-wrapper,
-    .plan-card-row {
-        display: flex !important;
-        flex-direction: column !important;
-        padding: 16px !important;
-        text-align: center !important;
-    }
-
-    .upsell-market-card .card-checkbox-cell, 
-    .upsell-market-card .card-pricing-cell {
-        width: 100% !important;
-        margin: 8px 0 !important;
-        justify-content: center !important;
-    }
-
-    /* --- 6. STEP 6 PAYMENTS INTERLOCK OVERRIDES --- */
-    #step-panel-6, .payment-gateway-wrapper {
-        padding: 12px !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-    }
-
-    /* Prevent custom nested Stripe wrapper overlays from shifting out of boundary layers */
-    #stripe-payment-element, 
-    #card-element, 
-    .StripeElement {
-        width: 100% !important;
-        min-width: 100% !important;
-        box-sizing: border-box !important;
-    }
-
-    /* --- 7. STEP 7 RECEIPT CANVAS FLOW --- */
-    main.success-container {
-        padding: 4px !important;
-        width: 100% !important;
-    }
-
-    main.success-container section.success-card {
-        padding: 16px !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-    }
-
-    .receipt-line-item {
-        display: flex !important;
-        flex-direction: row !important; 
-        justify-content: space-between !important;
-        width: 100% !important;
-        font-size: 0.85rem !important;
-        padding: 8px 0 !important;
-    }
-
-    /* --- 8. ACTION BAR PLACEMENTS & BUTTON ROW FLOATS --- */
-    .wizard-footer-action-row, 
-    .btn-action-container, 
-    .wizard-footer {
-        display: flex !important;
-        flex-direction: column-reverse !important; 
-        gap: 12px !important;
-        width: 100% !important;
-        padding: 12px 0 !important;
-        box-sizing: border-box !important;
-    }
-
-    .btn-wizard-nav-next, 
-    .btn-wizard-nav-back, 
-    #wizard-next-trigger-btn, 
-    #portal-activation-submit-btn, 
-    .wizard-button {
-        width: 100% !important;
-        max-width: 100% !important;
-        min-height: 48px !important; 
-        margin: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-}
-
-
-/* 1. HIDE THE TOGGLE BUTTON BY DEFAULT ON DESKTOP VIEWPORTS */
-#mobileNavToggleBtn,
-#f4u-dropdown-menu-panel,
-#f4u-mobile-header-bar {
-  display: none !important;
-}
-
-/* 2. REVEAL THE TOP DROPDOWN ELEMENTS ONLY ON MOBILE BREAKPOINTS */
-@media screen and (max-width: 768px) {
-  #mobileNavToggleBtn {
-    display: block !important;
+@media (max-width: 900px) {
+  :root {
+    --f4u-mobile-gutter: 14px;
+    --f4u-mobile-radius: 18px;
+    --f4u-mobile-shadow: 0 14px 38px rgba(10,31,68,.09);
   }
-  
-  #f4u-mobile-header-bar {
+
+  html {
+    width: 100%;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-padding-top: 78px;
+  }
+
+  body {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    overflow-x: hidden !important;
+    background: #f6f9fc !important;
+    color: #0a1f44;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  img, svg, video, canvas {
+    max-width: 100%;
+  }
+
+  /* --------------------------------------------------------------------------
+     MOBILE TOP BAR
+     -------------------------------------------------------------------------- */
+
+  .wizard-shell-topbar {
+    position: sticky !important;
+    top: 0;
+    z-index: 9000;
+    min-height: 64px !important;
+    height: 64px !important;
+    padding: 0 14px !important;
     display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    background: rgba(255,255,255,.97) !important;
+    border-bottom: 1px solid #e5eaf0 !important;
+    box-shadow: 0 5px 20px rgba(10,31,68,.05) !important;
+    backdrop-filter: blur(14px);
   }
-  
-  /* Keep the dropdown menu completely hidden until the button is clicked */
-  #f4u-dropdown-menu-panel {
-    display: none; 
+
+  .wizard-shell-topbar__brand {
+    min-width: 0;
+    gap: 0 !important;
+  }
+
+  .wizard-shell-topbar__brand img {
+    display: block;
+    width: auto !important;
+    height: 34px !important;
+    max-width: 150px !important;
+    object-fit: contain;
+  }
+
+  .wizard-shell-topbar__divider,
+  .wizard-shell-topbar__label,
+  .wizard-shell-topbar__secure {
+    display: none !important;
+  }
+
+  .wizard-shell-topbar__actions {
+    margin-left: auto !important;
+    gap: 0 !important;
+  }
+
+  .wizard-shell-topbar__back {
+    min-height: 38px !important;
+    padding: 0 12px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid #dce3eb !important;
+    border-radius: 10px !important;
+    background: #fff !important;
+    color: #0a1f44 !important;
+    font: 800 .75rem/1 Manrope, sans-serif !important;
+    text-decoration: none !important;
+    white-space: nowrap;
+  }
+
+  /* Remove obsolete mobile navigation system from the old shell. */
+  #mobileNavToggleBtn,
+  #f4u-dropdown-menu-panel,
+  #f4u-mobile-header-bar,
+  .mobile-nav-toggle-btn,
+  .portal-sidebar,
+  .wizard-navigation-sidebar,
+  .multi-sidebar-progress {
+    display: none !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     MAIN WORKSPACE
+     -------------------------------------------------------------------------- */
+
+  .dashboard-wrapper {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: calc(100dvh - 64px) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .portal-main {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 16px var(--f4u-mobile-gutter) 112px !important;
+  }
+
+  .wizard-container-wrapper,
+  .wizard-container,
+  .master-onboarding-form {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .wizard-container-wrapper::before,
+  .wizard-container-wrapper::after {
+    display: none !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     PROGRESS — COMPACT, CLEAR, NO TINY TIMELINE DOTS
+     -------------------------------------------------------------------------- */
+
+  .wizard-progress-shell {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 12px !important;
+    padding: 13px 14px 14px !important;
+    background: #fff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 15px !important;
+    box-shadow: 0 7px 22px rgba(10,31,68,.045) !important;
+  }
+
+  .wizard-progress-shell__top {
+    display: grid !important;
+    grid-template-columns: auto minmax(0,1fr) auto !important;
+    gap: 8px !important;
+    align-items: center !important;
+    margin-bottom: 9px !important;
+  }
+
+  #wizard-progress-step-text {
+    color: #0e9f6e !important;
+    font: 800 .67rem/1.2 Manrope, sans-serif !important;
+    letter-spacing: .055em !important;
+    text-transform: uppercase !important;
+    white-space: nowrap;
+  }
+
+  #wizard-progress-title {
+    min-width: 0;
+    overflow: hidden;
+    color: #0a1f44 !important;
+    font: 800 .78rem/1.25 Manrope, sans-serif !important;
+    text-align: center !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #wizard-progress-percent {
+    color: #64748b !important;
+    font-size: .69rem !important;
+    font-weight: 800 !important;
+    white-space: nowrap;
+  }
+
+  .wizard-progress-track {
+    height: 6px !important;
+    overflow: hidden !important;
+    border-radius: 999px !important;
+    background: #e8edf3 !important;
+  }
+
+  #wizard-progress-meter {
+    height: 100% !important;
+    border-radius: inherit !important;
+    background: #10b981 !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     PANELS
+     -------------------------------------------------------------------------- */
+
+  .wizard-panel,
+  .wizard-step-panel,
+  div[id^="step-panel-"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 20px 16px !important;
+    overflow: visible !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: var(--f4u-mobile-radius) !important;
+    background: #fff !important;
+    box-shadow: var(--f4u-mobile-shadow) !important;
+  }
+
+  .wizard-panel:not(.active),
+  .wizard-panel[hidden] {
+    display: none !important;
+  }
+
+  .wizard-panel.active {
+    display: block !important;
+    animation: f4uMobileStepIn .2s ease both;
+  }
+
+  @keyframes f4uMobileStepIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-panel-form-card,
+  .f4u-entry-layout,
+  .f4u-package-review,
+  .marketplace-panel-wrapper,
+  .payment-gateway-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .step-header-container {
+    margin: 0 0 20px !important;
+    padding: 0 !important;
+  }
+
+  .step-main-title,
+  .step-header-container h1,
+  .step-header-container h2,
+  .step-panel-form-card h2,
+  .f4u-entry-copy h2 {
+    margin: 0 0 8px !important;
+    color: #0a1f44 !important;
+    font: 800 clamp(1.45rem, 6.7vw, 1.95rem)/1.12 Manrope, sans-serif !important;
+    letter-spacing: -.035em !important;
+  }
+
+  .step-subtitle,
+  .step-header-container p,
+  .step-panel-form-card p,
+  .f4u-entry-copy p {
+    margin-top: 0 !important;
+    color: #64748b !important;
+    font-size: .94rem !important;
+    line-height: 1.6 !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     CONTEXT / SELECTED SERVICE
+     -------------------------------------------------------------------------- */
+
+  .wizard-order-context {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+    margin: 0 0 12px !important;
+    overflow: hidden !important;
+    border: 1px solid #dfe6ee !important;
+    border-radius: 14px !important;
+    background: #fff !important;
+  }
+
+  .wizard-order-context > div {
+    min-width: 0 !important;
+    padding: 11px 14px !important;
+    border: 0 !important;
+    border-bottom: 1px solid #edf1f5 !important;
+  }
+
+  .wizard-order-context > div:last-of-type {
+    border-bottom: 0 !important;
+  }
+
+  .wizard-order-context span {
+    display: block !important;
+    margin-bottom: 2px !important;
+    color: #64748b !important;
+    font-size: .66rem !important;
+    font-weight: 800 !important;
+    letter-spacing: .055em !important;
+    text-transform: uppercase !important;
+  }
+
+  .wizard-order-context strong {
+    display: block;
+    overflow-wrap: anywhere;
+    color: #0a1f44 !important;
+    font-size: .86rem !important;
+  }
+
+  .wizard-order-context a {
+    margin: 0 !important;
+    padding: 11px 14px !important;
+    text-align: center !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     FORM LAYOUT — ONE COLUMN, THUMB FRIENDLY
+     -------------------------------------------------------------------------- */
+
+  .form-row,
+  .grid-2-col,
+  .grid-3-col,
+  .workspace-split-layout,
+  .wizard-split-layout,
+  .checkout-split-view,
+  .f4u-poa-sign-grid,
+  .f4u-summary-grid,
+  .f4u-review-meta,
+  .f4u-upsell-grid,
+  #step-2-onboarding-fields-canvas,
+  #step-3-onboarding-fields-canvas,
+  #step-4-onboarding-fields-canvas,
+  #step-5-onboarding-fields-canvas {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) !important;
+    gap: 14px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .form-group-wrapper,
+  .wizard-input-group,
+  .column-cell,
+  .half-width-field,
+  .third-width-field,
+  .f4u-state-field {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    flex: none !important;
+  }
+
+  label,
+  .wizard-field-label,
+  .f4u-state-field label,
+  .f4u-poa-sign-grid label {
+    display: block !important;
+    margin: 0 0 7px !important;
+    color: #0a1f44 !important;
+    font-size: .79rem !important;
+    font-weight: 800 !important;
+    line-height: 1.35 !important;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea,
+  .wizard-input-field,
+  .wizard-field-select,
+  .state-dropdown-select {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-height: 50px !important;
+    margin: 0 !important;
+    padding: 12px 13px !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 11px !important;
+    background: #fff !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+    font: 500 16px/1.35 "DM Sans", sans-serif !important;
+    appearance: none;
+  }
+
+  textarea {
+    min-height: 112px !important;
+    resize: vertical !important;
+  }
+
+  select {
+    padding-right: 38px !important;
+    background-image:
+      linear-gradient(45deg, transparent 50%, #64748b 50%),
+      linear-gradient(135deg, #64748b 50%, transparent 50%) !important;
+    background-position:
+      calc(100% - 18px) 21px,
+      calc(100% - 13px) 21px !important;
+    background-size: 5px 5px, 5px 5px !important;
+    background-repeat: no-repeat !important;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus,
+  .wizard-input-field:focus,
+  .wizard-field-select:focus,
+  .state-dropdown-select:focus {
+    outline: none !important;
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 3px rgba(16,185,129,.13) !important;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    accent-color: #10b981;
+  }
+
+  /* --------------------------------------------------------------------------
+     JURISDICTION / PACKAGE REVIEW
+     -------------------------------------------------------------------------- */
+
+  .f4u-entry-layout {
+    display: grid !important;
+    gap: 20px !important;
+  }
+
+  .f4u-entry-kicker {
+    margin-bottom: 8px !important;
+    font-size: .67rem !important;
+  }
+
+  .f4u-selection-summary,
+  .f4u-review-features,
+  .f4u-review-pricing {
+    padding: 15px !important;
+    border-radius: 14px !important;
+  }
+
+  .f4u-review-meta {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .f4u-review-meta span {
+    min-width: 0;
+    padding: 10px !important;
+  }
+
+  .f4u-review-meta strong {
+    overflow-wrap: anywhere;
+  }
+
+  .f4u-review-features ul {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .f4u-review-pricing {
+    margin-top: 14px !important;
+  }
+
+  .f4u-review-fee-row {
+    gap: 12px !important;
+    padding: 10px 0 !important;
+  }
+
+  .f4u-review-fee-row > span {
+    min-width: 0 !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     UPSELLS — LARGE SELECTABLE CARDS
+     -------------------------------------------------------------------------- */
+
+  .f4u-upsell-grid {
+    grid-template-columns: 1fr !important;
+    gap: 11px !important;
+  }
+
+  .upsell-market-card,
+  .f4u-upsell-card,
+  .dynamic-addon-invoice-row {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 15px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) auto !important;
+    align-items: center !important;
+    gap: 12px !important;
+    text-align: left !important;
+    border: 1px solid #dfe6ee !important;
+    border-radius: 14px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  .f4u-upsell-card:has(input:checked) {
+    border-color: #10b981 !important;
+    background: #f0fdf8 !important;
+    box-shadow: 0 0 0 2px rgba(16,185,129,.08) !important;
+  }
+
+  .f4u-upsell-card__copy strong {
+    font-size: .93rem !important;
+  }
+
+  .f4u-upsell-card__copy small {
+    margin-top: 4px !important;
+    font-size: .78rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .f4u-upsell-card__copy b,
+  .upsell-price-display,
+  .upsell-card-price-render {
+    display: block;
+    margin-top: 6px !important;
+    color: #0e9f6e !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     POWER OF ATTORNEY + SIGNATURE
+     -------------------------------------------------------------------------- */
+
+  .f4u-poa-document {
+    padding: 16px !important;
+    border-radius: 15px !important;
+  }
+
+  .f4u-document-brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding-bottom: 12px !important;
+  }
+
+  .f4u-document-brand img {
+    width: auto !important;
+    height: 30px !important;
+  }
+
+  .f4u-document-brand span {
+    font-size: .7rem !important;
+  }
+
+  #poa-scroll-box {
+    max-height: 270px !important;
+    padding: 14px !important;
+    border-radius: 12px !important;
+    font-size: .82rem !important;
+    line-height: 1.55 !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .f4u-signature-viewport {
+    min-height: 126px !important;
+    padding: 18px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .f4u-signature-viewport strong {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-size: clamp(2rem, 11vw, 3.2rem) !important;
+    line-height: 1.05 !important;
+  }
+
+  .f4u-consent-row {
+    align-items: flex-start !important;
+    gap: 10px !important;
+    padding: 14px !important;
+    border-radius: 12px !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     SUMMARY / RECEIPT / PRICING
+     -------------------------------------------------------------------------- */
+
+  .f4u-summary-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .f4u-summary-grid article {
+    min-width: 0 !important;
+    padding: 14px !important;
+    border-radius: 13px !important;
+  }
+
+  .f4u-summary-grid strong,
+  .f4u-summary-grid small {
+    overflow-wrap: anywhere;
+  }
+
+  .f4u-price-summary {
+    padding: 15px !important;
+    border-radius: 14px !important;
+  }
+
+  .f4u-price-summary > div,
+  .summary-item-row,
+  .summary-receipt-row-item,
+  .receipt-line-item {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) auto !important;
+    align-items: start !important;
+    gap: 12px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 9px 0 !important;
+    font-size: .84rem !important;
+  }
+
+  .f4u-price-summary > div > *:first-child,
+  .summary-item-row > *:first-child,
+  .receipt-line-item > *:first-child {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* --------------------------------------------------------------------------
+     CHECKOUT / STRIPE
+     -------------------------------------------------------------------------- */
+
+  #step-panel-7,
+  .payment-gateway-wrapper {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  #stripe-payment-element,
+  #stripe-payment-element-mount-point,
+  #card-element,
+  .StripeElement {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  #step6-error-banner-target {
+    width: 100% !important;
+    border-radius: 11px !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     ACTIONS — MOBILE CTA HIERARCHY
+     -------------------------------------------------------------------------- */
+
+  .wizard-footer-action-row,
+  .wizard-action-footer,
+  .btn-action-container,
+  .wizard-footer,
+  .f4u-entry-actions,
+  .f4u-package-review .wizard-action-footer {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 9px !important;
+    width: 100% !important;
+    margin-top: 20px !important;
+    padding: 0 !important;
+  }
+
+  .btn-wizard-main,
+  .btn-wizard-nav-next,
+  .fluid-wide-action-btn,
+  #wizard-next-trigger-btn,
+  #portal-activation-submit-btn,
+  button[onclick*="goToNextWizardStep"],
+  button[onclick*="processJurisdictionGateAdvancement"],
+  .f4u-entry-actions .btn-wizard-main {
+    order: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    min-height: 50px !important;
+    margin: 0 !important;
+    padding: 12px 16px !important;
+    border-radius: 11px !important;
+    font-size: .88rem !important;
+  }
+
+  .btn-wizard-nav-back,
+  .btn-wizard-secondary,
+  button[onclick*="goToPreviousWizardStep"],
+  .f4u-change-plan {
+    order: 2 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    min-height: 46px !important;
+    margin: 0 !important;
+    padding: 11px 15px !important;
+    border-radius: 11px !important;
+    text-align: center !important;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
+  }
+
+  /* --------------------------------------------------------------------------
+     FLOATING TOOL RAIL — MAP + SAVE
+     -------------------------------------------------------------------------- */
+
+  .wizard-floating-tools {
+    position: fixed !important;
+    left: 12px !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: 14px !important;
+    z-index: 8500 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+    width: auto !important;
+  }
+
+  .wizard-floating-tool {
+    width: auto !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    padding: 6px 9px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    border: 1px solid #dbe3eb !important;
+    border-radius: 14px !important;
+    background: rgba(255,255,255,.97) !important;
+    box-shadow: 0 10px 30px rgba(10,31,68,.16) !important;
+    backdrop-filter: blur(12px);
+  }
+
+  .wizard-floating-tool__icon {
+    width: 34px !important;
+    height: 34px !important;
+    flex: 0 0 34px !important;
+    border-radius: 10px !important;
+    font-size: 1rem !important;
+  }
+
+  .wizard-floating-tool__text {
+    display: block !important;
+    min-width: 0 !important;
+  }
+
+  .wizard-floating-tool__text strong {
+    display: block !important;
+    color: #0a1f44 !important;
+    font: 800 .68rem/1.15 Manrope, sans-serif !important;
+  }
+
+  .wizard-floating-tool__text small {
+    display: none !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     APPLICATION MAP — BRANDED BOTTOM SHEET
+     -------------------------------------------------------------------------- */
+
+  .wizard-floating-map {
+    position: fixed !important;
+    left: 10px !important;
+    right: 10px !important;
+    top: auto !important;
+    bottom: 74px !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: min(72dvh, 600px) !important;
+    z-index: 8600 !important;
+    transform: translateY(18px) scale(.985) !important;
+    transform-origin: bottom left;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: transform .2s ease, opacity .2s ease !important;
+  }
+
+  .wizard-floating-map.is-open {
+    transform: translateY(0) scale(1) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .floating-map-card {
+    width: 100% !important;
+    max-width: none !important;
+    max-height: min(72dvh, 600px) !important;
+    overflow: hidden !important;
+    border: 1px solid #dce3eb !important;
+    border-radius: 20px !important;
+    background: #fff !important;
+    box-shadow: 0 24px 60px rgba(10,31,68,.24) !important;
+  }
+
+  .floating-map-card__head {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2 !important;
+    padding: 15px 16px !important;
+    background: #fff !important;
+    border-bottom: 1px solid #e8edf3 !important;
+  }
+
+  .floating-map-card__head h3 {
+    font-size: 1rem !important;
+  }
+
+  .floating-map-card__steps {
+    max-height: calc(min(72dvh, 600px) - 72px) !important;
+    overflow-y: auto !important;
+    padding: 8px !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .floating-map-step {
+    grid-template-columns: 34px minmax(0,1fr) !important;
+    gap: 10px !important;
+    padding: 10px !important;
+    border-radius: 11px !important;
+  }
+
+  .floating-map-step__number {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .floating-map-step__copy strong {
+    font-size: .79rem !important;
+  }
+
+  .floating-map-step__copy small {
+    font-size: .69rem !important;
+    line-height: 1.35 !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     BRANDED MODALS — MOBILE BOTTOM SHEET
+     -------------------------------------------------------------------------- */
+
+  .f4u-brand-modal {
+    padding: 12px !important;
+    align-items: flex-end !important;
+  }
+
+  .f4u-brand-modal__card,
+  #f4u-save-progress-modal-root .f4u-modal-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: calc(100dvh - 24px) !important;
+    margin: 0 !important;
+    padding: 22px 17px calc(18px + env(safe-area-inset-bottom)) !important;
+    overflow-y: auto !important;
+    border-radius: 21px 21px 16px 16px !important;
+    box-shadow: 0 24px 70px rgba(10,31,68,.25) !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .f4u-brand-modal__card h2,
+  #f4u-save-progress-modal-root .f4u-modal-card h3 {
+    font-size: 1.35rem !important;
+  }
+
+  .f4u-brand-modal__actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 9px !important;
+  }
+
+  #f4u-save-progress-modal-root input {
+    min-height: 50px !important;
+    font-size: 16px !important;
+  }
+
+  #vault-save-submit-btn {
+    min-height: 50px !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     CHAT — FULL-WIDTH MOBILE PANEL WITHOUT COVERING THE WIZARD
+     -------------------------------------------------------------------------- */
+
+  .chat-bubble-widget-launcher {
+    right: 12px !important;
+    bottom: 14px !important;
+    width: 48px !important;
+    height: 48px !important;
+    z-index: 8400 !important;
+  }
+
+  #support-chat-flyout-panel,
+  .support-slide-container {
+    left: 10px !important;
+    right: 10px !important;
+    bottom: 72px !important;
+    top: auto !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: calc(100dvh - 92px) !important;
+    border-radius: 18px !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     TABLES / LONG CONTENT / PRINT PREVIEWS
+     -------------------------------------------------------------------------- */
+
+  table {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: .8rem !important;
+  }
+
+  .table-responsive,
+  .wizard-table-scroll,
+  .data-table-wrapper {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  pre, code {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
+  #step-8-injection-placeholder,
+  #step-8-injection-placeholder .print-canvas,
+  main.success-container,
+  main.success-container section.success-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  #step-8-injection-placeholder .print-canvas,
+  main.success-container section.success-card {
+    padding: 16px !important;
+    border-radius: 15px !important;
+  }
+
+  /* Safe area support for modern phones. */
+  @supports (padding: max(0px)) {
+    .portal-main {
+      padding-left: max(var(--f4u-mobile-gutter), env(safe-area-inset-left)) !important;
+      padding-right: max(var(--f4u-mobile-gutter), env(safe-area-inset-right)) !important;
+      padding-bottom: max(112px, calc(92px + env(safe-area-inset-bottom))) !important;
+    }
+
+    .wizard-floating-tools,
+    .chat-bubble-widget-launcher {
+      bottom: max(14px, env(safe-area-inset-bottom)) !important;
+    }
   }
 }
 
+/* ==========================================================================
+   SMALL PHONES
+   ========================================================================== */
 
+@media (max-width: 520px) {
+  .wizard-shell-topbar__brand img {
+    height: 31px !important;
+    max-width: 128px !important;
+  }
+
+  .wizard-shell-topbar__back {
+    min-height: 36px !important;
+    padding: 0 10px !important;
+    font-size: .7rem !important;
+  }
+
+  .portal-main {
+    padding-top: 12px !important;
+  }
+
+  .wizard-progress-shell__top {
+    grid-template-columns: auto minmax(0,1fr) !important;
+  }
+
+  #wizard-progress-percent {
+    display: none !important;
+  }
+
+  #wizard-progress-title {
+    text-align: right !important;
+  }
+
+  .wizard-panel,
+  .wizard-step-panel,
+  div[id^="step-panel-"] {
+    padding: 18px 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .f4u-review-meta {
+    grid-template-columns: 1fr !important;
+  }
+
+  .wizard-floating-tool {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    padding: 7px !important;
+    border-radius: 14px !important;
+  }
+
+  .wizard-floating-tool__text {
+    display: none !important;
+  }
+
+  .wizard-floating-tool__icon {
+    width: 32px !important;
+    height: 32px !important;
+    flex-basis: 32px !important;
+  }
+
+  .wizard-floating-map {
+    bottom: 72px !important;
+  }
+}
+
+/* ==========================================================================
+   VERY SMALL PHONES
+   ========================================================================== */
+
+@media (max-width: 360px) {
+  .wizard-shell-topbar {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .wizard-shell-topbar__brand img {
+    max-width: 112px !important;
+    height: 28px !important;
+  }
+
+  .wizard-shell-topbar__back {
+    padding: 0 8px !important;
+    font-size: .66rem !important;
+  }
+
+  .portal-main {
+    --f4u-mobile-gutter: 10px;
+  }
+
+  .wizard-panel,
+  .wizard-step-panel,
+  div[id^="step-panel-"] {
+    padding: 16px 12px !important;
+  }
+
+  .step-main-title,
+  .step-header-container h2,
+  .step-panel-form-card h2,
+  .f4u-entry-copy h2 {
+    font-size: 1.38rem !important;
+  }
+}
+
+/* ==========================================================================
+   LANDSCAPE PHONE
+   ========================================================================== */
+
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 520px) {
+  .wizard-shell-topbar {
+    position: relative !important;
+  }
+
+  .wizard-floating-map,
+  .floating-map-card {
+    max-height: calc(100dvh - 86px) !important;
+  }
+
+  .floating-map-card__steps {
+    max-height: calc(100dvh - 150px) !important;
+  }
+
+  .f4u-brand-modal__card,
+  #f4u-save-progress-modal-root .f4u-modal-card {
+    max-height: calc(100dvh - 16px) !important;
+  }
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .wizard-panel.active,
+  .wizard-floating-map,
+  .f4u-brand-modal__card {
+    animation: none !important;
+    transition: none !important;
+  }
+}
