@@ -36,4 +36,5 @@ export async function saveStep(step_key,answers){const token=getSessionToken();i
 export async function createQuote(addon_keys=[]){const token=getSessionToken();if(!token) throw new Error("No active session.");return callFunction("wizard-v2-quote",{session_token:token,addon_keys});}
 export async function createPaymentIntent(quote_id){const token=getSessionToken();if(!token) throw new Error("No active session.");if(!quote_id) throw new Error("No active quote.");return callFunction("wizard-v2-payment-intent",{session_token:token,quote_id});}
 export async function getPaymentStatus(){const token=getSessionToken();if(!token) throw new Error("No active session.");return callFunction("wizard-v2-payment-status",{session_token:token});}
+export async function completeOrder(){const token=getSessionToken();if(!token) throw new Error("No active session.");return callFunction("wizard-v2-complete",{session_token:token});}
 export {getSessionToken,clearSessionToken,accessToken};
