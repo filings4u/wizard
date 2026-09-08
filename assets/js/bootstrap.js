@@ -1,4 +1,4 @@
-import {bootstrapService,mintHandoff,consumeHandoff,resumeSession,saveStep,createQuote,getSessionToken,clearSessionToken} from "./wizard-api.js";
+import {bootstrapService,mintHandoff,consumeHandoff,resumeSession,saveStep,createQuote,createPaymentIntent,getPaymentStatus,getSessionToken,clearSessionToken} from "./wizard-api.js";
 const root=document.getElementById("f4u-wizard-root");
 const orderPanel=document.getElementById("f4u-order-panel");
 const orderBackdrop=document.getElementById("f4u-order-drawer-backdrop");
@@ -338,7 +338,7 @@ async function renderPayment(){
   if(paymentInitializing)return;paymentInitializing=true;
   try{
     const StripeCtor=await loadStripeJs();
-    const intent=await callFunction("wizard-v2-payment-intent",{session_token:state.sessionToken,quote_id:state.quote.id});
+    const intent=await createPaymentIntent(state.quote.id);
     if(!intent?.payment?.client_secret)throw new Error("payment_client_secret_missing");
     const key=window.F4U_WIZARD_CONFIG?.stripePublishableKey;if(!key)throw new Error("stripe_publishable_key_missing");
     stripeInstance=StripeCtor(key);stripeElements=stripeInstance.elements({clientSecret:intent.payment.client_secret,appearance:{theme:"stripe",variables:{colorPrimary:"#10b981",colorText:"#0a1f44",borderRadius:"10px",fontFamily:"DM Sans, system-ui, sans-serif"}}});
@@ -353,7 +353,7 @@ async function renderPayment(){
   finally{paymentInitializing=false}
 }
 async function pollPaymentStatus(message,button,total){
-  for(let i=0;i<20;i++){await new Promise(r=>setTimeout(r,1500));try{const result=await callFunction("wizard-v2-payment-status",{session_token:state.sessionToken}),status=result?.payment?.status;
+  for(let i=0;i<20;i++){await new Promise(r=>setTimeout(r,1500));try{const result=await getPaymentStatus(),status=result?.payment?.status;
     if(status==="succeeded"){message.innerHTML="<strong>Payment confirmed.</strong> Your order is being finalized.";button.textContent="Payment confirmed";button.disabled=true;return}
     if(status==="failed"||status==="cancelled"){message.textContent=result?.payment?.failure_message||"Payment was not completed. You can try another payment method.";button.disabled=false;button.textContent=`Pay ${money(total)}`;return}
   }catch(error){console.warn("Payment status check failed",error)}}
