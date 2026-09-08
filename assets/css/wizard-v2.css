@@ -1116,3 +1116,28 @@ button:disabled{opacity:.65;cursor:wait}
   .f4u-poa-sign-grid{grid-template-columns:1fr}
   .f4u-document-brand{align-items:flex-start;flex-direction:column}
 }
+
+/* =========================================================
+   ORDER COMPLETION — CENTERED FULL-WIDTH SUCCESS STATE
+   The completion renderer replaces <main class="f4u-layout"> with
+   a single card. Remove the normal two-column wizard grid once
+   the order is complete so the success card is centered in the
+   browser viewport instead of remaining in the left wizard column.
+   ========================================================= */
+body.f4u-order-complete .f4u-layout{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:44px 24px 64px!important;
+  box-sizing:border-box!important;
+}
+body.f4u-order-complete .f4u-completion-card,
+body.f4u-order-complete .f4u-completion-card--wide{
+  width:min(900px,100%)!important;
+  max-width:900px!important;
+  margin:0 auto!important;
+}
+@media(max-width:680px){
+  body.f4u-order-complete .f4u-layout{padding:24px 14px 40px!important}
+}
