@@ -988,3 +988,12 @@ button:disabled{opacity:.65;cursor:wait}
 .f4u-field-help{display:block;margin-top:6px;color:#64748b;font-size:.76rem;line-height:1.45}
 .wizard-error-message{display:none;margin-top:5px;color:#b91c1c;font-size:.75rem}
 @media(max-width:720px){.f4u-field-grid--schema{grid-template-columns:1fr}.f4u-schema-field{grid-column:1!important}.f4u-agency-strip{display:grid;gap:3px}}
+
+/* Persistent filing-jurisdiction context */
+.f4u-jurisdiction-context{display:inline-flex;align-items:center;gap:7px;width:max-content;max-width:100%;padding:6px 10px;border:1px solid rgba(16,185,129,.22);border-radius:999px;background:#ecfdf5;color:#065f46;font-size:.72rem;font-weight:600;line-height:1.2}
+.f4u-jurisdiction-context[hidden]{display:none!important}
+.f4u-jurisdiction-context__dot{width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}
+.f4u-jurisdiction-context strong{font-weight:800}
+.f4u-jurisdiction-context--header{margin-top:5px}
+.f4u-jurisdiction-context--order{margin-top:8px}
+@media(max-width:720px){.f4u-jurisdiction-context{font-size:.68rem;padding:5px 8px}}

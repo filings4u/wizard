@@ -76,12 +76,25 @@ function serviceBehavior(){
 function buildSteps(){
   const behavior=serviceBehavior();
   const steps=[];
-  if(behavior.jurisdiction && !state.jurisdiction) steps.push({key:"jurisdiction",title:"Jurisdiction"});
+  const addonCount=Array.isArray(state.bootstrap?.addons)?state.bootstrap.addons.length:0;
+
+  if(behavior.jurisdiction && !state.jurisdiction){
+    steps.push({key:"jurisdiction",title:"Jurisdiction"});
+  }
+
   steps.push({key:"application",title:"Application"});
-  steps.push({key:"addons",title:"Add-ons"});
-  if(behavior.authorization) steps.push({key:"authorization",title:"Authorization"});
+
+  if(addonCount>0){
+    steps.push({key:"addons",title:"Add-ons"});
+  }
+
+  if(behavior.authorization){
+    steps.push({key:"authorization",title:"Authorization"});
+  }
+
   steps.push({key:"review",title:"Review"});
   steps.push({key:"payment",title:"Payment"});
+
   state.steps=steps;
   state.activeStep=Math.min(state.activeStep,Math.max(steps.length-1,0));
 }
@@ -118,6 +131,14 @@ function updateShell(){
   document.getElementById("f4u-mobile-order-name").textContent=service;
   document.getElementById("f4u-order-entry").textContent=
     state.entryMode==="admin"?"Admin Assisted":state.entryMode==="client"?"Client Portal":"Website";
+
+  const jurisdictionName=state.jurisdiction?(STATE_NAMES[state.jurisdiction]||state.jurisdiction):"";
+  document.querySelectorAll("[data-f4u-jurisdiction-context]").forEach(node=>{
+    node.hidden=!jurisdictionName;
+    node.innerHTML=jurisdictionName
+      ? `<span class="f4u-jurisdiction-context__dot" aria-hidden="true"></span><span>Filing in <strong>${esc(jurisdictionName)}</strong></span>`
+      : "";
+  });
 
   updateProgress();
 }
@@ -857,7 +878,15 @@ async function hydrateSession(sessionResult,registry){
   buildSteps();
   const savedStep=sessionResult.session.current_step_key;
   const savedIndex=state.steps.findIndex(step=>step.key===savedStep);
-  if(savedIndex>=0) state.activeStep=savedIndex;
+
+  if(savedIndex>=0){
+    state.activeStep=savedIndex;
+  }else if(savedStep==="addons"){
+    const authIndex=state.steps.findIndex(step=>step.key==="authorization");
+    const reviewIndex=state.steps.findIndex(step=>step.key==="review");
+    state.activeStep=authIndex>=0?authIndex:(reviewIndex>=0?reviewIndex:0);
+  }
+
   updateShell();renderCurrentStep();clearTimeout(window.__F4U_BOOT_WATCHDOG__);
 }
 async function boot(){
