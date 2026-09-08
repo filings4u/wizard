@@ -1,261 +1,148 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 <head>
-<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="#10b981" name="theme-color"/>
-<title>Secure Filing Wizard | filings4u</title>
-<!-- 1. CORE THIRD-PARTY API DEPENDENCIES & SECURITY FILTERS (LOAD SYNCHRONOUSLY) -->
-<!-- 2. STYLESHEETS & FONTS TYPOGRAPHY ASSETS -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="theme-color" content="#10b981">
+  <meta name="description" content="Secure filings4u application and checkout wizard.">
+  <title>Secure Application | filings4u</title>
 
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="images/fav.png" rel="icon"/>
-
-<link href="assets/css/wizard.css" rel="stylesheet"/>
-
-<link href="assets/css/wizard-toggle.css" rel="stylesheet"/>
-<link href="assets/css/wizard-floating-map.css" rel="stylesheet"/>
-<link href="assets/css/wizard-overrides.css" rel="stylesheet"/>
-<link href="assets/css/wizard-mobile.css" rel="stylesheet"/>
-<link href="assets/css/service-forms.css" rel="stylesheet"/><link href="assets/css/wizard-refinements-v3.css" rel="stylesheet"/><link href="assets/css/wizard-chat-wizard.css" rel="stylesheet"/>
-  <link href="assets/css/wizard-account-save-fixes.css" rel="stylesheet"/>
-<link rel="preconnect" href="https://lrbimrlbskjweynxlgas.supabase.co" crossorigin>
-<link rel="dns-prefetch" href="//lrbimrlbskjweynxlgas.supabase.co">
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link href="assets/css/wizard-global-refinements.css" rel="stylesheet"/>
-<link rel="preconnect" href="https://js.stripe.com" crossorigin>
-<script async src="https://js.stripe.com/v3/"></script>
+  <link rel="icon" href="images/fav.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/wizard-v2.css">
 </head>
-
 <body>
-<header class="wizard-shell-topbar">
-<div class="wizard-shell-topbar__brand">
-<a aria-label="filings4u home" href="index.html">
-<img alt="filings4u" src="images/logo.png"/>
-</a>
-<span aria-hidden="true" class="wizard-shell-topbar__divider"></span>
-<span class="wizard-shell-topbar__label">
-<strong>Secure Filing Wizard</strong>
-<span>Guided application workspace</span>
-</span>
-</div>
-<div class="wizard-shell-topbar__actions">
-<span class="wizard-shell-topbar__secure">● Secure workspace</span>
-<a class="wizard-shell-topbar__back" href="get-started.html">← Back to services</a>
-</div>
-</header>
-<div aria-label="Wizard tools" class="wizard-floating-tools">
-<button aria-expanded="false" class="wizard-floating-tool wizard-floating-tool--map" id="f4u-application-map-toggle" type="button">
-<span class="wizard-floating-tool__icon">☷</span>
-<span class="wizard-floating-tool__text">
-<strong>Application Map</strong>
-<small id="wizard-floating-step-label">Step 1 of 7</small>
-</span>
-</button>
-<button class="wizard-floating-tool wizard-floating-tool--login" id="f4u-wizard-login-button" type="button"><span class="wizard-floating-tool__icon">↪</span><span class="wizard-floating-tool__text"><strong>Log In</strong><small>Resume application</small></span></button>
-<button class="wizard-floating-tool wizard-floating-tool--save" id="sidebarFallbackLogoutBtn" type="button">
-<span class="wizard-floating-tool__icon">↧</span>
-<span class="wizard-floating-tool__text">
-<strong>Save Progress</strong>
-<small>Resume later</small>
-</span>
-</button>
-</div>
-<div aria-hidden="true" class="wizard-floating-map" id="f4u-floating-map-panel">
-<div id="wizard-sidebar-application-map-target"></div>
-</div>
-<div class="dashboard-wrapper">
-<!-- RIGHT MAIN SCREEN CONTENT AREA -->
-<main class="portal-main">
-<div class="wizard-progress-shell">
-<div class="wizard-progress-shell__top">
-<span id="wizard-progress-step-text">Step 1 of 7</span>
-<strong id="wizard-progress-title">Getting started</strong>
-<span id="wizard-progress-percent">12%</span>
-</div>
-<div aria-hidden="true" class="wizard-progress-track">
-<span id="wizard-progress-meter"></span>
-</div>
-</div>
-<div class="wizard-container-wrapper"><div aria-label="Wizard step 1" class="wizard-panel active" id="step-panel-1" role="region"><div id="step-1-injection-placeholder"></div></div></div>
-<div aria-label="Wizard step 2" class="wizard-panel" hidden="" id="step-panel-2" role="region"><div id="step-2-injection-placeholder"></div></div>
-<div aria-label="Wizard step 3" class="wizard-panel" hidden="" id="step-panel-3" role="region"><div id="step-3-injection-placeholder"></div></div>
-<div aria-label="Wizard step 4" class="wizard-panel" hidden="" id="step-panel-4" role="region"><div id="step-4-injection-placeholder"></div></div>
-<div aria-label="Wizard step 5" class="wizard-panel" hidden="" id="step-panel-5" role="region"><div id="step-5-injection-placeholder"></div></div>
-<div aria-label="Wizard step 6" class="wizard-panel" hidden="" id="step-panel-6" role="region"><div id="step-6-injection-placeholder"></div></div>
-<div aria-label="Wizard step 7" class="wizard-panel" hidden="" id="step-panel-7" role="region"><div id="step-7-injection-placeholder"></div></div>
-</div>
-<!-- STEP 3 INNER WIZARD PANEL CARD -->
-</main></div>
-<!-- STEP 4 INNER WIZARD PANEL CARD -->
-<!-- STEP 5 INNER WIZARD PANEL CARD -->
-<!-- STEP 6 INNER WIZARD PANEL CARD -->
-<!-- STEP 7 INNER WIZARD PANEL CARD -->
-<!-- 🏁 STEP 8 INNER WIZARD PANEL CARD (NEW SUCCESS PORTAL FRAME) -->
-<!-- /.dashboard-wrapper -->
-<!-- Load reference registries first -->
-<!-- Load wizard core engine next -->
-<!-- Core Wizard Engines & Master Layout Router Pipeline -->
-<!-- Production checkout remains connected only to the wizard files actually deployed on this site. -->
+<div class="f4u-app" id="f4u-app">
 
-<!-- Floating launcher trigger button widget bubble -->
-<div class="chat-bubble-widget-launcher" data-chat-action="open" id="wizard-chat-launcher" style="cursor: pointer; position: fixed !important; bottom: 24px !important; right: 24px !important; background: #0a1f44 !important; width: 50px !important; height: 50px !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important; box-shadow: 0 4px 12px rgba(10,31,68,0.2) !important; z-index: 99998 !important;" title="Chat with an Expert">
-<svg fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" style="width: 22px; height: 22px; display: block; pointer-events: none;" viewbox="0 0 24 24" xmlns="http://w3.org">
-<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-</svg>
-</div>
-<!-- Main Support Sliding Overlay Container Panel Box -->
-<!-- FIXED MOBILE COMPRESSION: Changed fixed height to a fluid 'max-height' blueprint that dynamically adjusts sizing scales natively on mobile screens -->
-<div class="support-slide-container" id="support-chat-flyout-panel" style="display: none !important; position: fixed !important; bottom: 90px !important; right: 24px !important; top: auto !important; width: 380px !important; max-width: calc(100vw - 32px) !important; height: auto !important; max-height: calc(100vh - 120px) !important; background: #ffffff !important; border-radius: 12px !important; box-shadow: 0 12px 40px rgba(10,31,68,0.15) !important; z-index: 99999 !important; border: 1px solid #e2e8f0 !important; overflow: hidden; opacity: 0; transform: translateY(20px); transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, height 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;">
-<header id="support-chat-drag-handle" style="background: #0a1f44; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; color: #ffffff; user-select: none;">
-<h3 style="margin: 0; font-size: 0.95rem; font-weight: 800;">filings4u Support</h3>
-<div style="display: flex; align-items: center; gap: 12px;">
-<button data-chat-action="end" id="wizardHeaderEndChatBtn" style="display: none; background: #ef4444; border: none; color: #ffffff; font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; cursor: pointer;" type="button">End Chat</button>
-<button data-chat-action="close" style="background: transparent; border: none; color: #ffffff; font-size: 1.4rem; cursor: pointer; line-height: 1;" type="button">×</button>
-</div>
-</header>
-<!-- FIXED HOOK: This parent container box keeps your 520px height rules fully locked! -->
-<div id="wizardChatDynamicInterfaceBox" style="height: calc(100% - 49px) !important; width: 100% !important; display: flex !important; flex-direction: column !important; box-sizing: border-box !important; position: relative !important;">
-<!-- NEW: AUTO-TRIGGERED OUT OF OFFICE COVER MESSAGE LAYER (HIDDEN BY DEFAULT) -->
-<!-- FIXED VISUAL SPACE: Added explicit 24px inner padding to keep elements well away from the layout boundaries edges -->
-<div id="f4uChatClosedOfflineStateContainer" style="display: none; flex-direction: column; padding: 24px 24px 16px 24px !important; box-sizing: border-box !important; width: 100% !important; text-align: left !important;">
-<div style="width: 44px; height: 44px; background: rgba(10,31,68,0.06); color: #0a1f44; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-bottom: 16px;">⏱️</div>
-<h3 style="margin: 0 0 8px 0; color: #0a1f44; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.3px;">Live Chat is Currently Offline</h3>
-<p style="margin: 0 0 20px 0; font-size: 0.875rem; color: #475569; line-height: 1.5; font-weight: 500;">
-    Our expert fulfillment brokers are available live from <strong style="color:#0a1f44;">9:00 AM to 5:00 PM CST</strong>, Monday through Friday. 
-  </p>
-<div style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; box-sizing: border-box; margin-bottom: 24px;">
-<p style="margin: 0 0 6px 0; font-size: 0.825rem; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Next Immediate Step:</p>
-<p style="margin: 0; font-size: 0.875rem; color: #0f172a; line-height: 1.45; font-weight: 600;">
-      Please send an email directly to our support desk at 
-      <a href="mailto:support@filings4u.com" style="color: #10b981; text-decoration: underline; font-weight: 700;">support@filings4u.com</a>. 
-      A compliance broker will personally contact you on the very next business day!
-    </p>
-</div>
-<button data-chat-action="close" style="width: 100%; padding: 12px 0; background: #0a1f44; color: #ffffff; border: none; font-weight: 700; border-radius: 6px; cursor: pointer; font-size: 0.875rem;" type="button">Close Window</button>
-</div>
-<!-- THE INTAKE FORM WELL (Swapped away dynamically on user login) -->
-<div id="chat-preflight-input-form" style="padding: 26px 24px 12px 24px; display: flex; flex-direction: column; gap: 16px; box-sizing: border-box; background: #ffffff; flex: 1 !important; justify-content: center !important;">
-<p style="margin: 0; font-size: 0.875rem; color: #475569; line-height: 1.5; text-align: left; font-weight: 500;">Please provide your corporate contact credentials below to connect to a live compliance fulfillment agent.</p>
-<form id="f4uActiveIntakeForm" novalidate="" style="margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; width: 100%;">
-<div class="f4u-form-row" style="display: flex; gap: 12px; width: 100%;">
-<div class="f4u-input-group" style="flex: 1;">
-<input id="chat_first_name" placeholder="First Name" required="" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.875rem; box-sizing: border-box;" type="text"/>
-</div>
-<div class="f4u-input-group" style="flex: 1;">
-<input id="chat_last_name" placeholder="Last Name" required="" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.875rem; box-sizing: border-box;" type="text"/>
-</div>
-</div>
-<div class="f4u-input-group" style="width: 100%;">
-<input id="chat_phone" placeholder="Phone Number" required="" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.875rem; box-sizing: border-box;" type="tel"/>
-</div>
-<div class="f4u-input-group" style="width: 100%;">
-<input id="chat_email" placeholder="Email Address" required="" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.875rem; box-sizing: border-box;" type="email"/>
-</div>
-<button class="btn-wizard-main" id="f4uSubmitBtn" style="width:100%; padding:12px 0; background:#0a1f44; color:#ffffff; border:none; font-weight:700; border-radius:6px; cursor:pointer; font-size:0.875rem; margin-top: 4px; transition: background 0.15s ease;" type="submit">Connect to Live Agent</button>
-</form>
-</div>
-<!-- MONITORING PILL BAR -->
-<div id="f4uChatComplianceNoticeBar" style="background: #fff2e8 !important; border-top: 1px solid #ffd591 !important; padding: 10px 18px !important; font-size: 0.725rem !important; color: #d46b08 !important; font-weight: 600 !important; display: flex !important; align-items: center !important; gap: 8px !important; box-sizing: border-box !important; width: 100% !important; margin: 0 !important; flex-shrink: 0 !important;">
-<span>🔒</span>
-<span style="line-height: 1.4 !important; text-align: left !important;">Notice: For security and identity compliance tracking guidelines, this chat session is actively monitored and recorded.</span>
-</div>
-</div>
-</div>
-<!-- 🪟 BLURRED BACKDROP TERMINATION CONFIRMATION MODAL OVERLAY -->
-<div id="f4uChatTerminationModalOverlay" style="display: none !important; position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(15, 23, 42, 0.4) !important; backdrop-filter: blur(5px) !important; -webkit-backdrop-filter: blur(5px) !important; z-index: 999999 !important; align-items: center !important; justify-content: center !important; padding: 20px !important; box-sizing: border-box !important; opacity: 0; transition: opacity 0.2s ease;">
-<div style="background: #ffffff !important; width: 100% !important; max-width: 340px !important; border-radius: 12px !important; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important; border: 1px solid #e2e8f0 !important; overflow: hidden !important; transform: scale(0.95); transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important; box-sizing: border-box !important;">
-<div style="background: #0a1f44 !important; padding: 14px 18px !important; display: flex !important; align-items: center; gap: 8px !important;">
-<span style="font-size: 1.15rem !important;">⚠️</span>
-<h4 style="margin: 0 !important; font-size: 0.9rem !important; font-weight: 800 !important; color: #ffffff !important;">Terminate Conversation?</h4>
-</div>
-<!-- MAIN VIEW WELL -->
-<div id="f4uModalMainInteractiveContentWell" style="padding: 20px 18px !important; text-align: left !important; box-sizing: border-box !important;">
-<!-- ACTIVE CONFIRM DIALOG STATE SECTION -->
-<div id="f4uModalTerminationActivePromptState">
-<p style="margin: 0 0 16px 0 !important; font-size: 0.85rem !important; color: #475569 !important; line-height: 1.5 !important; font-weight: 500 !important;">
-          Are you sure you want to end this chat conversation? A copy of the full text discussion logs transcript will be immediately delivered to your business email address.
-        </p>
-<div style="display: flex !important; gap: 10px !important; justify-content: flex-end !important; width: 100% !important; box-sizing: border-box !important;">
-<button style="padding: 8px 14px !important; background: #f1f5f9 !important; color: #475569 !important; border: 1px solid #cbd5e1 !important; border-radius: 6px !important; font-size: 0.8rem !important; font-weight: 700 !important; cursor: pointer !important; transition: background 0.15s ease !important;" type="button">Cancel</button>
-<button id="f4uConfirmCloseActionBtn" style="padding: 8px 16px !important; background: #ef4444 !important; color: #ffffff !important; border: none !important; border-radius: 6px !important; font-size: 0.8rem !important; font-weight: 700 !important; cursor: pointer !important; transition: background 0.15s ease !important;" type="button">Yes, End Chat</button>
-</div>
-</div>
-<!-- NEW: SUCCESS STATE TRANSCRIPT TRANSFERS NOTIFICATION (HIDDEN ON START) -->
-<div id="f4uModalTerminationSuccessState" style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 10px 0; box-sizing: border-box; width: 100%;">
-<div style="width: 46px; height: 44px; background: rgba(16,185,129,0.1); color: #10b981; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-bottom: 12px;">✓</div>
-<h4 style="margin: 0 0 6px 0; color: #0a1f44; font-size: 0.95rem; font-weight: 800;">Transcript Sent Successfully!</h4>
-<p style="margin: 0; font-size: 0.825rem; color: #64748b; line-height: 1.4; font-weight: 500;">
-          Your logs summary has been dispatched. Closing secure chat workspace panel links now...
-        </p>
-</div>
-</div>
-</div>
-</div>
-<!-- ========================================================================== 
-     🚀 THE PLATFORM ENGINE PROGRAM CODE HOOK IS CURRENTLY OPEN
-     ========================================================================== -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/wizard-env.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/supabase-client.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/wizard-session-lifecycle.js"></script>
-<script src="assets/js/wizard-access-gate.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/government-pricing.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/state-pricing.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/service-form-engine.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/core.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/ui.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/chat.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/application-map.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/wizard-floating-ui.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/wizard-login.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/save-progress.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/alerts-modal.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/step-1.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/step-2.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/step-3.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/step-4.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/step-5.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/step-6.js"></script>
-<script type="application/x-f4u-deferred" data-src="assets/js/step-7.js"></script>
+  <header class="f4u-header">
+    <div class="f4u-header__inner">
+      <a class="f4u-brand" href="https://filings4u.com/" aria-label="filings4u home">
+        <img src="images/logo.png" alt="filings4u">
+      </a>
 
+      <div class="f4u-header__center" id="f4u-header-context">
+        <span class="f4u-header__eyebrow">Secure Application</span>
+        <strong id="f4u-header-service">Service Application</strong>
+      </div>
 
+      <div class="f4u-header__actions">
+        <button class="f4u-header-link" id="f4u-save-button" type="button">Save &amp; exit</button>
+        <button class="f4u-header-help" id="f4u-help-button" type="button">Need help?</button>
+      </div>
+    </div>
+  </header>
 
+  <div class="f4u-mobile-orderbar" id="f4u-mobile-orderbar">
+    <button type="button" id="f4u-mobile-order-toggle" aria-expanded="false">
+      <span>
+        <small>Your order</small>
+        <strong id="f4u-mobile-order-name">Service</strong>
+      </span>
+      <span class="f4u-mobile-order-total" id="f4u-mobile-order-total">—</span>
+      <span class="f4u-mobile-order-chevron" aria-hidden="true">⌄</span>
+    </button>
+  </div>
+
+  <main class="f4u-layout">
+    <section class="f4u-main">
+
+      <div class="f4u-topline">
+        <button class="f4u-back" type="button" id="f4u-back-button">← Back</button>
+
+        <div class="f4u-security">
+          <span></span>
+          Secure application
+        </div>
+      </div>
+
+      <div class="f4u-progress-card">
+        <div class="f4u-progress-meta">
+          <span id="f4u-progress-label">Application</span>
+          <span id="f4u-progress-count">Step 1 of 5</span>
+        </div>
+
+        <div class="f4u-progress-track" aria-hidden="true">
+          <span id="f4u-progress-bar"></span>
+        </div>
+
+        <div class="f4u-progress-steps" id="f4u-progress-steps"></div>
+      </div>
+
+      <div class="f4u-content-card" id="f4u-wizard-root" aria-live="polite">
+        <div class="f4u-loading">Preparing your application…</div>
+      </div>
+
+    </section>
+
+    <aside class="f4u-order" id="f4u-order-panel">
+      <div class="f4u-order__inner">
+        <div class="f4u-order__head">
+          <div>
+            <span class="f4u-order__eyebrow">Your order</span>
+            <h2 id="f4u-order-service">Service</h2>
+            <p id="f4u-order-package">Package</p>
+          </div>
+          <span class="f4u-order__badge" id="f4u-order-entry">Website</span>
+        </div>
+
+        <div class="f4u-order__details" id="f4u-order-details">
+          <div class="f4u-price-row">
+            <span>Package</span>
+            <strong id="f4u-order-package-price">Calculated at review</strong>
+          </div>
+          <div class="f4u-price-row">
+            <span>Government fees</span>
+            <strong id="f4u-order-government-fee">Calculated at review</strong>
+          </div>
+          <div class="f4u-price-row">
+            <span>Add-ons</span>
+            <strong id="f4u-order-addon-price">—</strong>
+          </div>
+        </div>
+
+        <div class="f4u-order__total">
+          <span>
+            <small>Current total</small>
+            <strong id="f4u-order-total">Calculated at review</strong>
+          </span>
+          <small>Final pricing is verified securely before payment.</small>
+        </div>
+
+        <div class="f4u-order__trust">
+          <div><span>✓</span><p><strong>Secure checkout</strong><small>Payment details are handled by Stripe.</small></p></div>
+          <div><span>✓</span><p><strong>Save and continue later</strong><small>Your application can be resumed securely.</small></p></div>
+          <div><span>✓</span><p><strong>Protected information</strong><small>Your filing data is handled through your secure account.</small></p></div>
+        </div>
+
+        <button class="f4u-order__help" id="f4u-order-help" type="button">Questions? Contact filings4u</button>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="f4u-footer">
+    <div class="f4u-footer__inner">
+      <span>© 2026 filings4u, LLC. All rights reserved.</span>
+      <span>A Subsidiary of Roseland Companies, LLC</span>
+    </div>
+  </footer>
+
+</div>
+
+<div class="f4u-order-drawer-backdrop" id="f4u-order-drawer-backdrop" hidden></div>
+
+<script src="assets/js/config.js"></script>
 <script>
-(function () {
-  "use strict";
-  function loadWizardScripts() {
-    const nodes = Array.from(document.querySelectorAll('script[type="application/x-f4u-deferred"][data-src]'));
-    return (async function(){
-      for (const node of nodes) {
-        await new Promise(function (resolve, reject) {
-          const s = document.createElement("script");
-          s.src = node.dataset.src;
-          s.onload = resolve;
-          s.onerror = function () { reject(new Error("Could not load " + s.src)); };
-          document.body.appendChild(s);
-        });
-      }
-    })();
-  }
-
-  async function bootVerifiedWizard() {
-    const scriptsReady = loadWizardScripts();
-    await Promise.all([window.F4UWizardAccessReady, scriptsReady]);
-
-    if (window.F4UWizard?.boot) {
-      await window.F4UWizard.boot();
+  window.__F4U_BOOT_WATCHDOG__=setTimeout(function(){
+    var root=document.getElementById("f4u-wizard-root");
+    if(root && /Preparing your application|Opening your secure application|Starting your secure application/.test(root.textContent||"")){
+      root.innerHTML='<section class="f4u-panel"><div class="f4u-panel__heading"><span class="f4u-kicker">Secure application</span><h1>We could not start the application.</h1><p>The wizard interface loaded, but its application module did not finish starting. Refresh this page once. If it continues, return to the service page and start the application again.</p></div><div class="f4u-actions"><a class="f4u-primary" href="https://filings4u.com/get-started.html">Return to services</a></div></section>';
     }
-    console.log("[filings4u] Verified wizard boot complete.");
-  }
-  bootVerifiedWizard().catch(function (error) {
-    console.error("[filings4u] Wizard boot failed:", error);
-  });
-})();
+  },8000);
 </script>
-
+<script src="assets/js/llc-formation.js"></script>
+<script type="module" src="assets/js/bootstrap.js"></script>
 </body>
 </html>
