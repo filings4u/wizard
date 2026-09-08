@@ -682,165 +682,321 @@ function authorizationSignerDefaults(){
   const saved=state.answers.authorization||{};
   const app=state.answers.application||{};
   const formAnswers=app.form_payload?.answers||app.answers||{};
+  const first=saved.first_name||saved.signer_first_name||app.first_name||formAnswers.contact_first_name||"";
+  const last=saved.last_name||saved.signer_last_name||app.last_name||formAnswers.contact_last_name||"";
   return {
-    first_name:saved.signer_first_name||app.first_name||formAnswers.contact_first_name||"",
-    last_name:saved.signer_last_name||app.last_name||formAnswers.contact_last_name||"",
-    capacity:saved.signer_capacity||"",
-    signature:saved.signature_text||[saved.signer_first_name||app.first_name||formAnswers.contact_first_name||"",saved.signer_last_name||app.last_name||formAnswers.contact_last_name||""].filter(Boolean).join(" "),
-    authority_confirmed:!!saved.authority_confirmed,
-    accuracy_confirmed:!!saved.accuracy_confirmed,
-    limited_poa_confirmed:!!saved.limited_poa_confirmed,
-    esign_consent:!!saved.esign_consent
+    first_name:first,
+    last_name:last,
+    signature:saved.signature||saved.signer_name||saved.signature_text||[first,last].filter(Boolean).join(" "),
+    consent:!!(saved.consent||saved.esign_consent),
+    document_reviewed:!!saved.document_reviewed,
+    document_reviewed_at:saved.document_reviewed_at||null,
+    executed_at:saved.executed_at||null
   };
 }
 
 function renderAuthorization(){
-  const saved=authorizationSignerDefaults();
+  const a=authorizationSignerDefaults();
+  const serviceName=state.serviceTitle||state.serviceKey||"Selected filing service";
+  const jurisdiction=state.jurisdiction||"";
+  const stepNumber=state.activeStep+1;
+
   root.innerHTML=`
-    <section class="f4u-panel f4u-authorization">
-      <div class="f4u-panel__heading">
-        <span class="f4u-kicker">${esc(state.serviceTitle)} · Authorization</span>
-        <h1>Authorization &amp; Power of Attorney</h1>
-        <p>Authorize filings4u to prepare and submit this filing using the information you provided. This authorization is limited to this order and related filing communications.</p>
+    <section class="f4u-panel f4u-poa-step">
+      <div class="f4u-entry-copy">
+        <span class="f4u-entry-kicker">Step ${stepNumber} · Power of Attorney</span>
+        <h1>Power of Attorney &amp; Digital Execution</h1>
+        <p>Review and electronically sign the limited authorization that allows filings4u, LLC to prepare, process, and submit documents for this order.</p>
       </div>
 
-      <div class="f4u-authorization__notice">
-        <strong>Limited filing authorization</strong>
-        <p>By completing this step, you are not transferring ownership or management authority. You are authorizing filings4u, LLC and its filing agents/service providers to prepare, sign where legally permitted, submit, receive, and communicate about documents for this specific filing. A jurisdiction may require an additional state-specific form or wet signature.</p>
+      <div id="poa-dynamic-state-tooltip" class="f4u-poa-status ${a.document_reviewed?"is-complete":""}" role="status" aria-live="polite">
+        <span id="poa-tooltip-icon" class="f4u-poa-status__icon" aria-hidden="true">${a.document_reviewed?"✓":"!"}</span>
+        <span id="poa-tooltip-text">
+          ${a.document_reviewed
+            ? `Document reviewed. You may now enter your legal name and complete the electronic signature.`
+            : `Scroll through the entire authorization agreement to the bottom before signing. Your signature fields will unlock when the review is complete.`}
+        </span>
       </div>
 
-      <div class="f4u-form-grid">
-        <div class="f4u-field">
-          <label for="poa-first">Signer first name *</label>
-          <input id="poa-first" autocomplete="given-name" value="${esc(saved.first_name)}" placeholder="First name">
-          <small class="f4u-field-error" id="err-poa-first"></small>
+      <article class="f4u-poa-document" id="f4u-poa-document">
+        <div class="f4u-document-brand">
+          <img src="images/logo.png" alt="filings4u">
+          <div>
+            <strong>filings4u, LLC</strong>
+            <span>A Subsidiary of Roseland Companies, LLC</span>
+          </div>
         </div>
-        <div class="f4u-field">
-          <label for="poa-last">Signer last name *</label>
-          <input id="poa-last" autocomplete="family-name" value="${esc(saved.last_name)}" placeholder="Last name">
-          <small class="f4u-field-error" id="err-poa-last"></small>
-        </div>
-        <div class="f4u-field f4u-field--full">
-          <label for="poa-capacity">Capacity / title *</label>
-          <select id="poa-capacity">
-            <option value="">Select capacity</option>
-            ${["Member","Manager","Organizer","Authorized Representative","Owner","Officer","Other"].map(v=>`<option value="${esc(v)}"${saved.capacity===v?" selected":""}>${esc(v)}</option>`).join("")}
-          </select>
-          <small class="f4u-field-error" id="err-poa-capacity"></small>
-        </div>
-      </div>
 
-      <div class="f4u-authorization__statements">
-        <label class="f4u-choice-row">
-          <input type="checkbox" id="poa-authority"${saved.authority_confirmed?" checked":""}>
-          <span><strong>I have authority to approve this filing.</strong><small>I am authorized to act for the business/applicant identified in this order.</small></span>
-        </label>
-        <label class="f4u-choice-row">
-          <input type="checkbox" id="poa-accuracy"${saved.accuracy_confirmed?" checked":""}>
-          <span><strong>I certify the information provided is accurate.</strong><small>filings4u may rely on the information I submitted to prepare the filing.</small></span>
-        </label>
-        <label class="f4u-choice-row">
-          <input type="checkbox" id="poa-limited"${saved.limited_poa_confirmed?" checked":""}>
-          <span><strong>I grant this limited filing Power of Attorney.</strong><small>This authorization is limited to preparing, submitting, receiving, and communicating about this order and does not grant general business authority.</small></span>
-        </label>
-        <label class="f4u-choice-row">
-          <input type="checkbox" id="poa-esign"${saved.esign_consent?" checked":""}>
-          <span><strong>I consent to use an electronic signature.</strong><small>Typing my name below is intended to serve as my signature for this authorization.</small></span>
-        </label>
-      </div>
-
-      <div class="f4u-signature-card">
-        <label for="poa-signature">Type your full legal name to sign *</label>
-        <input id="poa-signature" value="${esc(saved.signature)}" autocomplete="name" placeholder="Full legal name">
-        <div class="f4u-signature-preview" aria-live="polite">
-          <span id="poa-signature-preview">${esc(saved.signature||"Your signature")}</span>
+        <div class="f4u-poa-document__meta">
+          <span>Limited Power of Attorney</span>
+          <span>${esc(serviceName)}</span>
+          ${jurisdiction?`<span>${esc(jurisdiction)}</span>`:""}
         </div>
-        <small class="f4u-field-error" id="err-poa-signature"></small>
-      </div>
 
-      <div class="f4u-authorization__version">
-        Authorization version: <strong>F4U-POA-2026-09-v1</strong>
-      </div>
+        <h3>Limited Power of Attorney &amp; Corporate Agency Agreement</h3>
+
+        <div id="poa-scroll-box" class="f4u-poa-scroll" tabindex="0" aria-label="Limited Power of Attorney document">
+          <p><strong>LIMITED POWER OF ATTORNEY &amp; CORPORATE AGENCY AGREEMENT</strong></p>
+
+          <p>
+            <strong>WHEREAS,</strong> the undersigned Principal appoints and authorizes
+            <strong>filings4u, LLC</strong>, an Illinois limited liability company and a subsidiary of
+            <strong>Roseland Companies, LLC</strong>, together with its authorized operational agents, officers,
+            employees, and designees, to act as the Principal's limited Attorney-in-Fact and Corporate Agent
+            solely under the terms and limitations stated in this Agreement.
+          </p>
+
+          <h4>1. Express Limited Scope of Appointment</h4>
+          <p>
+            This appointment is limited to administrative, regulatory, filing, registration, compliance,
+            document-preparation, document-transmission, and related ministerial activities reasonably necessary
+            to perform the service purchased by the Principal through the filings4u digital filing wizard.
+          </p>
+          <p>
+            For this order, the authorization applies specifically to
+            <strong>${esc(serviceName)}</strong>${jurisdiction?` in <strong>${esc(jurisdiction)}</strong>`:""}.
+            The Attorney-in-Fact may prepare, complete, sign where permitted and authorized, correct, amend,
+            transmit, submit, receive, and process applications, registrations, forms, renewals, supporting
+            documents, and related correspondence necessary to complete that service.
+          </p>
+
+          <h4>2. Grant of Operational Powers</h4>
+          <p>
+            The Principal authorizes filings4u, LLC to communicate with applicable state filing offices,
+            federal agencies, regulatory bodies, registries, tax authorities, licensing agencies, and other
+            governmental or administrative entities as reasonably necessary to carry out the selected service.
+          </p>
+          <p>
+            This limited authorization may include responding to routine filing deficiencies, correcting
+            clerical or formatting issues, transmitting customer-approved information, receiving filing
+            confirmations, and taking other administrative actions reasonably required to complete the order.
+          </p>
+
+          <h4>3. Customer Information &amp; Accuracy</h4>
+          <p>
+            The Principal certifies that the information submitted through the filings4u wizard is complete and
+            accurate to the best of the Principal's knowledge and that the Principal has authority to act for
+            the applicant, business, organization, carrier, or other entity identified in this order.
+          </p>
+          <p>
+            filings4u, LLC may rely on the information supplied by the Principal and is not responsible for
+            inaccuracies, omissions, or delays caused by information supplied by the Principal or by government
+            agency requirements outside filings4u's reasonable control.
+          </p>
+
+          <h4>4. Electronic Signatures &amp; Intent</h4>
+          <p>
+            The Principal agrees to conduct this transaction electronically and expressly intends the typed
+            first and last name entered below, together with the associated electronic record and execution
+            timestamp, to serve as the Principal's electronic signature for this authorization.
+          </p>
+          <p>
+            The Principal acknowledges that electronic signatures and electronic records may be used in
+            accordance with applicable federal and state electronic-transactions law, including the federal
+            Electronic Signatures in Global and National Commerce Act (ESIGN) and applicable enactments of the
+            Uniform Electronic Transactions Act (UETA), where those laws apply.
+          </p>
+
+          <h4>5. No Attorney-Client Relationship</h4>
+          <p>
+            This authorization does not create an attorney-client relationship and does not appoint filings4u,
+            LLC as an attorney-at-law. filings4u, LLC provides filing, registration, compliance, document
+            preparation, and administrative support services and does not provide legal, tax, accounting, or
+            other professional advice.
+          </p>
+
+          <h4>6. Ratification, Revocation &amp; Duration</h4>
+          <p>
+            The Principal ratifies lawful administrative acts performed by filings4u, LLC within the scope of
+            this authorization. This authorization becomes effective when electronically executed and remains
+            effective only for the selected order and reasonably related filing communications unless earlier
+            revoked in writing or as otherwise required by applicable law.
+          </p>
+          <p>
+            Revocation does not affect actions already taken in reasonable reliance on this authorization before
+            filings4u receives and can reasonably process the revocation. A revocation request may be submitted
+            through an available verified client portal workflow or by contacting filings4u support.
+          </p>
+
+          <h4>7. Corporate Entity Information</h4>
+          <p>
+            <strong>filings4u, LLC</strong><br>
+            A Subsidiary of Roseland Companies, LLC<br>
+            State of Illinois<br>
+            Support: <a href="mailto:support@filings4u.com">support@filings4u.com</a>
+          </p>
+
+          <div class="f4u-poa-scroll-end" aria-hidden="true">
+            End of authorization document
+          </div>
+        </div>
+
+        <div id="poa_input_wrapper" class="f4u-poa-signature-fields ${a.document_reviewed?"is-unlocked":""}">
+          <div class="f4u-poa-sign-grid">
+            <div class="f4u-form-field">
+              <label for="poa_first_name">First name <span aria-hidden="true">*</span></label>
+              <input id="poa_first_name" class="wizard-input-field" autocomplete="given-name"
+                value="${esc(a.first_name||"")}" ${a.document_reviewed?"":"disabled"} required>
+            </div>
+            <div class="f4u-form-field">
+              <label for="poa_last_name">Last name <span aria-hidden="true">*</span></label>
+              <input id="poa_last_name" class="wizard-input-field" autocomplete="family-name"
+                value="${esc(a.last_name||"")}" ${a.document_reviewed?"":"disabled"} required>
+            </div>
+          </div>
+        </div>
+
+        <div class="f4u-signature-viewport ${a.document_reviewed?"is-unlocked":""}">
+          <span>Legal electronic signature preview</span>
+          <strong id="poa_signature_preview">${esc([a.first_name,a.last_name].filter(Boolean).join(" ")||"Your signature appears here")}</strong>
+          <small id="poa-signature-time">
+            ${esc(a.executed_at?`Signed electronically · ${new Date(a.executed_at).toLocaleString()}`:"Date and time are recorded when you sign and continue.")}
+          </small>
+        </div>
+
+        <div id="poa_consent_wrapper" class="f4u-poa-consent-wrap ${a.document_reviewed?"is-unlocked":""}">
+          <label class="f4u-consent-row">
+            <input type="checkbox" id="poa_consent_checkbox" ${a.consent?"checked":""} ${a.document_reviewed?"":"disabled"}>
+            <span>
+              I have reviewed this Limited Power of Attorney and consent to electronic execution. I intend my typed
+              first and last name to serve as my electronic signature. I certify that I am authorized to act
+              for the applicant or business identified in this order.
+            </span>
+          </label>
+        </div>
+      </article>
 
       <div class="f4u-actions">
         <button class="f4u-secondary" type="button" id="f4u-prev">Back</button>
-        <span class="f4u-actions__note" id="f4u-auth-note">Your authorization will be stored with this secure wizard session.</span>
+        <span class="f4u-actions__note" id="f4u-auth-note">${a.document_reviewed?"Document reviewed. Complete your signature to continue.":"Scroll to the bottom of the POA to unlock the signature fields."}</span>
         <button class="f4u-primary" type="button" id="f4u-next">Authorize &amp; continue</button>
       </div>
     </section>`;
 
-  const first=document.getElementById("poa-first");
-  const last=document.getElementById("poa-last");
-  const signature=document.getElementById("poa-signature");
-  const preview=document.getElementById("poa-signature-preview");
+  const scrollBox=document.getElementById("poa-scroll-box");
+  const status=document.getElementById("poa-dynamic-state-tooltip");
+  const statusIcon=document.getElementById("poa-tooltip-icon");
+  const statusText=document.getElementById("poa-tooltip-text");
+  const fields=document.getElementById("poa_input_wrapper");
+  const consentWrap=document.getElementById("poa_consent_wrapper");
+  const signatureView=root.querySelector(".f4u-signature-viewport");
+  const first=document.getElementById("poa_first_name");
+  const last=document.getElementById("poa_last_name");
+  const consent=document.getElementById("poa_consent_checkbox");
+  const preview=document.getElementById("poa_signature_preview");
+  const time=document.getElementById("poa-signature-time");
+  const note=document.getElementById("f4u-auth-note");
+  let reviewed=!!a.document_reviewed;
+  let reviewedAt=a.document_reviewed_at||null;
 
-  function syncSignature(){
-    const auto=[first.value.trim(),last.value.trim()].filter(Boolean).join(" ");
-    if(!signature.dataset.edited) signature.value=auto;
-    preview.textContent=signature.value.trim()||"Your signature";
+  function unlockSignature(){
+    if(reviewed)return;
+    reviewed=true;
+    reviewedAt=new Date().toISOString();
+    [first,last,consent].forEach(el=>{if(el)el.disabled=false;});
+    fields?.classList.add("is-unlocked");
+    consentWrap?.classList.add("is-unlocked");
+    signatureView?.classList.add("is-unlocked");
+    status?.classList.add("is-complete");
+    if(statusIcon)statusIcon.textContent="✓";
+    if(statusText)statusText.textContent="Document reviewed. You may now enter your legal name and complete the electronic signature.";
+    if(note)note.textContent="Document reviewed. Complete your signature to continue.";
   }
-  first.addEventListener("input",syncSignature);
-  last.addEventListener("input",syncSignature);
-  signature.addEventListener("input",()=>{signature.dataset.edited="1";preview.textContent=signature.value.trim()||"Your signature";});
+
+  function checkScroll(){
+    if(!scrollBox||reviewed)return;
+    const threshold=12;
+    if(scrollBox.scrollTop+scrollBox.clientHeight>=scrollBox.scrollHeight-threshold){
+      unlockSignature();
+    }
+  }
+
+  scrollBox?.addEventListener("scroll",checkScroll,{passive:true});
+  requestAnimationFrame(()=>{
+    if(scrollBox && scrollBox.scrollHeight<=scrollBox.clientHeight+12)unlockSignature();
+  });
+
+  function updateSignature(){
+    const name=[first?.value.trim(),last?.value.trim()].filter(Boolean).join(" ");
+    if(preview)preview.textContent=name||"Your signature appears here";
+  }
+  first?.addEventListener("input",updateSignature);
+  last?.addEventListener("input",updateSignature);
+  updateSignature();
 
   document.getElementById("f4u-prev").addEventListener("click",prevStep);
+
   document.getElementById("f4u-next").addEventListener("click",async()=>{
+    if(!reviewed){
+      if(note)note.textContent="Scroll to the bottom of the Power of Attorney before signing.";
+      scrollBox?.focus();
+      scrollBox?.scrollIntoView({behavior:"smooth",block:"center"});
+      return;
+    }
+
+    const f=String(first?.value||"").trim();
+    const l=String(last?.value||"").trim();
+    const hasConsent=!!consent?.checked;
+
+    if(!f||!l){
+      if(note)note.textContent="Enter both the first and last name of the authorized signer.";
+      (!f?first:last)?.focus();
+      return;
+    }
+
+    if(!hasConsent){
+      if(note)note.textContent="Check the authorization consent box before continuing.";
+      consent?.focus();
+      return;
+    }
+
+    const executedAt=new Date().toISOString();
+    const signerName=`${f} ${l}`;
     const values={
-      signer_first_name:first.value.trim(),
-      signer_last_name:last.value.trim(),
-      signer_capacity:document.getElementById("poa-capacity").value,
-      signature_text:signature.value.trim(),
-      authority_confirmed:document.getElementById("poa-authority").checked,
-      accuracy_confirmed:document.getElementById("poa-accuracy").checked,
-      limited_poa_confirmed:document.getElementById("poa-limited").checked,
-      esign_consent:document.getElementById("poa-esign").checked,
+      first_name:f,
+      last_name:l,
+      signer_name:signerName,
+      signature:signerName,
+      consent:true,
+      document_reviewed:true,
+      document_reviewed_at:reviewedAt||executedAt,
+      executed_at:executedAt,
+      service_key:state.serviceKey,
+      service_name:serviceName,
+      jurisdiction:state.jurisdiction||null,
+      document_title:"Limited Power of Attorney & Corporate Agency Agreement",
+      document_version:"F4U-POA-2026-09-v1",
+      principal_acknowledgment:true,
+      electronic_signature_intent:true,
+      parent_company:"Roseland Companies, LLC",
+
+      // Compatibility fields used by the existing completion/order pipeline.
+      signer_first_name:f,
+      signer_last_name:l,
+      signature_text:signerName,
+      esign_consent:true,
+      authority_confirmed:true,
+      accuracy_confirmed:true,
+      limited_poa_confirmed:true,
       authorization_version:"F4U-POA-2026-09-v1",
       authorization_scope:"this_order_and_related_filing_communications"
     };
 
-    root.querySelectorAll(".f4u-field-error").forEach(x=>x.textContent="");
-    let invalid=null;
-    const required=[
-      ["poa-first","err-poa-first",values.signer_first_name,"Enter the signer’s first name."],
-      ["poa-last","err-poa-last",values.signer_last_name,"Enter the signer’s last name."],
-      ["poa-capacity","err-poa-capacity",values.signer_capacity,"Select the signer’s capacity."],
-      ["poa-signature","err-poa-signature",values.signature_text,"Type the signer’s full legal name."]
-    ];
-    for(const [fieldId,errorId,value,message] of required){
-      if(!value){
-        document.getElementById(errorId).textContent=message;
-        invalid ||= document.getElementById(fieldId);
-      }
-    }
-    const expected=[values.signer_first_name,values.signer_last_name].filter(Boolean).join(" ").replace(/\s+/g," ").trim().toLowerCase();
-    const typed=values.signature_text.replace(/\s+/g," ").trim().toLowerCase();
-    if(values.signature_text && expected && typed!==expected){
-      document.getElementById("err-poa-signature").textContent="The typed signature must match the signer’s first and last name.";
-      invalid ||= signature;
-    }
-
-    const checks=[
-      ["poa-authority",values.authority_confirmed],
-      ["poa-accuracy",values.accuracy_confirmed],
-      ["poa-limited",values.limited_poa_confirmed],
-      ["poa-esign",values.esign_consent]
-    ];
-    if(checks.some(([,ok])=>!ok)){
-      document.getElementById("f4u-auth-note").textContent="All authorization acknowledgments are required before continuing.";
-      invalid ||= document.getElementById(checks.find(([,ok])=>!ok)[0]);
-    }
-    if(invalid){invalid.focus();invalid.scrollIntoView({behavior:"smooth",block:"center"});return;}
+    if(preview)preview.textContent=signerName;
+    if(time)time.textContent=`Signed electronically · ${new Date(executedAt).toLocaleString()}`;
 
     const btn=document.getElementById("f4u-next");
-    btn.disabled=true;btn.textContent="Saving authorization…";
+    btn.disabled=true;
+    btn.textContent="Saving authorization…";
     try{
       await saveStep("authorization",values);
       state.answers.authorization=values;
       nextStep();
     }catch(e){
       console.error(e);
-      btn.disabled=false;btn.textContent="Authorize & continue";
-      document.getElementById("f4u-auth-note").textContent="We couldn't save the authorization. Please try again.";
+      btn.disabled=false;
+      btn.textContent="Authorize & continue";
+      if(note)note.textContent="We couldn't save the authorization. Please try again.";
     }
   });
 }
