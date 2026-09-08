@@ -373,7 +373,7 @@ function registryRecordForService(){
 
 function serviceModulePath(){
   const record=registryRecordForService();
-  return record?.form_module || `assets/js/services/${state.serviceKey}.js`;
+  return record?.form_module || `assets/js/${state.serviceKey}.js`;
 }
 
 function loadServiceModule(){
