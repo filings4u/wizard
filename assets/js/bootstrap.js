@@ -309,6 +309,57 @@ function startService(record,planKey){
   renderCurrentStep();
 }
 
+
+let stripeInstance=null;
+let stripeElements=null;
+let paymentInitializing=false;
+function loadStripeJs(){
+  if(window.Stripe)return Promise.resolve(window.Stripe);
+  return new Promise((resolve,reject)=>{
+    const existing=document.querySelector('script[data-f4u-stripe-js]');
+    if(existing){existing.addEventListener("load",()=>resolve(window.Stripe),{once:true});existing.addEventListener("error",()=>reject(new Error("stripe_js_failed")),{once:true});return}
+    const script=document.createElement("script");script.src="https://js.stripe.com/v3/";script.async=true;script.dataset.f4uStripeJs="1";
+    script.onload=()=>resolve(window.Stripe);script.onerror=()=>reject(new Error("stripe_js_failed"));document.head.appendChild(script);
+  });
+}
+async function renderPayment(){
+  const total=Number(state.quote?.total_amount||0);
+  root.innerHTML=`<section class="f4u-panel">
+    <div class="f4u-panel__heading"><span class="f4u-kicker">${esc(state.serviceTitle)} · ${esc(state.planTitle||"Selected package")}</span><h1>Secure checkout</h1>
+    <p>Your final amount was calculated by the filings4u server. Payment details are entered directly into Stripe's secure Payment Element.</p></div>
+    <div class="f4u-payment-summary"><span>Amount due</span><strong>${money(total)}</strong></div>
+    <div id="f4u-payment-message" class="f4u-payment-message" aria-live="polite">Preparing secure payment…</div>
+    <form id="f4u-payment-form" class="f4u-payment-form" hidden><div id="f4u-payment-element"></div>
+    <button class="f4u-primary f4u-pay-button" type="submit" id="f4u-pay-button">Pay ${money(total)}</button>
+    <p class="f4u-payment-legal">Your payment is processed by Stripe. filings4u does not store your full card number.</p></form>
+    <div class="f4u-actions"><button class="f4u-secondary" type="button" id="f4u-payment-back">Back</button></div></section>`;
+  document.getElementById("f4u-payment-back")?.addEventListener("click",prevStep);
+  if(total<=0){document.getElementById("f4u-payment-message").textContent="No payment is required for this order.";return}
+  if(paymentInitializing)return;paymentInitializing=true;
+  try{
+    const StripeCtor=await loadStripeJs();
+    const intent=await callFunction("wizard-v2-payment-intent",{session_token:state.sessionToken,quote_id:state.quote.id});
+    if(!intent?.payment?.client_secret)throw new Error("payment_client_secret_missing");
+    const key=window.F4U_WIZARD_CONFIG?.stripePublishableKey;if(!key)throw new Error("stripe_publishable_key_missing");
+    stripeInstance=StripeCtor(key);stripeElements=stripeInstance.elements({clientSecret:intent.payment.client_secret,appearance:{theme:"stripe",variables:{colorPrimary:"#10b981",colorText:"#0a1f44",borderRadius:"10px",fontFamily:"DM Sans, system-ui, sans-serif"}}});
+    stripeElements.create("payment",{layout:"tabs"}).mount("#f4u-payment-element");
+    const message=document.getElementById("f4u-payment-message"),form=document.getElementById("f4u-payment-form");message.textContent="Choose a payment method below.";form.hidden=false;
+    form.addEventListener("submit",async e=>{e.preventDefault();const button=document.getElementById("f4u-pay-button");button.disabled=true;button.textContent="Processing…";message.textContent="Confirming your payment securely…";
+      const {error}=await stripeInstance.confirmPayment({elements:stripeElements,confirmParams:{return_url:`${location.origin}${location.pathname}?payment_return=1`},redirect:"if_required"});
+      if(error){message.textContent=error.message||"Payment could not be completed.";button.disabled=false;button.textContent=`Pay ${money(total)}`;return}
+      message.textContent="Payment submitted. Waiting for secure confirmation…";await pollPaymentStatus(message,button,total);
+    });
+  }catch(error){console.error(error);document.getElementById("f4u-payment-message").textContent=error.message==="stripe_publishable_key_missing"?"Stripe checkout is connected on the server, but the browser publishable key still needs to be added to Wizard v2 config.":"We couldn't prepare secure payment. Please try again."}
+  finally{paymentInitializing=false}
+}
+async function pollPaymentStatus(message,button,total){
+  for(let i=0;i<20;i++){await new Promise(r=>setTimeout(r,1500));try{const result=await callFunction("wizard-v2-payment-status",{session_token:state.sessionToken}),status=result?.payment?.status;
+    if(status==="succeeded"){message.innerHTML="<strong>Payment confirmed.</strong> Your order is being finalized.";button.textContent="Payment confirmed";button.disabled=true;return}
+    if(status==="failed"||status==="cancelled"){message.textContent=result?.payment?.failure_message||"Payment was not completed. You can try another payment method.";button.disabled=false;button.textContent=`Pay ${money(total)}`;return}
+  }catch(error){console.warn("Payment status check failed",error)}}
+  message.textContent="Your payment was submitted and is still being confirmed. Do not submit another payment.";button.disabled=true;
+}
+
 function renderCurrentStep(){
   const step=currentStep();
   updateProgress();
@@ -324,7 +375,7 @@ function renderCurrentStep(){
   }else if(step.key==="review"){
     renderReview();
   }else if(step.key==="payment"){
-    renderPlaceholder("Secure checkout","Stripe Elements will be mounted here after the database and payment functions are built.");
+    renderPayment().catch(console.error);
   }
 }
 
