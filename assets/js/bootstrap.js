@@ -40,28 +40,10 @@ const PLAN_TITLES={
   "fleet-ready":"Fleet Ready"
 };
 
-const SERVICE_BEHAVIOR={
-  "llc-formation":{jurisdiction:true,authorization:true},
-  "corporations":{jurisdiction:true,authorization:true},
-  "nonprofits":{jurisdiction:true,authorization:true},
-  "series-llc":{jurisdiction:true,authorization:true},
-  "dba-registration":{jurisdiction:true,authorization:true},
-  "sole-proprietorship":{jurisdiction:true,authorization:false},
-  "foreign-qualification":{jurisdiction:true,authorization:true},
-  "annual-reports":{jurisdiction:true,authorization:true},
-  "registered-agent":{jurisdiction:true,authorization:true},
-  "llc-reinstatement":{jurisdiction:true,authorization:true},
-  "dissolution":{jurisdiction:true,authorization:true},
-  "business-licenses":{jurisdiction:true,authorization:false},
-  "state-tax":{jurisdiction:true,authorization:true},
-  "franchise-tax":{jurisdiction:true,authorization:true},
-  "sales-tax-registration":{jurisdiction:true,authorization:true},
-  "web-design-packages":{jurisdiction:false,authorization:false},
-  "logo-design-packages":{jurisdiction:false,authorization:false},
-  "shipper-packages":{jurisdiction:false,authorization:false},
-  "carrier-packages-brokers":{jurisdiction:false,authorization:false},
-  "carrier-packages-truckers":{jurisdiction:false,authorization:false}
-};
+const STATE_NAMES=Object.freeze({"AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","FL":"Florida","GA":"Georgia","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming","DC":"District of Columbia"});
+const STATE_CODES=Object.freeze(Object.keys(STATE_NAMES));
+
+
 
 function esc(v){
   return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -84,18 +66,11 @@ function planTitle(key){
 }
 
 function serviceBehavior(){
-  if(state.bootstrap?.service){
-    const serviceType=String(state.bootstrap.service.service_type||"").toLowerCase();
-    return {
-      jurisdiction:serviceType==="state" || state.bootstrap.service.requires_jurisdiction===true,
-      authorization:!!state.bootstrap.service.requires_authorization
-    };
-  }
-  const configured=SERVICE_BEHAVIOR[state.serviceKey];
-  if(configured) return configured;
-  const category=window.__F4U_SERVICE__?.category||"";
-  const jurisdiction=/Business Formation|Compliance|Tax & Regulatory/.test(category);
-  return {jurisdiction,authorization:false};
+  const svc=state.bootstrap?.service||{};
+  return {
+    jurisdiction:!!svc.requires_jurisdiction,
+    authorization:!!svc.requires_authorization
+  };
 }
 
 function buildSteps(){
@@ -388,6 +363,119 @@ function renderJurisdiction(){
   });
 }
 
+
+const SERVICE_MODULE_PROMISES=new Map();
+
+function registryRecordForService(){
+  const list=window.__F4U_REGISTRY__?.services||[];
+  return list.find(item=>item.key===state.serviceKey)||null;
+}
+
+function serviceModulePath(){
+  const record=registryRecordForService();
+  return record?.form_module || `assets/js/services/${state.serviceKey}.js`;
+}
+
+function loadServiceModule(){
+  const key=state.serviceKey;
+  if(!key) return Promise.reject(new Error("service_key_missing"));
+  if(window.formRegistry?.[`${key}-form-master`]) return Promise.resolve();
+
+  if(SERVICE_MODULE_PROMISES.has(key)) return SERVICE_MODULE_PROMISES.get(key);
+
+  const promise=new Promise((resolve,reject)=>{
+    const script=document.createElement("script");
+    script.src=serviceModulePath();
+    script.async=true;
+    script.dataset.f4uServiceModule=key;
+    script.onload=()=>{
+      if(window.formRegistry?.[`${key}-form-master`]) resolve();
+      else reject(new Error(`service_renderer_not_registered:${key}`));
+    };
+    script.onerror=()=>reject(new Error(`service_module_not_found:${key}`));
+    document.head.appendChild(script);
+  });
+
+  SERVICE_MODULE_PROMISES.set(key,promise);
+  return promise;
+}
+
+function serviceFormRoot(){
+  return document.querySelector(`[data-service-form="${CSS.escape(state.serviceKey)}"]`)
+    || document.getElementById("step-2-onboarding-fields-canvas");
+}
+
+function serializeServiceForm(){
+  const formRoot=serviceFormRoot();
+  const answers={};
+  if(!formRoot) return answers;
+
+  formRoot.querySelectorAll("input,select,textarea").forEach(field=>{
+    if(field.disabled||field.type==="file") return;
+    const key=field.name||field.id;
+    if(!key) return;
+
+    if(field.type==="radio"){
+      if(field.checked) answers[key]=field.value;
+    }else if(field.type==="checkbox"){
+      answers[key]=!!field.checked;
+    }else if(field.multiple){
+      answers[key]=[...field.selectedOptions].map(option=>option.value);
+    }else{
+      answers[key]=field.value;
+    }
+  });
+  return answers;
+}
+
+function contactFromAnswers(answers){
+  const firstKeys=["first_name","contact_first_name","owner_first_name","applicant_first_name"];
+  const lastKeys=["last_name","contact_last_name","owner_last_name","applicant_last_name"];
+  const emailKeys=["email_address","contact_email","email","business_email"];
+  const phoneKeys=["phone_number","contact_phone","phone","business_phone"];
+
+  const first=(keys)=>{for(const key of keys){if(String(answers?.[key]||"").trim()) return String(answers[key]).trim();}return "";};
+
+  return {
+    first_name:first(firstKeys),
+    last_name:first(lastKeys),
+    email:first(emailKeys).toLowerCase(),
+    phone:first(phoneKeys)
+  };
+}
+
+function normalizedApplicationPayload(){
+  let formPayload=null;
+  if(typeof window.buildPayloadsForSupabase==="function"){
+    try{
+      const built=window.buildPayloadsForSupabase()||{};
+      if(built.form_payload && built.form_payload.service_key===state.serviceKey) formPayload=built.form_payload;
+    }catch(error){
+      console.warn("Service payload builder failed; using generic serializer.",error);
+    }
+  }
+
+  const answers=formPayload?.answers||serializeServiceForm();
+  if(!formPayload){
+    formPayload={
+      schema_version:"2026-09-08.service.v2",
+      service_key:state.serviceKey,
+      jurisdiction_state:state.jurisdiction||null,
+      answers
+    };
+  }
+
+  const contact=contactFromAnswers(answers);
+  return {
+    schema_version:formPayload.schema_version||"2026-09-08.service.v2",
+    service_key:state.serviceKey,
+    jurisdiction_state:state.jurisdiction||null,
+    form_payload:formPayload,
+    answers,
+    ...contact
+  };
+}
+
 function restoreFormAnswers(rootNode, answers){
   if(!rootNode || !answers) return;
   Object.entries(answers).forEach(([key,value])=>{
@@ -400,91 +488,91 @@ function restoreFormAnswers(rootNode, answers){
     });
   });
 }
-function renderApplication(){
+async function renderApplication(){
   window.__F4U_WIZARD_JURISDICTION__=state.jurisdiction||"";
+  window.F4UWizard=window.F4UWizard||{};
+  window.F4UWizard.state=window.F4UWizard.state||{};
+  window.F4UWizard.state.route={
+    service:state.serviceKey,
+    plan:state.planKey,
+    jurisdiction:state.jurisdiction||""
+  };
+
   const saved=state.answers.application||{};
 
-  if(state.serviceKey==="llc-formation" && window.formRegistry?.["llc-formation-form-master"]){
-    const formHtml=window.formRegistry["llc-formation-form-master"]();
-    root.innerHTML=`
-      <section class="f4u-panel">
-        <div class="f4u-panel__heading">
-          <span class="f4u-kicker">${esc(state.serviceTitle)} · ${esc(state.planTitle||"Selected package")}</span>
-          <h1>Complete your LLC formation application.</h1>
-          <p>Your filing state and package were selected before this step. This form collects only the facts needed to prepare the LLC filing.</p>
-        </div>
-        <div id="step-2-onboarding-fields-canvas">${formHtml}</div>
-        <div class="f4u-actions">
-          <span class="f4u-actions__note" id="f4u-save-note">Your answers are saved to your secure Wizard v2 session.</span>
-          <button class="f4u-primary" type="button" id="f4u-next">Save &amp; continue</button>
-        </div>
-      </section>`;
-
-    restoreFormAnswers(
-      document.querySelector('[data-service-form="llc-formation"]'),
-      saved.form_payload?.answers || saved.answers || {}
-    );
-
-    document.getElementById("f4u-next").addEventListener("click",async()=>{
-      const validator=window.formRegistry?.["llc-formation-validation-engine"];
-      const validation=validator?.validate?.()||{isValid:true,errors:[]};
-      if(!validation.isValid) return;
-
-      const built=window.buildPayloadsForSupabase?.()||{};
-      const formPayload=built.form_payload||{};
-      const answers=formPayload.answers||{};
-      const payload={
-        schema_version:formPayload.schema_version||"2026-09-04.llc.v2",
-        service_key:"llc-formation",
-        jurisdiction_state:state.jurisdiction||null,
-        form_payload:formPayload,
-        answers,
-        first_name:String(answers.contact_first_name||""),
-        last_name:String(answers.contact_last_name||""),
-        email:String(answers.contact_email||"").toLowerCase(),
-        phone:String(answers.contact_phone||"")
-      };
-
-      const btn=document.getElementById("f4u-next");
-      btn.disabled=true;btn.textContent="Saving…";
-      try{
-        await saveStep("application",payload);
-        state.answers.application=payload;
-        nextStep();
-      }catch(e){
-        console.error(e);
-        btn.disabled=false;btn.textContent="Save & continue";
-        document.getElementById("f4u-save-note").textContent="We couldn't save your application. Please try again.";
-      }
-    });
-    return;
-  }
-
-  const savedContact=saved||{};
   root.innerHTML=`
     <section class="f4u-panel">
       <div class="f4u-panel__heading">
         <span class="f4u-kicker">${esc(state.serviceTitle)} · ${esc(state.planTitle||"Selected package")}</span>
-        <h1>Let's start your application.</h1>
-        <p>The dedicated service form for ${esc(state.serviceTitle)} will plug into this area. LLC Formation is now fully connected as the first v2 service module.</p>
+        <h1>Complete your ${esc(state.serviceTitle)} application.</h1>
+        <p>Your service, package${state.jurisdiction?", and filing state":""} were selected before this step. Complete the service-specific intake below.</p>
       </div>
-      <div class="f4u-form-grid">
-        <div class="f4u-field"><label for="preview-first">First name</label><input id="preview-first" value="${esc(savedContact.first_name||"")}" placeholder="First name"></div>
-        <div class="f4u-field"><label for="preview-last">Last name</label><input id="preview-last" value="${esc(savedContact.last_name||"")}" placeholder="Last name"></div>
-        <div class="f4u-field"><label for="preview-email">Email</label><input id="preview-email" type="email" value="${esc(savedContact.email||"")}" placeholder="name@example.com"></div>
-        <div class="f4u-field"><label for="preview-phone">Phone</label><input id="preview-phone" type="tel" value="${esc(savedContact.phone||"")}" placeholder="(555) 555-5555"></div>
+      <div id="step-2-onboarding-fields-canvas">
+        <div class="f4u-loading">Loading ${esc(state.serviceTitle)} application…</div>
       </div>
-      <div class="f4u-actions"><button class="f4u-primary" type="button" id="f4u-next">Save &amp; continue</button></div>
+      <div class="f4u-actions">
+        <span class="f4u-actions__note" id="f4u-save-note">Your answers are saved to your secure Wizard v2 session.</span>
+        <button class="f4u-primary" type="button" id="f4u-next" disabled>Save &amp; continue</button>
+      </div>
     </section>`;
-  document.getElementById("f4u-next").addEventListener("click",async()=>{
-    const payload={
-      first_name:document.getElementById("preview-first").value.trim(),
-      last_name:document.getElementById("preview-last").value.trim(),
-      email:document.getElementById("preview-email").value.trim(),
-      phone:document.getElementById("preview-phone").value.trim()
-    };
-    await saveStep("application",payload);state.answers.application=payload;nextStep();
-  });
+
+  try{
+    await loadServiceModule();
+
+    if(currentStep().key!=="application") return;
+
+    const renderer=window.formRegistry?.[`${state.serviceKey}-form-master`];
+    if(typeof renderer!=="function") throw new Error(`service_renderer_not_registered:${state.serviceKey}`);
+
+    const statesHtml=STATE_CODES.map(code=>`<option value="${code}">${STATE_NAMES[code]||code}</option>`).join("");
+    const canvas=document.getElementById("step-2-onboarding-fields-canvas");
+    canvas.innerHTML=renderer(statesHtml,{
+      service:state.serviceKey,
+      plan:state.planKey,
+      state:state.jurisdiction||"",
+      entry:state.entryMode
+    });
+
+    restoreFormAnswers(
+      serviceFormRoot(),
+      saved.form_payload?.answers||saved.answers||{}
+    );
+
+    const btn=document.getElementById("f4u-next");
+    btn.disabled=false;
+
+    btn.addEventListener("click",async()=>{
+      const validator=window.formRegistry?.[`${state.serviceKey}-validation-engine`];
+      const validation=validator?.validate?.()||{isValid:true,errors:[]};
+      if(!validation.isValid) return;
+
+      const payload=normalizedApplicationPayload();
+
+      btn.disabled=true;
+      btn.textContent="Saving…";
+      try{
+        await saveStep("application",payload);
+        state.answers.application=payload;
+        nextStep();
+      }catch(error){
+        console.error(error);
+        btn.disabled=false;
+        btn.textContent="Save & continue";
+        document.getElementById("f4u-save-note").textContent="We couldn't save your application. Please try again.";
+      }
+    });
+  }catch(error){
+    console.error(error);
+    const canvas=document.getElementById("step-2-onboarding-fields-canvas");
+    if(canvas){
+      canvas.innerHTML=`
+        <div class="f4u-empty">
+          <strong>${esc(state.serviceTitle)} form could not be loaded.</strong>
+          <p>The service route is valid, but its application module is unavailable. No other service form will be substituted.</p>
+        </div>`;
+    }
+    document.getElementById("f4u-save-note").textContent="This service module must be available before the application can continue.";
+  }
 }
 
 function money(v,currency="USD"){return new Intl.NumberFormat("en-US",{style:"currency",currency}).format(Number(v||0));}
