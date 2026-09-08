@@ -9,7 +9,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/annual-reports.js"
+      "form_module": "assets/js/annual-reports.js"
     },
     {
       "key": "apostille-services",
@@ -18,7 +18,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/apostille-services.js"
+      "form_module": "assets/js/apostille-services.js"
     },
     {
       "key": "boc-3-amendment",
@@ -27,7 +27,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/boc-3-amendment.js"
+      "form_module": "assets/js/boc-3-amendment.js"
     },
     {
       "key": "broker-authority",
@@ -36,7 +36,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/broker-authority.js"
+      "form_module": "assets/js/broker-authority.js"
     },
     {
       "key": "broker-insurance-quote",
@@ -45,7 +45,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/broker-insurance-quote.js"
+      "form_module": "assets/js/broker-insurance-quote.js"
     },
     {
       "key": "business-licenses",
@@ -54,7 +54,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/business-licenses.js"
+      "form_module": "assets/js/business-licenses.js"
     },
     {
       "key": "cage-code",
@@ -63,7 +63,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/cage-code.js"
+      "form_module": "assets/js/cage-code.js"
     },
     {
       "key": "certificate-of-good-standing",
@@ -72,7 +72,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/certificate-of-good-standing.js"
+      "form_module": "assets/js/certificate-of-good-standing.js"
     },
     {
       "key": "clia-certificate",
@@ -81,7 +81,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/clia-certificate.js"
+      "form_module": "assets/js/clia-certificate.js"
     },
     {
       "key": "corporations",
@@ -90,7 +90,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/corporations.js"
+      "form_module": "assets/js/corporations.js"
     },
     {
       "key": "dba-registration",
@@ -99,7 +99,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/dba-registration.js"
+      "form_module": "assets/js/dba-registration.js"
     },
     {
       "key": "dbe-certification",
@@ -108,7 +108,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/dbe-certification.js"
+      "form_module": "assets/js/dbe-certification.js"
     },
     {
       "key": "dissolution",
@@ -117,7 +117,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/dissolution.js"
+      "form_module": "assets/js/dissolution.js"
     },
     {
       "key": "dot-consortium",
@@ -126,7 +126,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/dot-consortium.js"
+      "form_module": "assets/js/dot-consortium.js"
     },
     {
       "key": "dot-permits",
@@ -135,7 +135,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/dot-permits.js"
+      "form_module": "assets/js/dot-permits.js"
     },
     {
       "key": "driver-file",
@@ -144,7 +144,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/driver-file.js"
+      "form_module": "assets/js/driver-file.js"
     },
     {
       "key": "duns-number",
@@ -153,7 +153,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/duns-number.js"
+      "form_module": "assets/js/duns-number.js"
     },
     {
       "key": "employer-id-ein",
@@ -162,7 +162,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/employer-id-ein.js"
+      "form_module": "assets/js/employer-id-ein.js"
     },
     {
       "key": "federal-tax",
@@ -171,7 +171,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/federal-tax.js"
+      "form_module": "assets/js/federal-tax.js"
     },
     {
       "key": "foreign-qualification",
@@ -180,7 +180,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/foreign-qualification.js"
+      "form_module": "assets/js/foreign-qualification.js"
     },
     {
       "key": "franchise-tax",
@@ -189,7 +189,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/franchise-tax.js"
+      "form_module": "assets/js/franchise-tax.js"
     },
     {
       "key": "hazmat-registration",
@@ -198,7 +198,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/hazmat-registration.js"
+      "form_module": "assets/js/hazmat-registration.js"
     },
     {
       "key": "heavy-use-tax",
@@ -207,7 +207,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/heavy-use-tax.js"
+      "form_module": "assets/js/heavy-use-tax.js"
     },
     {
       "key": "heavy-use-tax-2290",
@@ -216,7 +216,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/heavy-use-tax-2290.js"
+      "form_module": "assets/js/heavy-use-tax-2290.js"
     },
     {
       "key": "ifta-quarterly-returns",
@@ -225,7 +225,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/ifta-quarterly-returns.js"
+      "form_module": "assets/js/ifta-quarterly-returns.js"
     },
     {
       "key": "ifta-registration",
@@ -234,7 +234,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/ifta-registration.js"
+      "form_module": "assets/js/ifta-registration.js"
     },
     {
       "key": "ifta-replacement",
@@ -243,7 +243,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/ifta-replacement.js"
+      "form_module": "assets/js/ifta-replacement.js"
     },
     {
       "key": "llc-formation",
@@ -252,7 +252,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/llc-formation.js"
+      "form_module": "assets/js/llc-formation.js"
     },
     {
       "key": "llc-reinstatement",
@@ -261,7 +261,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/llc-reinstatement.js"
+      "form_module": "assets/js/llc-reinstatement.js"
     },
     {
       "key": "mcs-150-update",
@@ -270,7 +270,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/mcs-150-update.js"
+      "form_module": "assets/js/mcs-150-update.js"
     },
     {
       "key": "minority-certificate",
@@ -279,7 +279,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/minority-certificate.js"
+      "form_module": "assets/js/minority-certificate.js"
     },
     {
       "key": "new-entrant-audit",
@@ -288,7 +288,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/new-entrant-audit.js"
+      "form_module": "assets/js/new-entrant-audit.js"
     },
     {
       "key": "nonprofits",
@@ -297,7 +297,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/nonprofits.js"
+      "form_module": "assets/js/nonprofits.js"
     },
     {
       "key": "operating-agreement",
@@ -306,7 +306,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/operating-agreement.js"
+      "form_module": "assets/js/operating-agreement.js"
     },
     {
       "key": "owner-operators",
@@ -315,7 +315,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/owner-operators.js"
+      "form_module": "assets/js/owner-operators.js"
     },
     {
       "key": "payroll-tax-940-941",
@@ -324,7 +324,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/payroll-tax-940-941.js"
+      "form_module": "assets/js/payroll-tax-940-941.js"
     },
     {
       "key": "process-agents-boc-3",
@@ -333,7 +333,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/process-agents-boc-3.js"
+      "form_module": "assets/js/process-agents-boc-3.js"
     },
     {
       "key": "registered-agent",
@@ -342,7 +342,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/registered-agent.js"
+      "form_module": "assets/js/registered-agent.js"
     },
     {
       "key": "regulatory-consulting",
@@ -351,7 +351,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/regulatory-consulting.js"
+      "form_module": "assets/js/regulatory-consulting.js"
     },
     {
       "key": "sales-tax-registration",
@@ -360,7 +360,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/sales-tax-registration.js"
+      "form_module": "assets/js/sales-tax-registration.js"
     },
     {
       "key": "scac-code",
@@ -369,7 +369,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/scac-code.js"
+      "form_module": "assets/js/scac-code.js"
     },
     {
       "key": "series-llc",
@@ -378,7 +378,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/series-llc.js"
+      "form_module": "assets/js/series-llc.js"
     },
     {
       "key": "servicemark-filing",
@@ -387,7 +387,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/servicemark-filing.js"
+      "form_module": "assets/js/servicemark-filing.js"
     },
     {
       "key": "sole-proprietorship",
@@ -396,7 +396,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/sole-proprietorship.js"
+      "form_module": "assets/js/sole-proprietorship.js"
     },
     {
       "key": "state-tax",
@@ -405,7 +405,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/state-tax.js"
+      "form_module": "assets/js/state-tax.js"
     },
     {
       "key": "trademark-filing",
@@ -414,7 +414,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/trademark-filing.js"
+      "form_module": "assets/js/trademark-filing.js"
     },
     {
       "key": "trucker-authority",
@@ -423,7 +423,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/trucker-authority.js"
+      "form_module": "assets/js/trucker-authority.js"
     },
     {
       "key": "trucker-insurance-quote",
@@ -432,7 +432,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/trucker-insurance-quote.js"
+      "form_module": "assets/js/trucker-insurance-quote.js"
     },
     {
       "key": "ucr-registration",
@@ -441,7 +441,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/ucr-registration.js"
+      "form_module": "assets/js/ucr-registration.js"
     },
     {
       "key": "wbe-certification",
@@ -450,7 +450,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/wbe-certification.js"
+      "form_module": "assets/js/wbe-certification.js"
     },
     {
       "key": "web-design-packages",
@@ -459,7 +459,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/web-design-packages.js"
+      "form_module": "assets/js/web-design-packages.js"
     },
     {
       "key": "logo-design-packages",
@@ -468,7 +468,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/logo-design-packages.js"
+      "form_module": "assets/js/logo-design-packages.js"
     },
     {
       "key": "shipper-packages",
@@ -477,7 +477,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/shipper-packages.js"
+      "form_module": "assets/js/shipper-packages.js"
     },
     {
       "key": "carrier-packages-brokers",
@@ -486,7 +486,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/carrier-packages-brokers.js"
+      "form_module": "assets/js/carrier-packages-brokers.js"
     },
     {
       "key": "carrier-packages-truckers",
@@ -495,7 +495,7 @@
       "enabled": true,
       "requires_jurisdiction": null,
       "requires_authorization": null,
-      "form_module": "assets/js/services/carrier-packages-truckers.js"
+      "form_module": "assets/js/carrier-packages-truckers.js"
     }
   ]
 }
