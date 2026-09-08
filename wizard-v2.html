@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="theme-color" content="#10b981">
+  <meta name="description" content="Secure filings4u application and checkout wizard.">
+  <title>Secure Application | filings4u</title>
+
+  <link rel="icon" href="images/fav.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/wizard-v2.css">
+</head>
+<body>
+<div class="f4u-app" id="f4u-app">
+
+  <header class="f4u-header">
+    <div class="f4u-header__inner">
+      <a class="f4u-brand" href="https://filings4u.com/" aria-label="filings4u home">
+        <img src="images/logo.png" alt="filings4u">
+      </a>
+
+      <div class="f4u-header__center" id="f4u-header-context">
+        <span class="f4u-header__eyebrow">Secure Application</span>
+        <strong id="f4u-header-service">Service Application</strong>
+      </div>
+
+      <div class="f4u-header__actions">
+        <button class="f4u-header-link" id="f4u-save-button" type="button">Save &amp; exit</button>
+        <button class="f4u-header-help" id="f4u-help-button" type="button">Need help?</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="f4u-mobile-orderbar" id="f4u-mobile-orderbar">
+    <button type="button" id="f4u-mobile-order-toggle" aria-expanded="false">
+      <span>
+        <small>Your order</small>
+        <strong id="f4u-mobile-order-name">Service</strong>
+      </span>
+      <span class="f4u-mobile-order-total" id="f4u-mobile-order-total">—</span>
+      <span class="f4u-mobile-order-chevron" aria-hidden="true">⌄</span>
+    </button>
+  </div>
+
+  <main class="f4u-layout">
+    <section class="f4u-main">
+
+      <div class="f4u-topline">
+        <button class="f4u-back" type="button" id="f4u-back-button">← Back</button>
+
+        <div class="f4u-security">
+          <span></span>
+          Secure application
+        </div>
+      </div>
+
+      <div class="f4u-progress-card">
+        <div class="f4u-progress-meta">
+          <span id="f4u-progress-label">Application</span>
+          <span id="f4u-progress-count">Step 1 of 5</span>
+        </div>
+
+        <div class="f4u-progress-track" aria-hidden="true">
+          <span id="f4u-progress-bar"></span>
+        </div>
+
+        <div class="f4u-progress-steps" id="f4u-progress-steps"></div>
+      </div>
+
+      <div class="f4u-content-card" id="f4u-wizard-root" aria-live="polite">
+        <div class="f4u-loading">Preparing your application…</div>
+      </div>
+
+    </section>
+
+    <aside class="f4u-order" id="f4u-order-panel">
+      <div class="f4u-order__inner">
+        <div class="f4u-order__head">
+          <div>
+            <span class="f4u-order__eyebrow">Your order</span>
+            <h2 id="f4u-order-service">Service</h2>
+            <p id="f4u-order-package">Package</p>
+          </div>
+          <span class="f4u-order__badge" id="f4u-order-entry">Website</span>
+        </div>
+
+        <div class="f4u-order__details" id="f4u-order-details">
+          <div class="f4u-price-row">
+            <span>Package</span>
+            <strong id="f4u-order-package-price">Calculated at review</strong>
+          </div>
+          <div class="f4u-price-row">
+            <span>Government fees</span>
+            <strong id="f4u-order-government-fee">Calculated at review</strong>
+          </div>
+          <div class="f4u-price-row">
+            <span>Add-ons</span>
+            <strong id="f4u-order-addon-price">—</strong>
+          </div>
+        </div>
+
+        <div class="f4u-order__total">
+          <span>
+            <small>Current total</small>
+            <strong id="f4u-order-total">Calculated at review</strong>
+          </span>
+          <small>Final pricing is verified securely before payment.</small>
+        </div>
+
+        <div class="f4u-order__trust">
+          <div><span>✓</span><p><strong>Secure checkout</strong><small>Payment details are handled by Stripe.</small></p></div>
+          <div><span>✓</span><p><strong>Save and continue later</strong><small>Your application can be resumed securely.</small></p></div>
+          <div><span>✓</span><p><strong>Protected information</strong><small>Your filing data is handled through your secure account.</small></p></div>
+        </div>
+
+        <button class="f4u-order__help" id="f4u-order-help" type="button">Questions? Contact filings4u</button>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="f4u-footer">
+    <div class="f4u-footer__inner">
+      <span>© 2026 filings4u, LLC. All rights reserved.</span>
+      <span>A Subsidiary of Roseland Companies, LLC</span>
+    </div>
+  </footer>
+
+</div>
+
+<div class="f4u-order-drawer-backdrop" id="f4u-order-drawer-backdrop" hidden></div>
+
+<script src="assets/js/config.js"></script>
+<script>
+  window.__F4U_BOOT_WATCHDOG__=setTimeout(function(){
+    var root=document.getElementById("f4u-wizard-root");
+    if(root && /Preparing your application|Opening your secure application|Starting your secure application/.test(root.textContent||"")){
+      root.innerHTML='<section class="f4u-panel"><div class="f4u-panel__heading"><span class="f4u-kicker">Secure application</span><h1>We could not start the application.</h1><p>The wizard interface loaded, but its application module did not finish starting. Refresh this page once. If it continues, return to the service page and start the application again.</p></div><div class="f4u-actions"><a class="f4u-primary" href="https://filings4u.com/get-started.html">Return to services</a></div></section>';
+    }
+  },8000);
+</script>
+<script src="assets/js/llc-formation.js"></script>
+<script type="module" src="assets/js/bootstrap.js"></script>
+</body>
+</html>

@@ -1,0 +1,1690 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="theme-color" content="#10b981">
+  <meta name="description" content="Secure filings4u application and checkout wizard.">
+  <title>Secure Application | filings4u</title>
+
+  <link rel="icon" href="https://filings4u.com/images/fav.png" type="image/png">
+  <style>
+
+:root{
+  --navy:#0a1f44;
+  --navy-2:#102a56;
+  --emerald:#10b981;
+  --emerald-dark:#0e9f6e;
+  --emerald-soft:#ebfaf5;
+  --bg:#f5f8fb;
+  --white:#fff;
+  --line:#e3eaf2;
+  --muted:#69788b;
+  --slate:#475569;
+  --danger:#b91c1c;
+  --shadow:0 18px 50px rgba(10,31,68,.08);
+  --radius:24px;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  min-width:320px;
+  background:
+    linear-gradient(rgba(10,31,68,.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(10,31,68,.022) 1px,transparent 1px),
+    #f7f9fb;
+  background-size:32px 32px;
+  color:var(--navy);
+  font-family:"DM Sans",Arial,sans-serif;
+}
+
+body{overflow-x:hidden}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit}
+
+/* Header */
+.f4u-header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.97);
+  backdrop-filter:blur(16px);
+}
+
+.f4u-header__inner{
+  width:min(1460px,100%);
+  min-height:78px;
+  margin:0 auto;
+  padding:0 28px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:20px;
+}
+
+.f4u-brand{
+  width:max-content;
+  display:flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.f4u-brand img{
+  display:block;
+  width:134px;
+  height:auto;
+}
+
+.f4u-header__center{
+  min-width:0;
+  text-align:center;
+  display:grid;
+  gap:2px;
+}
+
+.f4u-header__eyebrow{
+  color:#8a96a6;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:.59rem;
+  font-weight:900;
+}
+
+.f4u-header__center strong{
+  max-width:440px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font:800 .83rem Manrope,sans-serif;
+  color:var(--navy);
+}
+
+.f4u-header__actions{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:9px;
+}
+
+.f4u-header-link,
+.f4u-header-help{
+  min-height:41px;
+  border-radius:10px;
+  padding:0 14px;
+  font-size:.74rem;
+  font-weight:900;
+}
+
+.f4u-header-link{
+  border:1px solid transparent;
+  background:transparent;
+  color:var(--emerald-dark);
+}
+
+.f4u-header-link:hover{background:var(--emerald-soft)}
+
+.f4u-header-help{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--navy);
+}
+
+.f4u-header-help:hover{border-color:#b8c5d6}
+
+/* Layout */
+.f4u-layout{
+  width:min(1320px,100%);
+  margin:0 auto;
+  padding:26px 28px 54px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 340px;
+  gap:28px;
+  align-items:start;
+}
+
+.f4u-main{min-width:0}
+
+.f4u-topline{
+  min-height:42px;
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.f4u-back{
+  border:0;
+  background:transparent;
+  padding:7px 0;
+  color:var(--slate);
+  font-size:.74rem;
+  font-weight:900;
+}
+
+.f4u-back:hover{color:var(--emerald-dark)}
+
+.f4u-security{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#768397;
+  font-size:.68rem;
+  font-weight:900;
+}
+
+.f4u-security span{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--emerald);
+  box-shadow:0 0 0 4px rgba(16,185,129,.11);
+}
+
+/* Progress */
+.f4u-progress-card{
+  margin-bottom:14px;
+  padding:18px 20px 15px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:17px;
+  box-shadow:0 8px 30px rgba(10,31,68,.04);
+}
+
+.f4u-progress-meta{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  color:var(--muted);
+  font-size:.66rem;
+  font-weight:900;
+}
+
+.f4u-progress-meta span:first-child{color:var(--navy)}
+
+.f4u-progress-track{
+  height:5px;
+  margin:10px 0 12px;
+  overflow:hidden;
+  border-radius:999px;
+  background:#edf2f6;
+}
+
+.f4u-progress-track span{
+  display:block;
+  height:100%;
+  width:20%;
+  border-radius:999px;
+  background:var(--emerald);
+  transition:width .25s ease;
+}
+
+.f4u-progress-steps{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:8px;
+}
+
+.f4u-progress-step{
+  color:#9aa5b3;
+  font-size:.61rem;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.f4u-progress-step.is-active{color:var(--emerald-dark)}
+.f4u-progress-step.is-complete{color:var(--navy)}
+
+/* Content */
+.f4u-content-card{
+  min-height:650px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:26px;
+  background:#fff;
+  box-shadow:var(--shadow);
+}
+
+.f4u-loading{
+  min-height:640px;
+  display:grid;
+  place-items:center;
+  color:var(--muted);
+  font-size:.8rem;
+}
+
+.f4u-panel{
+  padding:clamp(30px,4.5vw,58px);
+}
+
+.f4u-panel__heading{
+  max-width:760px;
+  margin-bottom:34px;
+}
+
+.f4u-kicker{
+  display:block;
+  margin-bottom:9px;
+  color:var(--emerald-dark);
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:.67rem;
+  font-weight:900;
+}
+
+.f4u-panel__heading h1{
+  margin:0 0 12px;
+  max-width:800px;
+  font:800 clamp(2rem,4vw,3.15rem)/1.05 Manrope,sans-serif;
+  letter-spacing:-.048em;
+  color:var(--navy);
+}
+
+.f4u-panel__heading p{
+  margin:0;
+  max-width:690px;
+  color:var(--slate);
+  font-size:.96rem;
+  line-height:1.72;
+}
+
+/* Intro form preview */
+.f4u-form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+}
+
+.f4u-field{
+  display:grid;
+  gap:7px;
+}
+
+.f4u-field--full{grid-column:1/-1}
+
+.f4u-field label{
+  color:var(--navy);
+  font-size:.74rem;
+  font-weight:900;
+}
+
+.f4u-field label span{
+  color:#8c98a8;
+  font-weight:700;
+}
+
+.f4u-field input,
+.f4u-field select,
+.f4u-field textarea{
+  width:100%;
+  border:1px solid #ccd6e1;
+  border-radius:12px;
+  outline:none;
+  background:#fff;
+  color:var(--navy);
+  padding:0 14px;
+}
+
+.f4u-field input,
+.f4u-field select{min-height:50px}
+
+.f4u-field textarea{
+  min-height:112px;
+  resize:vertical;
+  padding-top:13px;
+}
+
+.f4u-field input:focus,
+.f4u-field select:focus,
+.f4u-field textarea:focus{
+  border-color:#6dcbae;
+  box-shadow:0 0 0 4px rgba(16,185,129,.09);
+}
+
+.f4u-field small{
+  color:#8491a2;
+  font-size:.64rem;
+  line-height:1.45;
+}
+
+.f4u-actions{
+  margin-top:34px;
+  padding-top:24px;
+  border-top:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+}
+
+.f4u-actions__note{
+  color:#8190a2;
+  font-size:.67rem;
+  line-height:1.45;
+}
+
+.f4u-primary{
+  min-height:48px;
+  padding:0 20px;
+  border:0;
+  border-radius:12px;
+  background:var(--emerald);
+  color:#fff;
+  font-weight:900;
+  font-size:.76rem;
+  box-shadow:0 9px 22px rgba(16,185,129,.18);
+}
+
+.f4u-primary:hover{background:var(--emerald-dark)}
+
+.f4u-secondary{
+  min-height:48px;
+  padding:0 18px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fff;
+  color:var(--navy);
+  font-weight:900;
+  font-size:.76rem;
+}
+
+/* Fallback service selector */
+.f4u-service-search{
+  position:relative;
+  margin-bottom:22px;
+}
+
+.f4u-service-search input{
+  width:100%;
+  min-height:52px;
+  padding:0 16px 0 45px;
+  border:1px solid #ccd6e1;
+  border-radius:13px;
+  outline:none;
+  background:#fff;
+  color:var(--navy);
+}
+
+.f4u-service-search input:focus{
+  border-color:#70cdb0;
+  box-shadow:0 0 0 4px rgba(16,185,129,.09);
+}
+
+.f4u-service-search::before{
+  content:"⌕";
+  position:absolute;
+  left:16px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#8290a1;
+  font-size:1.15rem;
+}
+
+.f4u-service-category{margin-top:30px}
+.f4u-service-category:first-of-type{margin-top:0}
+
+.f4u-service-category__head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:12px;
+}
+
+.f4u-service-category__head h2{
+  margin:0;
+  font:800 .95rem Manrope,sans-serif;
+}
+
+.f4u-service-category__head span{
+  color:#98a4b3;
+  font-size:.64rem;
+  font-weight:900;
+}
+
+.f4u-service-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:11px;
+}
+
+.f4u-service-card{
+  min-height:118px;
+  padding:16px;
+  text-align:left;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:#fff;
+  color:inherit;
+  display:flex;
+  flex-direction:column;
+  transition:.18s ease;
+}
+
+.f4u-service-card:hover{
+  transform:translateY(-2px);
+  border-color:#9bd8c4;
+  box-shadow:0 10px 25px rgba(10,31,68,.07);
+}
+
+.f4u-service-card__icon{
+  width:32px;
+  height:32px;
+  margin-bottom:13px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  background:var(--emerald-soft);
+  color:var(--emerald-dark);
+  font-size:.6rem;
+  font-weight:900;
+}
+
+.f4u-service-card strong{
+  font:800 .76rem/1.35 Manrope,sans-serif;
+}
+
+.f4u-service-card small{
+  margin-top:auto;
+  padding-top:8px;
+  color:var(--emerald-dark);
+  font-size:.63rem;
+  font-weight:900;
+}
+
+.f4u-empty{
+  padding:38px;
+  text-align:center;
+  border:1px dashed #cbd5df;
+  border-radius:16px;
+  color:var(--muted);
+}
+
+/* Order Summary */
+.f4u-order{
+  position:sticky;
+  top:104px;
+}
+
+.f4u-order__inner{
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 12px 38px rgba(10,31,68,.06);
+}
+
+.f4u-order__head{
+  padding:23px 22px 19px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  border-bottom:1px solid var(--line);
+}
+
+.f4u-order__eyebrow{
+  display:block;
+  margin-bottom:7px;
+  color:var(--emerald-dark);
+  font-size:.64rem;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+}
+
+.f4u-order__head h2{
+  margin:0;
+  font:800 1.03rem/1.25 Manrope,sans-serif;
+  letter-spacing:-.025em;
+}
+
+.f4u-order__head p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:.74rem;
+}
+
+.f4u-order__badge{
+  flex:0 0 auto;
+  padding:5px 8px;
+  border-radius:999px;
+  background:var(--emerald-soft);
+  color:var(--emerald-dark);
+  font-size:.57rem;
+  font-weight:900;
+}
+
+.f4u-order__details{
+  padding:16px 22px;
+  display:grid;
+  gap:12px;
+}
+
+.f4u-price-row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  color:var(--slate);
+  font-size:.7rem;
+}
+
+.f4u-price-row strong{
+  color:var(--navy);
+  text-align:right;
+  font-weight:800;
+}
+
+.f4u-order__total{
+  padding:17px 22px;
+  background:#f9fbfd;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+
+.f4u-order__total>span{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-end;
+}
+
+.f4u-order__total small{
+  color:#8290a3;
+  font-size:.62rem;
+  line-height:1.4;
+}
+
+.f4u-order__total strong{
+  font:800 .94rem Manrope,sans-serif;
+}
+
+.f4u-order__total>small{
+  display:block;
+  margin-top:7px;
+}
+
+.f4u-order__trust{
+  padding:18px 22px;
+  display:grid;
+  gap:15px;
+}
+
+.f4u-order__trust>div{
+  display:grid;
+  grid-template-columns:25px 1fr;
+  gap:10px;
+  align-items:flex-start;
+}
+
+.f4u-order__trust>div>span{
+  width:24px;
+  height:24px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:var(--emerald-soft);
+  color:var(--emerald-dark);
+  font-size:.62rem;
+  font-weight:900;
+}
+
+.f4u-order__trust p{
+  margin:0;
+  display:grid;
+  gap:1px;
+}
+
+.f4u-order__trust strong{
+  font-size:.68rem;
+}
+
+.f4u-order__trust small{
+  color:#8793a4;
+  font-size:.61rem;
+  line-height:1.4;
+}
+
+.f4u-order__help{
+  width:calc(100% - 36px);
+  margin:0 18px 18px;
+  min-height:41px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#fff;
+  color:var(--navy);
+  font-size:.67rem;
+  font-weight:900;
+}
+
+.f4u-order__help:hover{background:#f8fafc}
+
+/* Footer */
+.f4u-footer{
+  border-top:1px solid var(--line);
+  background:#fff;
+}
+
+.f4u-footer__inner{
+  width:min(1320px,100%);
+  margin:0 auto;
+  min-height:60px;
+  padding:14px 28px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px;
+  color:#8995a5;
+  font-size:.64rem;
+}
+
+.f4u-mobile-orderbar{display:none}
+.f4u-order-drawer-backdrop{display:none}
+
+/* Modal */
+.f4u-modal{
+  position:fixed;
+  inset:0;
+  z-index:300;
+  display:grid;
+  place-items:center;
+  padding:20px;
+}
+
+.f4u-modal__backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(4,16,37,.52);
+  backdrop-filter:blur(3px);
+}
+
+.f4u-modal__card{
+  position:relative;
+  width:min(560px,100%);
+  max-height:85vh;
+  overflow:auto;
+  padding:27px;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 28px 90px rgba(4,16,37,.25);
+}
+
+.f4u-modal__close{
+  position:absolute;
+  right:16px;
+  top:14px;
+  width:34px;
+  height:34px;
+  border:0;
+  border-radius:50%;
+  background:#f5f7fa;
+  color:var(--navy);
+  font-size:1.1rem;
+}
+
+.f4u-modal h2{
+  margin:7px 0 8px;
+  font:800 1.4rem Manrope,sans-serif;
+}
+
+.f4u-modal p{
+  margin:0 0 20px;
+  color:var(--slate);
+  line-height:1.6;
+  font-size:.8rem;
+}
+
+/* Tablet */
+@media(max-width:1040px){
+  .f4u-layout{
+    grid-template-columns:minmax(0,1fr) 300px;
+    gap:18px;
+    padding-inline:18px;
+  }
+  .f4u-header__inner{padding-inline:20px}
+  .f4u-service-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* Mobile */
+@media(max-width:800px){
+  .f4u-header__inner{
+    min-height:68px;
+    padding:0 16px;
+    grid-template-columns:1fr auto;
+  }
+
+  .f4u-brand img{width:108px}
+  .f4u-header__center{display:none}
+  .f4u-header-link{display:none}
+
+  .f4u-header-help{
+    min-height:38px;
+    padding:0 11px;
+    font-size:.67rem;
+  }
+
+  .f4u-mobile-orderbar{
+    display:block;
+    position:sticky;
+    top:68px;
+    z-index:90;
+    background:#fff;
+    border-bottom:1px solid var(--line);
+  }
+
+  .f4u-mobile-orderbar button{
+    width:100%;
+    min-height:60px;
+    padding:9px 16px;
+    border:0;
+    background:#fff;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto auto;
+    align-items:center;
+    gap:10px;
+    text-align:left;
+  }
+
+  .f4u-mobile-orderbar button>span:first-child{
+    display:grid;
+    gap:1px;
+    min-width:0;
+  }
+
+  .f4u-mobile-orderbar small{
+    color:#8a96a6;
+    font-size:.59rem;
+    font-weight:800;
+  }
+
+  .f4u-mobile-orderbar strong{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font:800 .76rem Manrope,sans-serif;
+  }
+
+  .f4u-mobile-order-total{
+    color:var(--emerald-dark);
+    font-size:.7rem;
+    font-weight:900;
+  }
+
+  .f4u-mobile-order-chevron{
+    color:#8b98a9;
+    font-size:1rem;
+  }
+
+  .f4u-layout{
+    display:block;
+    padding:0;
+  }
+
+  .f4u-topline{
+    margin:0;
+    padding:10px 16px 7px;
+  }
+
+  .f4u-progress-card{
+    margin:0 16px 10px;
+    padding:14px 15px 12px;
+    border-radius:14px;
+  }
+
+  .f4u-progress-steps{display:none}
+
+  .f4u-content-card{
+    min-height:calc(100vh - 210px);
+    border-left:0;
+    border-right:0;
+    border-radius:0;
+    box-shadow:none;
+  }
+
+  .f4u-panel{padding:30px 18px 42px}
+
+  .f4u-panel__heading{
+    margin-bottom:27px;
+  }
+
+  .f4u-panel__heading h1{
+    font-size:clamp(2rem,10vw,2.65rem);
+  }
+
+  .f4u-form-grid{grid-template-columns:1fr}
+  .f4u-field--full{grid-column:auto}
+
+  .f4u-actions{
+    align-items:stretch;
+    flex-direction:column-reverse;
+  }
+
+  .f4u-primary,
+  .f4u-secondary{width:100%}
+
+  .f4u-service-grid{grid-template-columns:1fr}
+
+  .f4u-order{
+    position:fixed;
+    z-index:130;
+    left:0;
+    right:0;
+    bottom:0;
+    top:auto;
+    padding:10px 12px max(12px,env(safe-area-inset-bottom));
+    transform:translateY(110%);
+    transition:transform .22s ease;
+  }
+
+  .f4u-order.is-open{transform:translateY(0)}
+
+  .f4u-order__inner{
+    max-height:78vh;
+    overflow:auto;
+    border-radius:22px;
+    box-shadow:0 -12px 50px rgba(4,16,37,.2);
+  }
+
+  .f4u-order-drawer-backdrop{
+    position:fixed;
+    inset:0;
+    z-index:120;
+    background:rgba(4,16,37,.45);
+    backdrop-filter:blur(2px);
+  }
+
+  .f4u-order-drawer-backdrop:not([hidden]){display:block}
+
+  .f4u-footer__inner{
+    padding-inline:16px;
+    display:grid;
+    justify-content:center;
+    text-align:center;
+    gap:4px;
+  }
+}
+
+@media(max-width:430px){
+  .f4u-security{display:none}
+}
+
+/* Wizard v2 live session / quote layer */
+.f4u-addon-list{display:grid;gap:12px;margin-top:22px}
+.f4u-addon-option{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;padding:16px 18px;border:1px solid #dbe4ee;border-radius:14px;background:#fff;cursor:pointer}
+.f4u-addon-option input{width:20px;height:20px;accent-color:#10b981}
+.f4u-addon-option span{display:grid;gap:4px}.f4u-addon-option strong{color:#0a1f44}.f4u-addon-option small{color:#64748b;line-height:1.45}.f4u-addon-option b{color:#0a1f44;white-space:nowrap}
+.f4u-review-lines{display:grid;gap:4px;margin:22px 0}.f4u-review-lines .f4u-price-row{padding:12px 0;border-bottom:1px solid #edf2f7}
+button:disabled{opacity:.65;cursor:wait}
+@media(max-width:640px){.f4u-addon-option{grid-template-columns:auto 1fr}.f4u-addon-option b{grid-column:2}}
+
+</style>
+</head>
+<body>
+<script>
+window.addEventListener("error",function(e){
+  console.error("Wizard runtime error:",e.error||e.message);
+});
+window.addEventListener("unhandledrejection",function(e){
+  console.error("Wizard promise rejection:",e.reason);
+});
+</script>
+<div class="f4u-app" id="f4u-app">
+
+  <header class="f4u-header">
+    <div class="f4u-header__inner">
+      <a class="f4u-brand" href="https://filings4u.com/" aria-label="filings4u home">
+        <img src="https://filings4u.com/images/logo.png" alt="filings4u">
+      </a>
+
+      <div class="f4u-header__center" id="f4u-header-context">
+        <span class="f4u-header__eyebrow">Secure Application</span>
+        <strong id="f4u-header-service">Service Application</strong>
+      </div>
+
+      <div class="f4u-header__actions">
+        <button class="f4u-header-link" id="f4u-save-button" type="button">Save &amp; exit</button>
+        <button class="f4u-header-help" id="f4u-help-button" type="button">Need help?</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="f4u-mobile-orderbar" id="f4u-mobile-orderbar">
+    <button type="button" id="f4u-mobile-order-toggle" aria-expanded="false">
+      <span>
+        <small>Your order</small>
+        <strong id="f4u-mobile-order-name">Service</strong>
+      </span>
+      <span class="f4u-mobile-order-total" id="f4u-mobile-order-total">—</span>
+      <span class="f4u-mobile-order-chevron" aria-hidden="true">⌄</span>
+    </button>
+  </div>
+
+  <main class="f4u-layout">
+    <section class="f4u-main">
+
+      <div class="f4u-topline">
+        <button class="f4u-back" type="button" id="f4u-back-button">← Back</button>
+
+        <div class="f4u-security">
+          <span></span>
+          Secure application
+        </div>
+      </div>
+
+      <div class="f4u-progress-card">
+        <div class="f4u-progress-meta">
+          <span id="f4u-progress-label">Application</span>
+          <span id="f4u-progress-count">Step 1 of 5</span>
+        </div>
+
+        <div class="f4u-progress-track" aria-hidden="true">
+          <span id="f4u-progress-bar"></span>
+        </div>
+
+        <div class="f4u-progress-steps" id="f4u-progress-steps"></div>
+      </div>
+
+      <div class="f4u-content-card" id="f4u-wizard-root" aria-live="polite">
+        <div class="f4u-loading">Preparing your application…</div>
+      </div>
+
+    </section>
+
+    <aside class="f4u-order" id="f4u-order-panel">
+      <div class="f4u-order__inner">
+        <div class="f4u-order__head">
+          <div>
+            <span class="f4u-order__eyebrow">Your order</span>
+            <h2 id="f4u-order-service">Service</h2>
+            <p id="f4u-order-package">Package</p>
+          </div>
+          <span class="f4u-order__badge" id="f4u-order-entry">Website</span>
+        </div>
+
+        <div class="f4u-order__details" id="f4u-order-details">
+          <div class="f4u-price-row">
+            <span>Package</span>
+            <strong id="f4u-order-package-price">Calculated at review</strong>
+          </div>
+          <div class="f4u-price-row">
+            <span>Government fees</span>
+            <strong id="f4u-order-government-fee">Calculated at review</strong>
+          </div>
+          <div class="f4u-price-row">
+            <span>Add-ons</span>
+            <strong id="f4u-order-addon-price">—</strong>
+          </div>
+        </div>
+
+        <div class="f4u-order__total">
+          <span>
+            <small>Current total</small>
+            <strong id="f4u-order-total">Calculated at review</strong>
+          </span>
+          <small>Final pricing is verified securely before payment.</small>
+        </div>
+
+        <div class="f4u-order__trust">
+          <div><span>✓</span><p><strong>Secure checkout</strong><small>Payment details are handled by Stripe.</small></p></div>
+          <div><span>✓</span><p><strong>Save and continue later</strong><small>Your application can be resumed securely.</small></p></div>
+          <div><span>✓</span><p><strong>Protected information</strong><small>Your filing data is handled through your secure account.</small></p></div>
+        </div>
+
+        <button class="f4u-order__help" id="f4u-order-help" type="button">Questions? Contact filings4u</button>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="f4u-footer">
+    <div class="f4u-footer__inner">
+      <span>© 2026 filings4u, LLC. All rights reserved.</span>
+      <span>A Subsidiary of Roseland Companies, LLC</span>
+    </div>
+  </footer>
+
+</div>
+
+<div class="f4u-order-drawer-backdrop" id="f4u-order-drawer-backdrop" hidden></div>
+
+<script>
+window.F4U_WIZARD_CONFIG=Object.freeze({
+  supabaseUrl:"https://lrbimrlbskjweynxlgas.supabase.co",
+  supabasePublishableKey:"sb_publishable_RlmqwQM8ATOc7-ML9hvwgw_UljUEavh",
+  functionsBaseUrl:"https://lrbimrlbskjweynxlgas.supabase.co/functions/v1",
+  environment:"production",
+  wizardUrl:"https://wizard.filings4u.com/wizard-v2.html",
+  websiteUrl:"https://filings4u.com"
+});
+</script>
+<script>
+  window.__F4U_BOOT_WATCHDOG__=setTimeout(function(){
+    var root=document.getElementById("f4u-wizard-root");
+    if(root && /Preparing your application|Opening your secure application|Starting your secure application/.test(root.textContent||"")){
+      root.innerHTML='<section class="f4u-panel"><div class="f4u-panel__heading"><span class="f4u-kicker">Secure application</span><h1>We could not start the application.</h1><p>The wizard interface loaded, but its application module did not finish starting. Refresh this page once. If it continues, return to the service page and start the application again.</p></div><div class="f4u-actions"><a class="f4u-primary" href="https://filings4u.com/get-started.html">Return to services</a></div></section>';
+    }
+  },8000);
+</script>
+<script>
+window.__F4U_INLINE_REGISTRY__={"version":2,"service_count":55,"services":[{"key":"annual-reports","title":"Annual Reports","category":"Compliance","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/annual-reports.js"},{"key":"apostille-services","title":"Apostille Services","category":"Compliance","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/apostille-services.js"},{"key":"boc-3-amendment","title":"BOC-3 Amendment","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/boc-3-amendment.js"},{"key":"broker-authority","title":"Broker Authority","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/broker-authority.js"},{"key":"broker-insurance-quote","title":"Broker Insurance Quote","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/broker-insurance-quote.js"},{"key":"business-licenses","title":"Business Licenses","category":"Compliance","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/business-licenses.js"},{"key":"cage-code","title":"CAGE Code","category":"Registrations & Certifications","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/cage-code.js"},{"key":"certificate-of-good-standing","title":"Certificate of Good Standing","category":"Compliance","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/certificate-of-good-standing.js"},{"key":"clia-certificate","title":"CLIA Certificate","category":"Tax & Regulatory","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/clia-certificate.js"},{"key":"corporations","title":"Corporation Formation","category":"Business Formation","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/corporations.js"},{"key":"dba-registration","title":"DBA Registration","category":"Business Formation","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/dba-registration.js"},{"key":"dbe-certification","title":"DBE Certification","category":"Registrations & Certifications","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/dbe-certification.js"},{"key":"dissolution","title":"Business Dissolution","category":"Compliance","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/dissolution.js"},{"key":"dot-consortium","title":"DOT Consortium","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/dot-consortium.js"},{"key":"dot-permits","title":"DOT Licenses & Permits","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/dot-permits.js"},{"key":"driver-file","title":"Driver Qualification File","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/driver-file.js"},{"key":"duns-number","title":"DUNS Number","category":"Registrations & Certifications","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/duns-number.js"},{"key":"employer-id-ein","title":"Employer ID (EIN)","category":"Compliance","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/employer-id-ein.js"},{"key":"federal-tax","title":"Federal Tax Filing","category":"Tax & Regulatory","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/federal-tax.js"},{"key":"foreign-qualification","title":"Foreign Qualification","category":"Compliance","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/foreign-qualification.js"},{"key":"franchise-tax","title":"Franchise Tax","category":"Tax & Regulatory","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/franchise-tax.js"},{"key":"hazmat-registration","title":"HAZMAT Registration","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/hazmat-registration.js"},{"key":"heavy-use-tax","title":"Heavy Use Tax","category":"Tax & Regulatory","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/heavy-use-tax.js"},{"key":"heavy-use-tax-2290","title":"Heavy Use Tax 2290","category":"Tax & Regulatory","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/heavy-use-tax-2290.js"},{"key":"ifta-quarterly-returns","title":"IFTA Quarterly Returns","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/ifta-quarterly-returns.js"},{"key":"ifta-registration","title":"IFTA Registration","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/ifta-registration.js"},{"key":"ifta-replacement","title":"IFTA Replacement","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/ifta-replacement.js"},{"key":"llc-formation","title":"LLC Formation","category":"Business Formation","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/llc-formation.js"},{"key":"llc-reinstatement","title":"LLC Reinstatement","category":"Compliance","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/llc-reinstatement.js"},{"key":"mcs-150-update","title":"MCS-150 Update","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/mcs-150-update.js"},{"key":"minority-certificate","title":"Minority Business Certification","category":"Registrations & Certifications","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/minority-certificate.js"},{"key":"new-entrant-audit","title":"New Entrant Audit","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/new-entrant-audit.js"},{"key":"nonprofits","title":"Nonprofit Formation","category":"Business Formation","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/nonprofits.js"},{"key":"operating-agreement","title":"Operating Agreement","category":"Compliance","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/operating-agreement.js"},{"key":"owner-operators","title":"Owner Operator Setup","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/owner-operators.js"},{"key":"payroll-tax-940-941","title":"Payroll Tax 940/941","category":"Tax & Regulatory","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/payroll-tax-940-941.js"},{"key":"process-agents-boc-3","title":"Process Agent (BOC-3)","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/process-agents-boc-3.js"},{"key":"registered-agent","title":"Registered Agent","category":"Compliance","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/registered-agent.js"},{"key":"regulatory-consulting","title":"Regulatory Consulting","category":"Tax & Regulatory","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/regulatory-consulting.js"},{"key":"sales-tax-registration","title":"Sales Tax Registration","category":"Tax & Regulatory","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/sales-tax-registration.js"},{"key":"scac-code","title":"SCAC Code","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/scac-code.js"},{"key":"series-llc","title":"Series LLC","category":"Business Formation","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/series-llc.js"},{"key":"servicemark-filing","title":"Servicemark Filing","category":"Registrations & Certifications","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/servicemark-filing.js"},{"key":"sole-proprietorship","title":"Sole Proprietorship","category":"Business Formation","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/sole-proprietorship.js"},{"key":"state-tax","title":"State Tax Filing","category":"Tax & Regulatory","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/state-tax.js"},{"key":"trademark-filing","title":"Trademark Filing","category":"Registrations & Certifications","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/trademark-filing.js"},{"key":"trucker-authority","title":"Trucker Authority","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/trucker-authority.js"},{"key":"trucker-insurance-quote","title":"Trucker Insurance Quote","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/trucker-insurance-quote.js"},{"key":"ucr-registration","title":"UCR Registration","category":"DOT & Fleet","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/ucr-registration.js"},{"key":"wbe-certification","title":"WBE Certification","category":"Registrations & Certifications","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/wbe-certification.js"},{"key":"web-design-packages","title":"Web Design Packages","category":"Specialty Services","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/web-design-packages.js"},{"key":"logo-design-packages","title":"Logo Design Packages","category":"Specialty Services","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/logo-design-packages.js"},{"key":"shipper-packages","title":"Shipper Setup Packages","category":"Specialty Services","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/shipper-packages.js"},{"key":"carrier-packages-brokers","title":"Carrier Setup Packages for Brokers","category":"Specialty Services","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/carrier-packages-brokers.js"},{"key":"carrier-packages-truckers","title":"Carrier Packages for Trucking Companies","category":"Specialty Services","enabled":true,"requires_jurisdiction":null,"requires_authorization":null,"form_module":"assets/js/forms/carrier-packages-truckers.js"}]};
+</script>
+<script>
+const CFG=window.F4U_WIZARD_CONFIG;
+const TOKEN_KEY="f4u_wizard_v2_session_token";
+
+function accessToken(){
+  try{
+    const keys=Object.keys(localStorage).filter(k=>k.startsWith("sb-")&&k.endsWith("-auth-token"));
+    for(const key of keys){
+      const raw=localStorage.getItem(key);
+      if(!raw) continue;
+      const parsed=JSON.parse(raw);
+      const token=parsed?.access_token||parsed?.currentSession?.access_token;
+      if(token) return token;
+    }
+  }catch(_){}
+  return "";
+}
+async function callFunction(name,body,{auth=true}={}){
+  const headers={"Content-Type":"application/json","apikey":CFG.supabasePublishableKey};
+  const jwt=auth?accessToken():"";
+  if(jwt) headers.Authorization=`Bearer ${jwt}`;
+  const res=await fetch(`${CFG.functionsBaseUrl}/${name}`,{
+    method:"POST",headers,body:JSON.stringify(body),cache:"no-store",credentials:"omit"
+  });
+  let data={}; try{data=await res.json();}catch(_){}
+  if(!res.ok){const e=new Error(data.error||`Request failed (${res.status})`);e.code=data.error||"request_failed";e.status=res.status;e.data=data;throw e;}
+  return data;
+}
+function setSessionToken(token){if(token) sessionStorage.setItem(TOKEN_KEY,token);}
+function getSessionToken(){return sessionStorage.getItem(TOKEN_KEY)||"";}
+function clearSessionToken(){sessionStorage.removeItem(TOKEN_KEY);}
+async function bootstrapService(service){return callFunction("wizard-v2-bootstrap",{service},{auth:false});}
+async function mintHandoff(payload){return callFunction("wizard-v2-handoff",{action:"mint",...payload});}
+async function consumeHandoff(token){const data=await callFunction("wizard-v2-session",{action:"consume",handoff_token:token});setSessionToken(data.session_token);return data;}
+async function resumeSession(){const token=getSessionToken();if(!token) throw new Error("No saved session.");return callFunction("wizard-v2-session",{action:"resume",session_token:token});}
+async function saveStep(step_key,answers){const token=getSessionToken();if(!token) throw new Error("No active session.");return callFunction("wizard-v2-session",{action:"save",session_token:token,step_key,answers});}
+async function createQuote(addon_keys=[]){const token=getSessionToken();if(!token) throw new Error("No active session.");return callFunction("wizard-v2-quote",{session_token:token,addon_keys});}
+
+
+
+const root=document.getElementById("f4u-wizard-root");
+const orderPanel=document.getElementById("f4u-order-panel");
+const orderBackdrop=document.getElementById("f4u-order-drawer-backdrop");
+const orderToggle=document.getElementById("f4u-mobile-order-toggle");
+
+const state={
+  entryMode:"public",
+  serviceKey:"",
+  serviceTitle:"",
+  planKey:"",
+  planTitle:"",
+  jurisdiction:"",
+  activeStep:0,
+  steps:[],
+  session:null,
+  bootstrap:null,
+  answers:{},
+  selectedAddons:[],
+  quote:null
+};
+
+const PLAN_TITLES={
+  starter:"Starter",
+  compliance:"Compliance",
+  enterprise:"Enterprise",
+  launch:"Launch",
+  business:"Business",
+  growth:"Growth",
+  essential:"Essential",
+  brand:"Brand",
+  signature:"Signature",
+  "shipper-basic":"Shipper Basic",
+  "shipper-pro":"Shipper Pro",
+  "shipper-complete":"Shipper Complete",
+  "carrier-basic":"Carrier Basic",
+  "carrier-pro":"Carrier Pro",
+  "carrier-complete":"Carrier Complete",
+  "carrier-ready":"Carrier Ready",
+  "fleet-ready":"Fleet Ready"
+};
+
+const SERVICE_BEHAVIOR={
+  "llc-formation":{jurisdiction:true,authorization:true},
+  "corporations":{jurisdiction:true,authorization:true},
+  "nonprofits":{jurisdiction:true,authorization:true},
+  "series-llc":{jurisdiction:true,authorization:true},
+  "dba-registration":{jurisdiction:true,authorization:true},
+  "sole-proprietorship":{jurisdiction:true,authorization:false},
+  "foreign-qualification":{jurisdiction:true,authorization:true},
+  "annual-reports":{jurisdiction:true,authorization:true},
+  "registered-agent":{jurisdiction:true,authorization:true},
+  "llc-reinstatement":{jurisdiction:true,authorization:true},
+  "dissolution":{jurisdiction:true,authorization:true},
+  "business-licenses":{jurisdiction:true,authorization:false},
+  "state-tax":{jurisdiction:true,authorization:true},
+  "franchise-tax":{jurisdiction:true,authorization:true},
+  "sales-tax-registration":{jurisdiction:true,authorization:true},
+  "web-design-packages":{jurisdiction:false,authorization:false},
+  "logo-design-packages":{jurisdiction:false,authorization:false},
+  "shipper-packages":{jurisdiction:false,authorization:false},
+  "carrier-packages-brokers":{jurisdiction:false,authorization:false},
+  "carrier-packages-truckers":{jurisdiction:false,authorization:false}
+};
+
+function esc(v){
+  return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+
+async function loadRegistry(){
+  return window.__F4U_INLINE_REGISTRY__;
+}
+
+function normalizeEntry(value){
+  value=String(value||"public").toLowerCase();
+  return ["public","client","admin"].includes(value)?value:"public";
+}
+
+function planTitle(key){
+  if(!key) return "";
+  return PLAN_TITLES[key] || key.split("-").map(x=>x.charAt(0).toUpperCase()+x.slice(1)).join(" ");
+}
+
+function serviceBehavior(){
+  if(state.bootstrap?.service){return {jurisdiction:!!state.bootstrap.service.requires_jurisdiction,authorization:!!state.bootstrap.service.requires_poa};}
+  const configured=SERVICE_BEHAVIOR[state.serviceKey];
+  if(configured) return configured;
+  const category=window.__F4U_SERVICE__?.category||"";
+  const jurisdiction=/Business Formation|Compliance|Tax & Regulatory/.test(category);
+  return {jurisdiction,authorization:false};
+}
+
+function buildSteps(){
+  const behavior=serviceBehavior();
+  const steps=[];
+  if(behavior.jurisdiction && !state.jurisdiction) steps.push({key:"jurisdiction",title:"Jurisdiction"});
+  steps.push({key:"application",title:"Application"});
+  steps.push({key:"addons",title:"Add-ons"});
+  if(behavior.authorization) steps.push({key:"authorization",title:"Authorization"});
+  steps.push({key:"review",title:"Review"});
+  steps.push({key:"payment",title:"Payment"});
+  state.steps=steps;
+  state.activeStep=Math.min(state.activeStep,Math.max(steps.length-1,0));
+}
+
+function currentStep(){
+  return state.steps[state.activeStep]||{key:"application",title:"Application"};
+}
+
+function updateProgress(){
+  const step=currentStep();
+  const count=state.steps.length||1;
+  const current=state.activeStep+1;
+
+  document.getElementById("f4u-progress-label").textContent=step.title;
+  document.getElementById("f4u-progress-count").textContent=`Step ${current} of ${count}`;
+  document.getElementById("f4u-progress-bar").style.width=`${Math.round((current/count)*100)}%`;
+
+  const holder=document.getElementById("f4u-progress-steps");
+  holder.style.gridTemplateColumns=`repeat(${count},minmax(0,1fr))`;
+  holder.innerHTML=state.steps.map((s,i)=>`
+    <span class="f4u-progress-step ${i===state.activeStep?"is-active":i<state.activeStep?"is-complete":""}">
+      ${esc(s.title)}
+    </span>
+  `).join("");
+}
+
+function updateShell(){
+  const service=state.serviceTitle||"Service Application";
+  const plan=state.planTitle||"Package selected on service page";
+
+  document.getElementById("f4u-header-service").textContent=service;
+  document.getElementById("f4u-order-service").textContent=service;
+  document.getElementById("f4u-order-package").textContent=plan;
+  document.getElementById("f4u-mobile-order-name").textContent=service;
+  document.getElementById("f4u-order-entry").textContent=
+    state.entryMode==="admin"?"Admin Assisted":state.entryMode==="client"?"Client Portal":"Website";
+
+  updateProgress();
+}
+
+function openOrder(){
+  orderPanel.classList.add("is-open");
+  orderBackdrop.hidden=false;
+  orderToggle?.setAttribute("aria-expanded","true");
+  document.body.style.overflow="hidden";
+}
+
+function closeOrder(){
+  orderPanel.classList.remove("is-open");
+  orderBackdrop.hidden=true;
+  orderToggle?.setAttribute("aria-expanded","false");
+  document.body.style.overflow="";
+}
+
+orderToggle?.addEventListener("click",()=>orderPanel.classList.contains("is-open")?closeOrder():openOrder());
+orderBackdrop?.addEventListener("click",closeOrder);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeOrder();});
+
+function makeServiceUrl(serviceKey,planKey=""){
+  const url=new URL(location.href);
+  url.searchParams.set("service",serviceKey);
+  if(planKey) url.searchParams.set("plan",planKey);
+  return url;
+}
+
+function getRecord(registry,key){
+  return (registry.services||[]).find(x=>x.key===key&&x.enabled!==false)||null;
+}
+
+function renderFallbackChooser(registry){
+  state.steps=[{key:"service",title:"Service"}];
+  state.activeStep=0;
+  updateProgress();
+
+  document.getElementById("f4u-order-service").textContent="Choose a service";
+  document.getElementById("f4u-order-package").textContent="No package selected";
+  document.getElementById("f4u-mobile-order-name").textContent="Choose a service";
+
+  const grouped={};
+  (registry.services||[]).filter(x=>x.enabled!==false).forEach(s=>{
+    const category=s.category||"Other Services";
+    (grouped[category] ||= []).push(s);
+  });
+
+  const order=["Business Formation","Compliance","Tax & Regulatory","Registrations & Certifications","DOT & Fleet","Specialty Services","Other Services"];
+
+  root.innerHTML=`
+    <section class="f4u-panel">
+      <div class="f4u-panel__heading">
+        <span class="f4u-kicker">${state.entryMode==="admin"?"Admin assisted order":state.entryMode==="client"?"Order another service":"Secure application"}</span>
+        <h1>Choose a service to continue.</h1>
+        <p>${state.entryMode==="public"
+          ?"Normally customers reach this page after choosing a package on a filings4u service page. You can still choose a service here to continue."
+          :state.entryMode==="client"
+            ?"Select the service you want to order. Your account information can be reused once the database layer is connected."
+            :"Select the service for this assisted order. The same application used by customers will be loaded here."}</p>
+      </div>
+
+      <div class="f4u-service-search">
+        <input id="f4u-service-search-input" type="search" placeholder="Search services..." autocomplete="off">
+      </div>
+
+      <div id="f4u-service-groups">
+        ${order.filter(c=>grouped[c]?.length).map(category=>`
+          <section class="f4u-service-category">
+            <div class="f4u-service-category__head">
+              <h2>${esc(category)}</h2>
+              <span>${grouped[category].length} services</span>
+            </div>
+            <div class="f4u-service-grid">
+              ${grouped[category].sort((a,b)=>a.title.localeCompare(b.title)).map(service=>{
+                const initials=service.title.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase();
+                return `
+                  <button class="f4u-service-card" type="button"
+                    data-service="${esc(service.key)}"
+                    data-search="${esc((service.title+" "+category).toLowerCase())}">
+                    <span class="f4u-service-card__icon">${esc(initials)}</span>
+                    <strong>${esc(service.title)}</strong>
+                    <small>Select service →</small>
+                  </button>
+                `;
+              }).join("")}
+            </div>
+          </section>
+        `).join("")}
+      </div>
+
+      <div class="f4u-empty" id="f4u-service-empty" hidden>No services match your search.</div>
+    </section>
+  `;
+
+  root.querySelectorAll("[data-service]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const service=btn.dataset.service;
+      const record=getRecord(registry,service);
+      const url=makeServiceUrl(service);
+      history.pushState({service},"",url);
+      startService(record,"");
+    });
+  });
+
+  const input=document.getElementById("f4u-service-search-input");
+  input?.addEventListener("input",()=>{
+    const q=input.value.trim().toLowerCase();
+    let total=0;
+    root.querySelectorAll(".f4u-service-category").forEach(section=>{
+      let visible=0;
+      section.querySelectorAll(".f4u-service-card").forEach(card=>{
+        const show=!q||card.dataset.search.includes(q);
+        card.hidden=!show;
+        if(show){visible++;total++;}
+      });
+      section.hidden=visible===0;
+    });
+    document.getElementById("f4u-service-empty").hidden=total!==0;
+  });
+}
+
+function renderMissingPlan(){
+  state.steps=[{key:"package",title:"Package"}];
+  state.activeStep=0;
+  updateProgress();
+
+  root.innerHTML=`
+    <section class="f4u-panel">
+      <div class="f4u-panel__heading">
+        <span class="f4u-kicker">${esc(state.serviceTitle)}</span>
+        <h1>Select your package on the service page.</h1>
+        <p>This wizard is designed for customers who already selected a pricing plan. Return to the service page, choose your package, and the wizard will open directly at the application.</p>
+      </div>
+
+      <div class="f4u-empty">
+        <strong style="display:block;color:#0a1f44;margin-bottom:8px">${esc(state.serviceTitle)}</strong>
+        Package information is required before the customer application begins.
+      </div>
+
+      <div class="f4u-actions">
+        <span class="f4u-actions__note">The Admin and Client Portal entry modes can choose service/package inside their own order flow later.</span>
+        <button class="f4u-primary" type="button" id="f4u-return-service">Return to service page</button>
+      </div>
+    </section>
+  `;
+  document.getElementById("f4u-return-service")?.addEventListener("click",()=>{
+    location.href="https://filings4u.com/get-started.html";
+  });
+}
+
+function startService(record,planKey){
+  window.__F4U_SERVICE__=record;
+  state.serviceKey=record.key;
+  state.serviceTitle=record.title;
+  state.planKey=planKey||"";
+  state.planTitle=planTitle(planKey);
+  state.activeStep=0;
+
+  buildSteps();
+  updateShell();
+
+  if(state.entryMode==="public" && !state.planKey){
+    renderMissingPlan();
+    return;
+  }
+
+  renderCurrentStep();
+}
+
+function renderCurrentStep(){
+  const step=currentStep();
+  updateProgress();
+
+  if(step.key==="jurisdiction"){
+    renderJurisdiction();
+  }else if(step.key==="application"){
+    renderApplication();
+  }else if(step.key==="addons"){
+    renderAddons();
+  }else if(step.key==="authorization"){
+    renderPlaceholder("Authorization","Required signatures or power-of-attorney fields will appear here only for services that need them.");
+  }else if(step.key==="review"){
+    renderReview();
+  }else if(step.key==="payment"){
+    renderPlaceholder("Secure checkout","Stripe Elements will be mounted here after the database and payment functions are built.");
+  }
+}
+
+function nextStep(){
+  if(state.activeStep<state.steps.length-1){
+    state.activeStep++;
+    renderCurrentStep();
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+}
+
+function prevStep(){
+  if(state.activeStep>0){
+    state.activeStep--;
+    renderCurrentStep();
+  }else{
+    history.back();
+  }
+}
+
+function renderJurisdiction(){
+  root.innerHTML=`
+    <section class="f4u-panel">
+      <div class="f4u-panel__heading">
+        <span class="f4u-kicker">${esc(state.serviceTitle)} · ${esc(state.planTitle)}</span>
+        <h1>Where will this filing apply?</h1>
+        <p>Select the jurisdiction required for this service. State-specific pricing and requirements will be verified later by the backend.</p>
+      </div>
+
+      <div class="f4u-form-grid">
+        <div class="f4u-field f4u-field--full">
+          <label for="f4u-jurisdiction">State or jurisdiction</label>
+          <select id="f4u-jurisdiction">
+            <option value="">Select a state</option>
+            ${["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","DC"].map(s=>`<option value="${s}" ${state.jurisdiction===s?"selected":""}>${s}</option>`).join("")}
+          </select>
+          <small>The final filing fee will be calculated from the authoritative state fee record.</small>
+        </div>
+      </div>
+
+      <div class="f4u-actions">
+        <button class="f4u-secondary" type="button" id="f4u-prev">Back</button>
+        <button class="f4u-primary" type="button" id="f4u-next">Continue</button>
+      </div>
+    </section>
+  `;
+
+  document.getElementById("f4u-prev").addEventListener("click",prevStep);
+  document.getElementById("f4u-next").addEventListener("click",()=>{
+    const select=document.getElementById("f4u-jurisdiction");
+    if(!select.value){select.focus();return;}
+    state.jurisdiction=select.value;
+    saveStep("jurisdiction",{state:state.jurisdiction}).catch(console.error);
+    buildSteps();
+    state.activeStep=0;
+    renderCurrentStep();
+  });
+}
+
+function collectApplication(){
+  return {
+    first_name:document.getElementById("preview-first")?.value.trim()||"",
+    last_name:document.getElementById("preview-last")?.value.trim()||"",
+    email:document.getElementById("preview-email")?.value.trim()||"",
+    phone:document.getElementById("preview-phone")?.value.trim()||""
+  };
+}
+function renderApplication(){
+  const saved=state.answers.application||{};
+  root.innerHTML=`
+    <section class="f4u-panel">
+      <div class="f4u-panel__heading">
+        <span class="f4u-kicker">${esc(state.serviceTitle)} · ${esc(state.planTitle||"Selected package")}</span>
+        <h1>Let's start your application.</h1>
+        <p>Your secure Wizard v2 session is active. This first contact block is now persisted through the session API; the full ${esc(state.serviceTitle)} form module will replace the service-form area next.</p>
+      </div>
+      <div class="f4u-form-grid">
+        <div class="f4u-field"><label for="preview-first">First name</label><input id="preview-first" autocomplete="given-name" value="${esc(saved.first_name||"")}" placeholder="First name"></div>
+        <div class="f4u-field"><label for="preview-last">Last name</label><input id="preview-last" autocomplete="family-name" value="${esc(saved.last_name||"")}" placeholder="Last name"></div>
+        <div class="f4u-field"><label for="preview-email">Email</label><input id="preview-email" type="email" autocomplete="email" value="${esc(saved.email||"")}" placeholder="name@example.com"></div>
+        <div class="f4u-field"><label for="preview-phone">Phone</label><input id="preview-phone" type="tel" autocomplete="tel" value="${esc(saved.phone||"")}" placeholder="(555) 555-5555"></div>
+        <div class="f4u-field f4u-field--full">
+          <label>Service form area <span>— next integration</span></label>
+          <textarea disabled>The ${esc(state.serviceTitle)} form module plugs into this exact area. Session, navigation and pricing are already outside the form module.</textarea>
+          <small>Contact information above is now saved to Wizard v2, not localStorage.</small>
+        </div>
+      </div>
+      <div class="f4u-actions">
+        <span class="f4u-actions__note" id="f4u-save-note">Secure session active.</span>
+        <button class="f4u-primary" type="button" id="f4u-next">Save &amp; continue</button>
+      </div>
+    </section>`;
+  document.getElementById("f4u-next").addEventListener("click",async()=>{
+    const answers=collectApplication();
+    if(!answers.first_name||!answers.last_name||!answers.email){document.getElementById(!answers.first_name?"preview-first":!answers.last_name?"preview-last":"preview-email").focus();return;}
+    const btn=document.getElementById("f4u-next");btn.disabled=true;btn.textContent="Saving…";
+    try{await saveStep("application",answers);state.answers.application=answers;nextStep();}catch(e){console.error(e);btn.disabled=false;btn.textContent="Save & continue";document.getElementById("f4u-save-note").textContent="We couldn't save. Please try again.";}
+  });
+}
+function money(v,currency="USD"){return new Intl.NumberFormat("en-US",{style:"currency",currency}).format(Number(v||0));}
+function updateQuoteSummary(q){
+  state.quote=q;
+  document.getElementById("f4u-order-package-price").textContent=money(q.service_fee,q.currency);
+  document.getElementById("f4u-order-government-fee").textContent=money(q.government_fee,q.currency);
+  document.getElementById("f4u-order-addon-price").textContent=q.addons_total?money(q.addons_total,q.currency):"—";
+  document.getElementById("f4u-order-total").textContent=money(q.total_amount,q.currency);
+  document.getElementById("f4u-mobile-order-total").textContent=money(q.total_amount,q.currency);
+}
+function renderAddons(){
+  const addons=state.bootstrap?.addons||[];
+  root.innerHTML=`<section class="f4u-panel">
+    <div class="f4u-panel__heading"><span class="f4u-kicker">${esc(state.serviceTitle)} · ${esc(state.planTitle)}</span><h1>Recommended add-ons</h1><p>Only add-ons authorized for this service can be selected. Prices shown here come from the Wizard v2 database.</p></div>
+    ${addons.length?`<div class="f4u-addon-list">${addons.map(a=>`<label class="f4u-addon-option"><input type="checkbox" value="${esc(a.addon_key)}" ${state.selectedAddons.includes(a.addon_key)?"checked":""}><span><strong>${esc(a.addon_name)}</strong><small>${esc(a.description||"")}</small></span><b>${money(a.price,a.currency)}</b></label>`).join("")}</div>`:`<div class="f4u-empty"><strong>No optional add-ons are configured for this service.</strong></div>`}
+    <div class="f4u-actions"><button class="f4u-secondary" type="button" id="f4u-prev">Back</button><button class="f4u-primary" type="button" id="f4u-next">Continue</button></div>
+  </section>`;
+  document.getElementById("f4u-prev").addEventListener("click",prevStep);
+  document.getElementById("f4u-next").addEventListener("click",async()=>{
+    state.selectedAddons=[...root.querySelectorAll('input[type="checkbox"]:checked')].map(x=>x.value);
+    await saveStep("addons",{selected_addons:state.selectedAddons});
+    nextStep();
+  });
+}
+async function renderReview(){
+  root.innerHTML=`<section class="f4u-panel"><div class="f4u-panel__heading"><span class="f4u-kicker">${esc(state.serviceTitle)}</span><h1>Verifying your order…</h1><p>Pricing is being recalculated securely from the database.</p></div><div class="f4u-loading">Creating authoritative quote…</div></section>`;
+  try{
+    const result=await createQuote(state.selectedAddons);
+    updateQuoteSummary(result.quote);
+    root.innerHTML=`<section class="f4u-panel">
+      <div class="f4u-panel__heading"><span class="f4u-kicker">Quote ${esc(result.quote.quote_number||"")}</span><h1>Review your order.</h1><p>This total was calculated by the server. Browser values cannot override it.</p></div>
+      <div class="f4u-review-lines">${result.quote.items.map(i=>`<div class="f4u-price-row"><span>${esc(i.item_name)}</span><strong>${money(i.line_total,result.quote.currency)}</strong></div>`).join("")}</div>
+      <div class="f4u-order__total"><span><small>Total</small><strong>${money(result.quote.total_amount,result.quote.currency)}</strong></span><small>Quote expires ${new Date(result.quote.expires_at).toLocaleString()}.</small></div>
+      <div class="f4u-actions"><button class="f4u-secondary" type="button" id="f4u-prev">Back</button><button class="f4u-primary" type="button" id="f4u-next">Continue to payment</button></div>
+    </section>`;
+    document.getElementById("f4u-prev").addEventListener("click",prevStep);
+    document.getElementById("f4u-next").addEventListener("click",nextStep);
+  }catch(e){
+    console.error(e);
+    root.innerHTML=`<section class="f4u-panel"><div class="f4u-panel__heading"><span class="f4u-kicker">Pricing verification</span><h1>We can't finalize this quote yet.</h1><p>${e.code==="government_fee_not_configured"?"The government fee for this service has not been configured in Wizard v2 yet. We stopped instead of estimating or charging the wrong amount.":"The secure quote could not be created. Please try again."}</p></div><div class="f4u-actions"><button class="f4u-secondary" type="button" id="f4u-prev">Back</button></div></section>`;
+    document.getElementById("f4u-prev").addEventListener("click",prevStep);
+  }
+}
+
+function renderPlaceholder(title,description){
+  root.innerHTML=`
+    <section class="f4u-panel">
+      <div class="f4u-panel__heading">
+        <span class="f4u-kicker">${esc(state.serviceTitle)} · ${esc(state.planTitle||"Selected package")}</span>
+        <h1>${esc(title)}</h1>
+        <p>${esc(description)}</p>
+      </div>
+
+      <div class="f4u-empty">
+        <strong style="display:block;color:#0a1f44;margin-bottom:8px">Shell section ready.</strong>
+        Database and business logic will be connected after this shell is approved.
+      </div>
+
+      <div class="f4u-actions">
+        <button class="f4u-secondary" type="button" id="f4u-prev">Back</button>
+        ${state.activeStep<state.steps.length-1?'<button class="f4u-primary" type="button" id="f4u-next">Continue</button>':""}
+      </div>
+    </section>
+  `;
+  document.getElementById("f4u-prev")?.addEventListener("click",prevStep);
+  document.getElementById("f4u-next")?.addEventListener("click",nextStep);
+}
+
+function showSaveModal(){
+  if(document.getElementById("f4u-save-modal")) return;
+  const modal=document.createElement("div");
+  modal.id="f4u-save-modal";
+  modal.className="f4u-modal";
+  modal.innerHTML=`
+    <div class="f4u-modal__backdrop" data-close></div>
+    <section class="f4u-modal__card" role="dialog" aria-modal="true" aria-labelledby="f4u-save-title">
+      <button class="f4u-modal__close" type="button" data-close aria-label="Close">×</button>
+      <span class="f4u-kicker">Save your application</span>
+      <h2 id="f4u-save-title">Continue later from where you left off.</h2>
+      <p>Your Wizard v2 session is already being saved securely. A continuation-email workflow will be added after the service forms are connected.</p>
+      <button class="f4u-primary" type="button" data-close>Got it</button>
+    </section>
+  `;
+  document.body.appendChild(modal);
+  modal.querySelectorAll("[data-close]").forEach(x=>x.addEventListener("click",()=>modal.remove()));
+}
+
+document.getElementById("f4u-save-button").addEventListener("click",showSaveModal);
+
+function help(){
+  location.href="https://filings4u.com/contact.html";
+}
+document.getElementById("f4u-help-button").addEventListener("click",help);
+document.getElementById("f4u-order-help").addEventListener("click",help);
+
+document.getElementById("f4u-back-button").addEventListener("click",prevStep);
+
+async function hydrateSession(sessionResult,registry){
+  state.session=sessionResult.session;
+  state.entryMode=normalizeEntry(sessionResult.session.entry_mode);
+  state.serviceKey=sessionResult.session.service_key;
+  state.planKey=sessionResult.session.plan_key;
+  state.jurisdiction=sessionResult.session.jurisdiction_state||"";
+  for(const row of sessionResult.answers||[]) state.answers[row.step_key]=row.answers||{};
+  state.selectedAddons=state.answers.addons?.selected_addons||[];
+  const data=await bootstrapService(state.serviceKey);
+  state.bootstrap=data;
+  const record=getRecord(registry,state.serviceKey)||{key:state.serviceKey,title:data.service.service_title,category:data.service.category};
+  state.serviceTitle=data.service.service_title||record.title;
+  const plan=(data.plans||[]).find(p=>p.plan_key===state.planKey);
+  state.planTitle=plan?.plan_name||planTitle(state.planKey);
+  window.__F4U_SERVICE__=record;
+  buildSteps();updateShell();renderCurrentStep();clearTimeout(window.__F4U_BOOT_WATCHDOG__);
+}
+async function boot(){
+  const registry=await loadRegistry(); window.__F4U_REGISTRY__=registry;
+  const q=new URLSearchParams(location.search),handoff=q.get("handoff");
+  if(handoff){
+    root.innerHTML='<div class="f4u-loading">Opening your secure application…</div>';
+    const consumed=await consumeHandoff(handoff);
+    const clean=new URL(location.href);clean.searchParams.delete("handoff");history.replaceState({},"",clean);
+    await hydrateSession({...consumed,answers:[]},registry);return;
+  }
+  if(getSessionToken()){
+    try{await hydrateSession(await resumeSession(),registry);return;}catch(e){console.warn("Saved session unavailable",e);clearSessionToken();}
+  }
+  state.entryMode=normalizeEntry(q.get("entry"));state.serviceKey=(q.get("service")||"").trim().toLowerCase();state.planKey=(q.get("plan")||"").trim().toLowerCase();state.planTitle=planTitle(state.planKey);state.jurisdiction=(q.get("state")||"").trim().toUpperCase();
+  const record=getRecord(registry,state.serviceKey);
+  if(!record){renderFallbackChooser(registry);return;}
+  if(state.entryMode==="public"&&!state.planKey){startService(record,"");return;}
+  root.innerHTML='<div class="f4u-loading">Starting your secure application…</div>';
+  const data=await bootstrapService(state.serviceKey);state.bootstrap=data;
+  const minted=await mintHandoff({service:state.serviceKey,plan:state.planKey,state:state.jurisdiction,entry:state.entryMode,return_url:location.href});
+  await hydrateSession({...await consumeHandoff(minted.token),answers:[]},registry);
+}
+window.addEventListener("popstate",()=>location.reload());
+
+boot().catch(error=>{
+  console.error(error);
+  root.innerHTML=`
+    <section class="f4u-panel">
+      <div class="f4u-panel__heading">
+        <span class="f4u-kicker">Secure application</span>
+        <h1>We couldn't prepare your application.</h1>
+        <p>Please refresh the page. If the problem continues, contact filings4u support.</p>
+      </div>
+    </section>
+  `;
+});
+
+</script>
+</body>
+</html>
