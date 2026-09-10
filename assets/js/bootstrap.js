@@ -67,36 +67,128 @@ function planTitle(key){
 
 function serviceBehavior(){
   const svc=state.bootstrap?.service||{};
+  const cfg=state.bootstrap?.wizard_config||{};
   return {
     jurisdiction:!!svc.requires_jurisdiction,
-    authorization:!!svc.requires_authorization
+    authorization:!!svc.requires_authorization,
+    showAddons:cfg.show_addons!==false,
+    showSummary:cfg.show_summary!==false,
+    checkoutEnabled:cfg.checkout_enabled!==false
   };
 }
 
-function buildSteps(){
+const DEFAULT_FLOW_STEPS=Object.freeze([
+  {key:"jurisdiction",label:"Jurisdiction",sort_order:20,enabled:true},
+  {key:"application",label:"Application",sort_order:30,enabled:true},
+  {key:"addons",label:"Add-ons",sort_order:40,enabled:true},
+  {key:"authorization",label:"Authorization",sort_order:50,enabled:true},
+  {key:"summary",label:"Summary",sort_order:60,enabled:true},
+  {key:"payment",label:"Payment",sort_order:70,enabled:true}
+]);
+
+function runtimeKey(key){
+  const clean=String(key||"").trim().toLowerCase();
+  if(clean==="summary") return "review";
+  if(clean==="service") return "service";
+  return clean;
+}
+
+function getByPath(source,path){
+  return String(path||"").split(".").filter(Boolean).reduce((value,key)=>value==null?undefined:value[key],source);
+}
+
+function flowContext(){
+  const svc=state.bootstrap?.service||{};
+  return {
+    service:state.serviceKey,service_key:state.serviceKey,
+    service_type:svc.service_type||"",category:svc.category||"",
+    plan:state.planKey,plan_key:state.planKey,
+    state:state.jurisdiction,jurisdiction:state.jurisdiction,
+    entry:state.entryMode,entry_mode:state.entryMode,
+    has_addons:(state.bootstrap?.addons||[]).length>0,
+    requires_jurisdiction:!!svc.requires_jurisdiction,
+    requires_authorization:!!svc.requires_authorization,
+    answers:state.answers||{}
+  };
+}
+
+function comparable(value){
+  if(Array.isArray(value)) return value.map(comparable);
+  if(typeof value==="string") return value.trim().toLowerCase();
+  return value;
+}
+
+function evaluateFlowCondition(condition){
+  if(!condition||typeof condition!=="object"||!condition.field) return true;
+  const actual=getByPath(flowContext(),condition.field);
+  const expected=condition.value;
+  const op=String(condition.operator||"equals").toLowerCase();
+  const a=comparable(actual), e=comparable(expected);
+  const list=Array.isArray(e)?e:String(e??"").split(",").map(x=>x.trim().toLowerCase()).filter(Boolean);
+  if(op==="exists") return actual!==undefined&&actual!==null&&actual!=="";
+  if(op==="not_exists") return actual===undefined||actual===null||actual==="";
+  if(op==="truthy") return !!actual;
+  if(op==="falsy") return !actual;
+  if(op==="not_equals") return a!==e;
+  if(op==="contains") return Array.isArray(a)?a.includes(e):String(a??"").includes(String(e??""));
+  if(op==="not_contains") return Array.isArray(a)?!a.includes(e):!String(a??"").includes(String(e??""));
+  if(op==="in") return list.includes(String(a??"").toLowerCase());
+  if(op==="not_in") return !list.includes(String(a??"").toLowerCase());
+  return a===e;
+}
+
+function configuredFlow(){
+  const cfg=state.bootstrap?.wizard_config||{};
+  const configured=cfg.config?.flow?.steps;
+  return Array.isArray(configured)&&configured.length?configured:DEFAULT_FLOW_STEPS;
+}
+
+function buildSteps(options={}){
   const behavior=serviceBehavior();
-  const steps=[];
   const addonCount=Array.isArray(state.bootstrap?.addons)?state.bootstrap.addons.length:0;
+  const previousKey=options.preserveKey||currentStep()?.key||null;
+  const cfg=state.bootstrap?.wizard_config||{};
+  const labels={
+    application:cfg.application_label||"Application",
+    addons:cfg.addons_label||"Add-ons",
+    authorization:cfg.authorization_label||"Authorization",
+    review:cfg.summary_label||"Summary",
+    payment:cfg.checkout_label||"Payment",
+    jurisdiction:"Jurisdiction"
+  };
+  const seen=new Set();
+  const steps=[];
 
-  if(behavior.jurisdiction && !state.jurisdiction){
-    steps.push({key:"jurisdiction",title:"Jurisdiction"});
+  [...configuredFlow()]
+    .sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0))
+    .forEach(item=>{
+      const key=runtimeKey(item.key);
+      if(!key||key==="service"||seen.has(key)||item.enabled===false) return;
+      if(!evaluateFlowCondition(item.condition)) return;
+      if(key==="jurisdiction"&&(!behavior.jurisdiction||!!state.jurisdiction)) return;
+      if(key==="addons"&&(!behavior.showAddons||addonCount===0)) return;
+      if(key==="authorization"&&!behavior.authorization) return;
+      if(key==="review"&&!behavior.showSummary) return;
+      if(key==="payment"&&!behavior.checkoutEnabled) return;
+      seen.add(key);
+      steps.push({key,title:String(item.label||labels[key]||key)});
+    });
+
+  if(!seen.has("application")){
+    const paymentIndex=steps.findIndex(x=>x.key==="payment");
+    const application={key:"application",title:labels.application};
+    if(paymentIndex>=0) steps.splice(paymentIndex,0,application); else steps.unshift(application);
   }
-
-  steps.push({key:"application",title:"Application"});
-
-  if(addonCount>0){
-    steps.push({key:"addons",title:"Add-ons"});
-  }
-
-  if(behavior.authorization){
-    steps.push({key:"authorization",title:"Authorization"});
-  }
-
-  steps.push({key:"review",title:"Review"});
-  steps.push({key:"payment",title:"Payment"});
+  if(!steps.length) steps.push({key:"application",title:labels.application});
 
   state.steps=steps;
-  state.activeStep=Math.min(state.activeStep,Math.max(steps.length-1,0));
+  if(previousKey){
+    const index=steps.findIndex(x=>x.key===previousKey);
+    if(index>=0) state.activeStep=index;
+    else state.activeStep=Math.min(state.activeStep,steps.length-1);
+  }else{
+    state.activeStep=Math.min(state.activeStep,steps.length-1);
+  }
 }
 
 function currentStep(){
@@ -387,11 +479,21 @@ function renderCurrentStep(){
 }
 
 function nextStep(){
-  if(state.activeStep<state.steps.length-1){
-    state.activeStep++;
-    renderCurrentStep();
-    window.scrollTo({top:0,behavior:"smooth"});
+  const completedKey=currentStep().key;
+  const oldSteps=state.steps.slice();
+  const oldIndex=oldSteps.findIndex(x=>x.key===completedKey);
+  buildSteps({preserveKey:completedKey});
+  let currentIndex=state.steps.findIndex(x=>x.key===completedKey);
+  if(currentIndex<0){
+    const later=oldSteps.slice(Math.max(oldIndex+1,0)).map(x=>x.key);
+    currentIndex=later.map(key=>state.steps.findIndex(x=>x.key===key)).find(index=>index>=0);
+    if(currentIndex===undefined) currentIndex=Math.min(state.activeStep,state.steps.length-1);
+    state.activeStep=Math.max(0,currentIndex);
+  }else if(currentIndex<state.steps.length-1){
+    state.activeStep=currentIndex+1;
   }
+  renderCurrentStep();
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 
 function prevStep(){
@@ -435,15 +537,16 @@ function renderJurisdiction(){
     const select=document.getElementById("f4u-jurisdiction");
     if(!select.value){select.focus();return;}
     state.jurisdiction=select.value;
-    saveStep("jurisdiction",{state:state.jurisdiction}).catch(console.error);
-    buildSteps();
-    state.activeStep=0;
-    renderCurrentStep();
+    state.answers.jurisdiction={state:state.jurisdiction};
+    saveStep("jurisdiction",state.answers.jurisdiction).catch(console.error);
+    nextStep();
   });
 }
 
 
 const SERVICE_MODULE_PROMISES=new Map();
+const PUBLISHED_FORM_PROMISES=new Map();
+const WIZARD_FORM_SCHEMA_URL="https://lrbimrlbskjweynxlgas.supabase.co/functions/v1/wizard-form-schema";
 
 function registryRecordForService(){
   const list=window.__F4U_REGISTRY__?.services||[];
@@ -455,10 +558,10 @@ function serviceModulePath(){
   return record?.form_module || `assets/js/${state.serviceKey}.js`;
 }
 
-function loadServiceModule(){
+function loadLegacyServiceModule(){
   const key=state.serviceKey;
   if(!key) return Promise.reject(new Error("service_key_missing"));
-  if(window.formRegistry?.[`${key}-form-master`]) return Promise.resolve();
+  if(window.formRegistry?.[`${key}-form-master`]) return Promise.resolve({source:"legacy"});
 
   if(SERVICE_MODULE_PROMISES.has(key)) return SERVICE_MODULE_PROMISES.get(key);
 
@@ -468,7 +571,7 @@ function loadServiceModule(){
     script.async=true;
     script.dataset.f4uServiceModule=key;
     script.onload=()=>{
-      if(window.formRegistry?.[`${key}-form-master`]) resolve();
+      if(window.formRegistry?.[`${key}-form-master`]) resolve({source:"legacy"});
       else reject(new Error(`service_renderer_not_registered:${key}`));
     };
     script.onerror=()=>reject(new Error(`service_module_not_found:${key}`));
@@ -477,6 +580,160 @@ function loadServiceModule(){
 
   SERVICE_MODULE_PROMISES.set(key,promise);
   return promise;
+}
+
+function normalizePublishedField(field,index){
+  const id=String(field?.id||field?.key||`field_${index+1}`).trim();
+  const options=Array.isArray(field?.options)
+    ? field.options.map(option=>{
+        if(Array.isArray(option)) return option;
+        if(option && typeof option==="object") return [String(option.value??option.label??""),String(option.label??option.value??"")];
+        return [String(option??""),String(option??"")];
+      })
+    : [];
+
+  const condition=field?.showWhen || (
+    field?.condition?.field
+      ? {
+          field:field.condition.field,
+          ...(field.condition.operator==="not_equals"
+            ? {notEquals:field.condition.value}
+            : {equals:field.condition.value})
+        }
+      : null
+  );
+
+  const typeMap={
+    "checkbox-group":"checkbox-group",
+    currency:"number",
+    phone:"tel",
+    signature:"text",
+    state:"select"
+  };
+
+  return {
+    ...field,
+    id,
+    type:typeMap[field?.type]||field?.type||"text",
+    label:String(field?.label||id),
+    span:field?.span || (field?.width==="full"?"full":"half"),
+    help:field?.help ?? field?.help_text ?? "",
+    showWhen:condition,
+    options:field?.type==="state" ? "__STATES__" : options,
+    format:field?.format || (field?.type==="phone"?"phone":field?.format),
+    original_type:field?.type||"text"
+  };
+}
+
+function normalizePublishedSchema(pack){
+  const raw=pack?.schema||{};
+  return {
+    title:String(raw.title||pack?.definition?.form_title||state.serviceTitle||"Service Application"),
+    subtitle:String(raw.subtitle||pack?.definition?.description||"Complete the filing information below."),
+    authority:String(raw.authority||"Applicable filing authority"),
+    tooltip:String(raw.tooltip||""),
+    notice:String(raw.notice||""),
+    settings:raw.settings&&typeof raw.settings==="object"?raw.settings:{},
+    rules:Array.isArray(raw.rules)?raw.rules:[],
+    sections:(Array.isArray(raw.sections)?raw.sections:[]).map((section,sectionIndex)=>({
+      ...section,
+      key:String(section?.key||`section_${sectionIndex+1}`),
+      title:String(section?.title||`Section ${sectionIndex+1}`),
+      description:String(section?.description||""),
+      showWhen:section?.showWhen||null,
+      fields:(Array.isArray(section?.fields)?section.fields:[]).map(normalizePublishedField)
+    }))
+  };
+}
+
+function installPublishedPayloadBuilder(pack){
+  const version=pack?.version||{};
+  window.__F4U_ACTIVE_FORM_VERSION__={
+    id:version.id||null,
+    version_number:version.version_number||null,
+    service_key:state.serviceKey
+  };
+
+  window.buildPayloadsForSupabase=function(){
+    const answers=serializeServiceForm();
+    return {
+      form_payload:{
+        schema_version:version.version_number||1,
+        form_version_id:version.id||null,
+        service_key:state.serviceKey,
+        jurisdiction_state:state.jurisdiction||null,
+        answers
+      },
+      errors:[]
+    };
+  };
+}
+
+async function loadPublishedServiceForm(){
+  const key=state.serviceKey;
+  if(!key) throw new Error("service_key_missing");
+
+  if(PUBLISHED_FORM_PROMISES.has(key)) return PUBLISHED_FORM_PROMISES.get(key);
+
+  const promise=(async()=>{
+    const url=`${WIZARD_FORM_SCHEMA_URL}?service_key=${encodeURIComponent(key)}`;
+    const response=await fetch(url,{method:"GET",mode:"cors",cache:"no-store"});
+
+    if(response.status===404){
+      const missing=await response.json().catch(()=>({}));
+      const error=new Error(missing.error||"published_form_not_found");
+      error.code="published_form_not_found";
+      throw error;
+    }
+
+    const pack=await response.json().catch(()=>({}));
+    if(!response.ok) throw new Error(pack.error||`wizard_form_schema_${response.status}`);
+
+    if(!window.F4UServiceForms?.register){
+      throw new Error("service_form_engine_unavailable");
+    }
+
+    const config=normalizePublishedSchema(pack);
+    window.F4UServiceForms.register(key,config);
+    installPublishedPayloadBuilder(pack);
+    console.info("[Wizard Forms] Database form loaded",{
+      service_key:key,
+      version:pack?.version?.version_number||null,
+      form_version_id:pack?.version?.id||null,
+      sections:config.sections.length,
+      fields:config.sections.reduce((n,s)=>n+(s.fields||[]).length,0)
+    });
+
+    if(typeof window.formRegistry?.[`${key}-form-master`]!=="function"){
+      throw new Error(`published_renderer_not_registered:${key}`);
+    }
+
+    return {source:"database",pack};
+  })();
+
+  PUBLISHED_FORM_PROMISES.set(key,promise);
+
+  try{
+    return await promise;
+  }catch(error){
+    PUBLISHED_FORM_PROMISES.delete(key);
+    throw error;
+  }
+}
+
+async function loadServiceFormRuntime(){
+  // Database-published Wizard Forms are authoritative when available.
+  // During rollout only, a missing/unpublished schema falls back to the
+  // existing per-service module so the live wizard remains operational.
+  try{
+    return await loadPublishedServiceForm();
+  }catch(error){
+    if(error?.code!=="published_form_not_found"){
+      console.warn(`[Wizard Forms] Published form load failed for ${state.serviceKey}; using legacy fallback.`,error);
+    }
+    console.info("[Wizard Forms] Using legacy service module fallback",{service_key:state.serviceKey});
+    return loadLegacyServiceModule();
+  }
 }
 
 function serviceFormRoot(){
@@ -596,7 +853,7 @@ async function renderApplication(){
     </section>`;
 
   try{
-    await loadServiceModule();
+    const formRuntime=await loadServiceFormRuntime();
 
     if(currentStep().key!=="application") return;
 
@@ -611,6 +868,11 @@ async function renderApplication(){
       state:state.jurisdiction||"",
       entry:state.entryMode
     });
+    canvas.dataset.formSource=formRuntime?.source||"unknown";
+    if(formRuntime?.source==="database"){
+      canvas.dataset.formVersion=String(formRuntime.pack?.version?.version_number||"");
+      canvas.dataset.formVersionId=String(formRuntime.pack?.version?.id||"");
+    }
 
     restoreFormAnswers(
       serviceFormRoot(),
@@ -626,6 +888,13 @@ async function renderApplication(){
       if(!validation.isValid) return;
 
       const payload=normalizedApplicationPayload();
+      if(formRuntime?.source==="database"){
+        payload.form_source="wizard_form_builder";
+        payload.form_version_id=formRuntime.pack?.version?.id||payload.form_payload?.form_version_id||null;
+        payload.form_version_number=formRuntime.pack?.version?.version_number||payload.form_payload?.schema_version||null;
+      }else{
+        payload.form_source="legacy_service_module";
+      }
 
       btn.disabled=true;
       btn.textContent="Saving…";
@@ -647,10 +916,10 @@ async function renderApplication(){
       canvas.innerHTML=`
         <div class="f4u-empty">
           <strong>${esc(state.serviceTitle)} form could not be loaded.</strong>
-          <p>The service route is valid, but its application module is unavailable. No other service form will be substituted.</p>
+          <p>The service route is valid, but neither its published Wizard Form nor its temporary legacy form module could be loaded.</p>
         </div>`;
     }
-    document.getElementById("f4u-save-note").textContent="This service module must be available before the application can continue.";
+    document.getElementById("f4u-save-note").textContent="A published Wizard Form or temporary legacy form must be available before the application can continue.";
   }
 }
 
@@ -673,7 +942,8 @@ function renderAddons(){
   document.getElementById("f4u-prev").addEventListener("click",prevStep);
   document.getElementById("f4u-next").addEventListener("click",async()=>{
     state.selectedAddons=[...root.querySelectorAll('input[type="checkbox"]:checked')].map(x=>x.value);
-    await saveStep("addons",{selected_addons:state.selectedAddons});
+    state.answers.addons={selected_addons:state.selectedAddons};
+    await saveStep("addons",state.answers.addons);
     nextStep();
   });
 }
@@ -1090,15 +1360,16 @@ async function hydrateSession(sessionResult,registry){
   state.planTitle=plan?.plan_name||planTitle(state.planKey);
   window.__F4U_SERVICE__=record;
   buildSteps();
-  const savedStep=sessionResult.session.current_step_key;
+  const savedStep=runtimeKey(sessionResult.session.current_step_key);
   const savedIndex=state.steps.findIndex(step=>step.key===savedStep);
-
   if(savedIndex>=0){
     state.activeStep=savedIndex;
-  }else if(savedStep==="addons"){
-    const authIndex=state.steps.findIndex(step=>step.key==="authorization");
-    const reviewIndex=state.steps.findIndex(step=>step.key==="review");
-    state.activeStep=authIndex>=0?authIndex:(reviewIndex>=0?reviewIndex:0);
+  }else{
+    const fallbackOrder=["jurisdiction","application","addons","authorization","review","payment"];
+    const oldPosition=fallbackOrder.indexOf(savedStep);
+    const candidates=(oldPosition>=0?fallbackOrder.slice(oldPosition+1):fallbackOrder);
+    const nextIndex=candidates.map(key=>state.steps.findIndex(step=>step.key===key)).find(index=>index>=0);
+    state.activeStep=nextIndex===undefined?0:nextIndex;
   }
 
   updateShell();renderCurrentStep();clearTimeout(window.__F4U_BOOT_WATCHDOG__);
