@@ -840,7 +840,7 @@ async function renderApplication(){
     <section class="f4u-panel">
       <div class="f4u-panel__heading">
         <span class="f4u-kicker">${esc(state.serviceTitle)} · ${esc(state.planTitle||"Selected package")}</span>
-        <h1>Complete your ${esc(state.serviceTitle)} application.</h1>
+        <h3 class="f4u-application-title">Complete your ${esc(state.serviceTitle)} application.</h3>
         <p>Your service, package${state.jurisdiction?", and filing state":""} were selected before this step. Complete the service-specific intake below.</p>
       </div>
       <div id="step-2-onboarding-fields-canvas">

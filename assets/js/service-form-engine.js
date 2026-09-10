@@ -245,7 +245,7 @@ function installModernFormStyles(){
  style.textContent=`
  .f4u-schema-form{--f4u-green:#10b981;--f4u-green-dark:#059669;--f4u-ink:#0f172a;--f4u-muted:#64748b;--f4u-line:#dbe3ea;--f4u-soft:#f8fafc;--f4u-danger:#dc2626;font-family:"DM Sans",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--f4u-ink)}
  .f4u-schema-form *{box-sizing:border-box}
- .f4u-schema-form .f4u-form-section{margin:0 0 20px;background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:20px;overflow:hidden;box-shadow:0 10px 30px rgba(15,23,42,.07),0 2px 8px rgba(15,23,42,.04)}
+ .f4u-schema-form .f4u-form-section{margin:0 0 20px;background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:20px;overflow:hidden;box-shadow:0 3px 10px rgba(15,23,42,.035)}
  .f4u-schema-form .f4u-form-section__head{display:flex;align-items:flex-start;gap:12px;padding:20px 22px 14px;background:linear-gradient(180deg,#fff 0%,#fbfdfc 100%);border-bottom:1px solid #eef2f6}
  .f4u-schema-form .f4u-form-section__number{display:grid;place-items:center;flex:0 0 28px;width:28px;height:28px;border-radius:9px;background:#ecfdf5;color:#047857;font-size:12px;font-weight:800}
  .f4u-schema-form .f4u-form-section__head h3{margin:1px 0 3px;font:800 16px/1.25 Manrope,"DM Sans",sans-serif;color:#0b1f3a}
@@ -291,6 +291,15 @@ function installModernFormStyles(){
  .f4u-schema-form .f4u-schema-heading h4{margin:5px 0 0;font:800 15px Manrope,"DM Sans",sans-serif;color:#172554}
  .f4u-schema-form .f4u-schema-divider hr{border:0;border-top:1px solid #e5e7eb;margin:4px 0}
  .f4u-schema-form .f4u-filing-tooltip,.f4u-schema-form .f4u-service-form__notice,.f4u-schema-form .f4u-schema-notice,.f4u-schema-form .f4u-agency-strip{border-radius:16px!important}
+ .f4u-schema-form .f4u-filing-tooltip{display:block!important;padding:0!important;overflow:hidden;border:1px solid #e2e8f0!important;background:#fbfcfd!important;box-shadow:none!important}
+ .f4u-schema-form .f4u-filing-tooltip summary{display:flex;align-items:center;gap:10px;min-height:48px;padding:12px 15px;cursor:pointer;list-style:none;color:#0b1f3a;font:800 13px/1.3 Manrope,"DM Sans",sans-serif;user-select:none}
+ .f4u-schema-form .f4u-filing-tooltip summary::-webkit-details-marker{display:none}
+ .f4u-schema-form .f4u-filing-tooltip summary::after{content:"⌄";margin-left:auto;color:#64748b;font-size:16px;line-height:1;transition:transform .18s ease}
+ .f4u-schema-form .f4u-filing-tooltip[open] summary::after{transform:rotate(180deg)}
+ .f4u-schema-form .f4u-filing-tooltip__icon{display:grid;place-items:center;flex:0 0 24px;width:24px;height:24px}
+ .f4u-schema-form .f4u-filing-tooltip__icon svg{width:18px;height:18px;fill:none;stroke:#059669;stroke-width:1.8}
+ .f4u-schema-form .f4u-filing-tooltip__body{padding:0 15px 14px 49px;color:#64748b;font-size:12px;line-height:1.6}
+ .f4u-schema-form .f4u-filing-tooltip__body p{margin:0}
  @media(max-width:760px){
    .f4u-schema-form .f4u-field-grid,.f4u-schema-form .f4u-address-group .f4u-field-grid,.f4u-schema-form .f4u-option-cards{grid-template-columns:1fr}
    .f4u-schema-form .f4u-schema-field[data-f4u-span="half"]{grid-column:1/-1}
@@ -311,10 +320,9 @@ api.register=function(slug,config){api._configs[slug]=config;
    const authority=config.authority||'Applicable filing authority';
    const tooltip=config.tooltip||`${config.title} is the filing or application selected for this order. The questions below collect the information filings4u needs to prepare this ${config.title.toLowerCase()} for ${authority}. Review each answer carefully because the information may be placed on the government filing.`;
    return `<div class="f4u-service-form f4u-schema-form" data-service-form="${attr(slug)}">
-   <aside class="f4u-filing-tooltip"><span class="f4u-filing-tooltip__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 10.5v6"></path><path d="M12 7.3h.01"></path></svg></span><div><strong>What you are filing</strong><p>${esc(tooltip)}</p></div></aside>
+   <details class="f4u-filing-tooltip"><summary><span class="f4u-filing-tooltip__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 10.5v6"></path><path d="M12 7.3h.01"></path></svg></span><span>What you are filing</span></summary><div class="f4u-filing-tooltip__body"><p>${esc(tooltip)}</p></div></details>
    <div class="f4u-service-form__notice"><div class="f4u-service-form__notice-icon">✓</div><div><strong>${esc(config.title)}</strong><p>${esc(config.subtitle||'Complete the filing information below.')} ${jurisdiction?`Selected jurisdiction: ${esc(jurisdiction)}.`:''}</p></div></div>
    ${config.notice?`<div class="f4u-schema-notice"><strong>Important</strong><span>${esc(config.notice)}</span></div>`:''}
-   <div class="f4u-agency-strip"><span>Prepared for</span><strong>${esc(authority)}</strong></div>
    ${(config.sections||[]).map((s,i)=>`<section class="f4u-form-section"${condAttrs(s.showWhen)}><div class="f4u-form-section__head"><span class="f4u-form-section__number">${i+1}</span><div><h3>${esc(s.title)}</h3>${s.description?`<p>${esc(s.description)}</p>`:''}</div></div><div class="f4u-form-section__body"><div class="f4u-field-grid f4u-field-grid--schema">${(s.fields||[]).map(x=>fieldHtml(x,states,settings)).join('')}</div></div></section>`).join('')}</div>`;
  };
  window.formRegistry[`${slug}-validation-engine`]={validate(){const root=document.querySelector(`[data-service-form="${CSS.escape(slug)}"]`);return root?validate(root):{isValid:false,errors:['form_unavailable']}}};
