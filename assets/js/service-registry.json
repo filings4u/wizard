@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "service_count": 55,
+  "service_count": 56,
   "services": [
     {
       "key": "annual-reports",
@@ -469,6 +469,15 @@
       "requires_jurisdiction": null,
       "requires_authorization": null,
       "form_module": "assets/js/logo-design-packages.js"
+    },
+    {
+      "key": "domain-name-registration",
+      "title": "Domain Name Registration",
+      "category": "Specialty Services",
+      "enabled": true,
+      "requires_jurisdiction": false,
+      "requires_authorization": false,
+      "form_module": "assets/js/domain-name-registration.js"
     },
     {
       "key": "shipper-packages",
